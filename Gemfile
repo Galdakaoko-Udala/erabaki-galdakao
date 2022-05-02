@@ -5,11 +5,13 @@ source "https://rubygems.org"
 ruby RUBY_VERSION
 
 gem "decidim", "0.24.3"
-# gem "decidim-conferences", "0.24.3"
-# gem "decidim-consultations", "0.24.3"
+gem "decidim-conferences", "0.24.3"
+gem "decidim-consultations", "0.24.3"
 # gem "decidim-elections", "0.24.3"
 # gem "decidim-initiatives", "0.24.3"
 # gem "decidim-templates", "0.24.3"
+
+gem "decidim-file_authorization_handler", git: "https://github.com/Patuksa/decidim-file_authorization_handler.git"
 
 gem "bootsnap", "~> 1.3"
 
