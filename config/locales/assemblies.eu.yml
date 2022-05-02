@@ -1,0 +1,459 @@
+eu:
+  activemodel:
+    attributes:
+      assemblies_setting:
+        enable_organization_chart: Gaitu organigrama
+      assembly:
+        area_id: Area
+        assembly_type: Parte-hartze organo mota
+        assembly_type_other: Beste parte-hartze organo bat
+        banner_image: Bannerra
+        closing_date: Amaiera data
+        closing_date_reason: Amaiera data arrazoia
+        composition: Osaera
+        copy_categories: Kopiatu kategoriak
+        copy_components: Kopiatu osagaiak
+        copy_features: Kopiatu funtzionalitateak
+        created_by: Sortuta
+        created_by_other: Beste batek sortua
+        creation_date: Sortze data
+        decidim_area_id: Arloa
+        decidim_assemblies_type_id: Parte-hartze organo mota
+        decidim_scope_id: esparrua
+        description: Deskribapena
+        developer_group: Talde sustatzailea
+        domain: Domeinua
+        duration: Iraupena
+        facebook: Facebook
+        github: GitHub
+        hashtag: Traola
+        hero_image: Orri nagusiko irudia
+        included_at: Barruan sartzen da
+        instagram: Instagram
+        internal_organisation: Barneko antolaketa
+        is_transparent: Gardena da
+        local_area: Antolakuntzako arloa
+        meta_scope: 'Metadatuak: esparrua'
+        parent_id: Parte-hartze organo nagusia
+        participatory_processes_ids: Lotutako parte-hartze prozesuak
+        participatory_scope: Zer erabaki
+        participatory_structure: Nola erabaki
+        private_space: Espazio pribatua
+        promoted: Nabarmendua
+        published_at: Argitaratuta
+        purpose_of_action: Ekintzaren xedea
+        scope_id: Esparrua
+        scopes_enabled: Esparruak gaituta
+        short_description: Deskribapen laburra
+        show_statistics: Erakutsi estatistikak
+        slug: URL laburra
+        special_features: Ezaugarri bereziak
+        subtitle: Azpititulua
+        target: Nork parte hartu
+        title: Parte-hartze prozesu multzoak
+        twitter: Twitter
+        weight: Kokapenaren hurrenkera
+        youtube: YouTube
+      assembly_member:
+        birthday: Urtebetetzea
+        birthplace: Sorlekua
+        ceased_date: Kargu-uztearen data
+        designation_date: Izendapen-data
+        full_name: Izen osoa
+        gender: Generoa
+        non_user_avatar: Avatar
+        position: Kargua
+        user_id: Parte-hartzailea edo taldea
+      assembly_user_role:
+        email: Posta elektronikoa
+        name: izena
+        role: Parte-hartzaile rola
+    errors:
+      models:
+        assembly:
+          attributes:
+            document:
+              invalid_document_type: 'Dokumentu-mota baliogabea da. Formatu hauek onartzen dira: %{valid_mime_types}'
+  activerecord:
+    models:
+      decidim/assembly:
+        one: Parte-hartze organoa
+        other: Parte-hartze organoak
+      decidim/assembly_member:
+        one: Parte-hartze organoko kidea
+        other: Parte-hartze organoko kideak
+      decidim/assembly_user_role:
+        one: Parte-hartze organoko kide rola
+        other: Parte-hartze organoko kide rolak
+  decidim:
+    admin:
+      actions:
+        import_assembly: Inportatu
+        new_assembly: Parte-hartze organo berria
+        new_assembly_type: Parte-hartze organo mota berria 
+      assemblies:
+        create:
+          error: Errorea gertatu da parte-hartze organo berri bat sortzean.
+          success: Parte-hartze organoa zuzen sortu da.
+        edit:
+          update: Eguneratu
+        index:
+          not_published: Argitaratu gabe
+          private: Pribatua
+          public: Publikoa
+          published: Argitaratua
+        new:
+          create: Sortu
+          title: Parte-hartze organo berria
+        update:
+          error: Errorea gertatu da parte-hartze organo hau eguneratzean.
+          success: Parte-hartze organoa zuzen eguneratu da.
+      assemblies_copies:
+        create:
+          error: Errorea gertatu da parte-hartze organo hau kopiatzean.
+          success: Parte-hartze organoa zuzen bikoiztu da.
+      assemblies_settings:
+        update:
+          error: Arazo bat gertatu da konfigurazioa eguneratzean.
+          success: Konfigurazioa zuzen eguneratu da.
+      assemblies_types:
+        create:
+          error: Errorea gertatu da parte-hartze organo mota berri bat sortzean.
+          success: Parte-hartze organo mota zuzen sortu da.
+        destroy:
+          success: Parte-hartze organo mota zuzen ezabatu da.
+        new:
+          create: Sortu
+          title: Parte-hartze organo mota berria
+        update:
+          error: Errore bat gertatu da parte-hartze organo mota hau eguneratzean.
+          success: Parte-hartze organo mota zuzen eguneratu da.
+      assembly_copies:
+        new:
+          copy: Kopiatu
+          select: Aukeratu itzazu kopiatu nahi dituzun datuak
+          title: Kopiatu parte-hartze organo
+      assembly_imports:
+        create:
+          error: Errorea gertatu da parte-hartze organo hau inportatzean.
+          success: Parte-hartze organoa zuzen inportatu da.
+        new:
+          import: Inportatu
+          select: Hautatu zein datu inportatu nahi dituzun
+          title: Inportatu parte-hartze organoa
+      assembly_members:
+        create:
+          error: Errore bat gertatu da parte-hartze organo honetan kide bat gehitzean.
+          success: Parte-hartze organo hau arrakastaz sortu da.
+        destroy:
+          success: Kidea zuzen ezabatu da parte-hartze organo honetatik.
+        edit:
+          title: Eguneratu parte-hartze organoko kidea.
+          update: eguneratu
+        index:
+          assembly_members_title: Parte-hartze organoko kideak
+        new:
+          create: Sortu
+          title: Parte-hartze organoko kide berria.
+        update:
+          error: Errore bat gertatu da parte-hartze organo honetako kidea eguneratzean
+          success: Parte-hartze organo honetako kidea zuzen eguneratu da.
+      assembly_publications:
+        create:
+          error: Errorea gertatu da parte-hartze organo hau bikoiztean.
+          success: Parte-hartze organoa ongi argitaratu da.
+        destroy:
+          error: Errorea gertatu da parte-hartze organo hau argitaratzeari uztean.
+          success: Parte-hartze organoa zuzen kendu da argitalpenetik.
+      assembly_user_roles:
+        create:
+          error: Errore bat gertatu da parte-hartze organo honen erabiltzaile bat gehitzean.
+          success: Administratzailea zuzen gehitu da parte-hartze organo honetan.
+        destroy:
+          success: Administratzailea zuzen kendu da parte-hartze organo honetatik
+        edit:
+          title: Eguneratu parte-hartze organoko administratzailea.
+          update: eguneratu
+        index:
+          assembly_admins_title: Parte-hartze organoko administratzaileak.
+        new:
+          create: Sortu
+          title: Parte-hartze organoko administratzaile berria.
+        update:
+          error: Errore bat gertatu da parte-hartze organoko administratzaile bat eguneratzean
+          success: Parte-hartze organoko administratzailea zuzen eguneratu da.
+      filters:
+        decidim_assemblies_type_id_eq:
+          label: Batzar mota
+      menu:
+        assemblies: Parte-hartze organoak
+        assemblies_settings: Ezarpenak
+        assemblies_submenu:
+          assembly_admins: Parte-hartze organoko administratzaileak
+          assembly_members: Kideak
+          attachment_collections: Karpetak
+          attachment_files: Fitxategiak
+          attachments: Eranskinak
+          categories: Kategoriak
+          components: Osagaiak
+          info: Informazioa
+          moderations: Moderazioak
+          private_users: Erabiltzaile pribatuak
+        assemblies_types: Parte-hartze organo motak
+      models:
+        assemblies_types:
+          fields:
+            created_at: Sortze-data
+            title: Izenburua
+        assembly:
+          fields:
+            created_at: Sortze-data
+            private: Pribatua
+            promoted: Nabarmendua
+            published: Argitaratua
+            title: Izenburua
+          name: Parte-hartze organoa
+        assembly_member:
+          fields:
+            ceased_date: Kargu-uztearen data
+            designation_date: Izendapen-data
+            full_name: Izena
+            position: Kargua
+          name: kidea
+          positions:
+            other: Beste bat
+            president: Presidentea
+            secretary: Idazkaria
+            vice_president: Presidenteordea
+        assembly_user_role:
+          fields:
+            email: Posta elektronikoa
+            name: Izena
+            role: Rola
+          name: Parte-hartze organoaren administratzailea
+          roles:
+            admin: Administratzailea
+            collaborator: Laguntzailea
+            moderator: Moderatzaile
+            valuator: Ebaluatzailea
+      titles:
+        assemblies: Parte-hartze organoak
+        assemblies_types: Parte-hartze organo mota
+    admin_log:
+      assembly:
+        create: "%{user_name} %{resource_name} parte-hartze organoa sortu duzu"
+        publish: "%{user_name} %{resource_name} parte-hartze organoa argitaratu duzu"
+        unpublish: "%{user_name} %{resource_name} parte-hartze organoa argitaratzeari utzi diozu"
+        update: "%{user_name} %{resource_name} parte-hartze organoa eguneratu duzu"
+      assembly_member:
+        create: "%{user_name} k %{resource_name} kidea sortu du %{space_name} parte-hartze organoan"
+        delete: "%{user_name} k %{resource_name} kidea kendu du %{space_name} parte-hartze organotik"
+        update: "%{user_name} k %{resource_name} kidea eguneratu du %{space_name} parte-hartze organoan"
+      assembly_setting:
+        update: "%{user_name} k parte-hartze organoaren konfigurazioa eguneratu du"
+      assembly_type:
+        create: "%{user_name} k %{resource_name} parte-hartze organoa mota sortu du"
+        delete: "%{user_name} k %{resource_name} parte-hartze organo mota ezabatu du"
+        publish: "%{user_name} k %{resource_name} parte-hartze organo mota argitaratu du"
+        unpublish: "%{user_name} k %{resource_name} parte-hartze organo mota argitaratzeari utzi dio"
+        update: "%{user_name} k %{resource_name} parte-hartze organo mota eguneratu du"
+      assembly_user_role:
+        create: "%{user_name} k %{resource_name} %{space_name} gonbidatu du parte-hartze organora"
+        delete: "%{user_name} k %{resource_name} %{space_name} parte-harte organotik ezabatu du"
+        update: "%{user_name} k %{resource_name} %{space_name} ren parte-hartze organoko rola aldatu du"
+    assemblies:
+      admin:
+        assemblies:
+          form:
+            announcement_help: Hemen sartzen duzun testua parte-hartze organoari buruzo informazioaren azpian agertuko zaio parte-hartzaileari.
+            duration: Iraupena
+            duration_help: Parte-hartze organo honen iraupena mugatua bada, hautatu amaiera-data. Bestela, mugagabea izango da.
+            filters: Iragazkiak
+            images: Irudiak
+            included_at_help: Hautatu parte-hartze organo hau gehitu zen data. Ez du derrigorrez sortu den data izan behar.
+            metadata: Metadatuak
+            other: Beste bat
+            select_a_created_by: Aukeratu egilea 
+            select_an_area: Hautatu arlo bat
+            select_an_assembly_type: Hautatu parte-hartze organo mota bat
+            select_parent_assembly: Hautatu parte-hartze organo nagusi bat
+            slug_help: 'URL testu laburrak parte-hartze organo honetarako URLa sortzeko erabiltzen dira. Letrak, zenbakiak eta gidoiak baino ez ditu onartzen, eta letra batekin hasi behar du. Adibidea: %{url}'
+            social_handlers: Sare Sozialak
+            title: Informazio orokorra
+            visbility: Ikusgarritasuna
+        assemblies_settings:
+          edit:
+            update: Eguneratu
+          form:
+            title: Parte-hartze organoen konfigurazioa
+        assemblies_types:
+          form:
+            title: Izenburua
+        assembly_copies:
+          form:
+            slug_help: 'URL testu laburrak parte-hartze organo honetarako URLa sortzeko erabiltzen dira. Letrak, zenbakiak eta gidoiak baino ez ditu onartzen, eta letra batekin hasi behar du. Adibidea: %{url}'
+        assembly_imports:
+          form:
+            document_legend: Gehitu dokumentu bat
+            slug_help: 'URL testu laburrak parte-hartze organo honetarako URLa sortzeko erabiltzen dira. Letrak, zenbakiak eta gidoiak baino ez ditu onartzen, eta letra batekin hasi behar du. Adibidea: %{url}'        
+        assembly_members:
+          form:
+            existing_user: Egon dagoen parte-hartzailea
+            explanation: 'Jarraibideak irudirako:'
+            image_guide: Ahal izanez gero, irudi bertikal bat testurik gabe.
+            non_user: Ez parte-hartzailea
+            non_user_avatar_help: Pertsonen baimena lortu beharko zenuke, kide gisa argitaratu baino lehen.
+            select_a_position: Aukeratu posizio bat
+            select_user: Aukeratu parte-hartzaile bat
+            user_type: Parte-hartzaile mota
+          index:
+            filter:
+              all: guztiak
+              ceased: utzitakoa
+              not_ceased: Ez utzitakoa
+            filter_by: arabera iragazia 
+            search: Bilatu
+        content_blocks:
+          highlighted_assemblies:
+            max_results: Gehienez erakutsi daitezkeen elementuak
+        new_import:
+          accepted_types:
+            json: JSON
+      assembly_members:
+        index:
+          members: Kideak
+      assembly_types:
+        commission: Batzordeak
+        consultative_advisory: Kontseilaria/Aholkularia
+        executive: Exekutiboa
+        government: Gobernua
+        others: Beste batzuk
+        participatory: Parte-hartzailea
+        working_group: Lan taldea
+      content_blocks:
+        highlighted_assemblies:
+          name: Parte-hartze organo nabarmenduak
+      created_by:
+        city_council: Udala
+        others: Beste batzuk
+        public: Publikoa
+      filter:
+        all: Mota guztiak
+        commission: Batzordea
+        consultative_advisory: Kontseilaria/Aholkularia
+        executive: Exekutiboa
+        government: Gobernua
+        help: 'Eredua:'
+        others: Beste batzuk
+        participatory: Parte-hartzailea
+        working_group: Lan taldea
+      index:
+        title: Parte-hartze organoak
+      last_activity:
+        new_assembly: Parte-hartze organo berria
+      pages:
+        home:
+          highlighted_assemblies:
+            active_assemblies: Parte-hartze organo aktiboak
+            assemblies_button_title: Parte-hartze organo guztiak erakusten dituen parte-hartze organoen esteka
+            see_all_assemblies: Ikusi Parte-hartze organo guztiak
+        user_profile:
+          member_of:
+            member_of: Kidea
+      show:
+        area: Arloa
+        assembly_type: Parte-hartze organo mota
+        children: Parte-hartze organoa
+        closing_date: Amaiera data
+        composition: Osaera
+        created_by: Sortuta
+        creation_date: Datan sortu da
+        developer_group: Talde sustatzailea
+        duration: Iraupena
+        included_at: Barruan sartzen da
+        indefinite_duration: mugagabea
+        internal_organisation: Barneko antolaketa
+        is_transparent:
+          'false': Opakua
+          'true': Gardena
+        local_area: Antolakuntzako arloa
+        participatory_scope: Zer erabaki
+        participatory_structure: Nola erabaki
+        private_space: Parte-hartze organo hau pribatua da
+        purpose_of_action: Ekintzaren xedea
+        read_less: Irakurri gutxiago
+        read_more: Irakurri gehiago
+        related_participatory_processes: Lotutako parte-hartze prozesuak
+        scope: Esparrua
+        social_networks: Sare sozialak
+        social_networks_title: Partekatu parte-hartze organo hau hemen
+        target: Nork parte hartu
+    assembly_members:
+      assembly_member:
+        designated_on: Izendatuta
+      index:
+        title: Kideak
+    events:
+      assemblies:
+        create_assembly_member:
+          email_intro: <a href="%{resource_url}">%{resource_name}</a> parte-hartze organoaren administratzaile batek bere kide bezala gehitu zaitu.
+          email_outro: Jakinarazpen hau jaso duzu parte-hartze organo batera gonbidatu zaituztelako. Sartu hemen <a href="%{resource_path}">assembly page</a> laguntza emateko!
+          email_subject: Gonbidatu zaituzte %{resource_name} parte-hartze organoko kidea izatera!
+          notification_title: Erregistratu zaituzte <a href="%{resource_path}">%{resource_name}</a> parte-hartze organoko kide bezala. Sartu hemen <a href="%{resource_path}">batzarraren orrian </a> laguntza emateko!
+      assembly:
+        role_assigned:
+          email_intro: '%{role} rola esleitu dizute "%{resource_title}" parte-hartze organoak.'
+          email_outro: Jakinarazpen hau jaso duzu %{role} rola esleitu dizutelako "%{resource_title}" parte-hartze organoan.
+          email_subject: '%{role} rola esleitu dizute "%{resource_title}" parte-hartze organoan.'
+          notification_title: '%{role} rola esleitu zaizu <a href="%{resource_url}">%{resource_title}</a> parte-hartze organoan.'
+    help:
+      participatory_spaces:
+        assemblies:
+          contextual: "<p> Parte-hartze organo bat erakunde bateko kideen taldea da, eta aldiro elkartzen da erakundearen eremu edo esparru zehatz bati buruzko erabakiak hartzeko.</p> <p> Parte-hartze organoak biltzen dira, batzu pribatuak eta beste batzuk irekiak dira. Irekiz gero, haietan parte har daiteke (esate baterako: aforoak ahalbidetzen duen tokian parte hartzera, agenda puntuak gehituz edo organo horri egindako proposamenak eta erabakiak iruzkinduz).</p> <p>Adibideak: Batzar orokor bat (urtero biltzen dena antolakuntzaren jarduera-ildo nagusiak ezarzeko edo organo exekutiboak boto bidez aukeratzeko), berdintasun aholku-kontseiluak (bi hilero behin biltzen dena genero-harremanak hobetzeko proposamenak egiteko erakundean), ebaluazio-batzorde bat (hilero biltzen dena prozesu bat kontrolatzeko) edo berme-organo bat (gertakariak, abusuak edo erabakiak hartzeko prozedurak hobetzeko proposamenak biltzen dituena) dira.</p>\n"
+          page: "<p> Parte-hartze organo bat erakunde bateko kideen taldea da, eta aldiro elkartzen da erakundearen eremu edo esparru zehatz bati buruzko erabakiak hartzeko.</p> <p> Parte-hartze organoak biltzen dira, batzuk pribatuak eta beste batzuk irekiak dira. Irekiz gero, haietan parte har daiteke (esate baterako: aforoak ahalbidetzen duen tokian parte hartzera, agenda puntuak gehituz edo organo horri egindako proposamenak eta erabakiak iruzkinduz).</p> <p>Adibideak: Batzar orokor bat (urtero biltzen dena antolakuntzaren jarduera-ildo nagusiak ezarzeko edo organo exekutiboak boto bidez aukeratzeko), berdintasun aholku-kontseiluak (bi hilero behin biltzen dena genero-harremanak hobetzeko proposamenak egiteko erakundean), ebaluazio-batzorde bat (hilero biltzen dena prozesu bat kontrolatzeko) edo berme-organo bat (gertakariak, abusuak edo erabakiak hartzeko prozedurak hobetzeko proposamenak biltzen dituena) dira.</p>\n"
+          title: Zer dira parte-hartze organoak?
+    log:
+      value_types:
+        assembly_presenter:
+          not_found: 'Ez da parte-hartze organoa aurkitu datu-basean (ID: %{id})'
+        assembly_type_presenter:
+          not_found: 'Parte-hartze organo mota ez da aurkitu (ID: %{id}) datu-basean'
+    menu:
+      assemblies: Parte-hartze organoak
+    metrics:
+      assemblies:
+        description: Sortutako parte-hartze organo kopurua
+        object: Parte-hartze organoak
+        title: Parte-hartze organoak
+    participatory_processes:
+      show:
+        related_assemblies: Lotutako parte-hartze organoak
+    statistics:
+      assemblies_count: Parte-hartze organoak
+  errors:
+    messages:
+      cannot_be_blank: ezin da hutsik egon
+  layouts:
+    decidim:
+      assemblies:
+        assembly:
+          more_info: Informazio gehiago
+          take_part: Parte hartu
+        index:
+          children: 'Parte-hartze organoak: '
+          organizational_chart: Organigrama
+          promoted_assemblies: Parte-hartze organo nabarmenduak
+          reset_chart: Berrezarri
+        order_by_assemblies:
+          assemblies:
+            one: "%{count} parte-hartze organoak"
+            other: "%{count} parte-hartze organoak "
+        promoted_assembly:
+          more_info: Informazio gehiago
+          take_part: Parte hartu
+      assembly_navigation:
+        assembly_member_menu_item: Kideak
+        assembly_menu_item: Parte-hartze organoa
+      assembly_widgets:
+        show:
+          take_part: Parte hartu
