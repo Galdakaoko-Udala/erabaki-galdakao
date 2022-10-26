@@ -160,14 +160,14 @@ eu:
             description: 'Jada bozkatu duzu aurrekonturako. Iritziz aldatu baduzu, ezeztatu hemen: %{cancel_link}.'
             title: Botoa zuzen bidali da
           minimum_projects_rule:
-            description: Zure ustez, zein proiekturi eman behar diegu aurrekontua? Hautatu gutxienez %{minimum_number} eta bozkatu zure lehentasunen arabera aurrrekontua osatzeko.
-            instruction: "<li>Aurrekontuaren arauak. Hautatu gutxienez %{minimum_number} proiektu artean zure lehentasunen arabera aurrekontua osatzeko</li>"
+            description: Zure aburuz, proiektuetako zeinei esleitu behar diegu aurrekontua? Hautatu gutxienez %{minimum_number} eta bozkatu zure lehentasunen arabera proiektua zehazteko.
+            instruction: "<li>Hautatu gutxienez nahi dituzun %{minimum_number} proiektu eta bozkatu zure lehentasunen arabera </li> proiektua zehazteko"
           projects_rule:
-            description: Zure ustez, zein proiekturi eman behar diegu aurrekontua? Hautatu %{minimum_number} eta %{maximum_number} proiektu artean, eta eman botoa zure lehentasunen arabera>
-            instruction: "<li>Aurrekontuaren arauak. Hautatu %{minimum_number} eta %{maximum_number} proiektu artean zure lehentasunen arabera aurrekontua osatzeko</li>"
+            description: Zure ustez, zein proiekturi esleitu beharko genieke aurrekontua? Hautatu %{minimum_number} eta %{maximum_number} arteko proiektuak, eta eman botoa zure lehentasunen arabera aurrekontua zehazteko.
+            instruction: "<li>Hautatu gutxienez nahi dituzun %{minimum_number} eta %{maximum_number} arteko proiektu eta bozkatu zure lehentasunen arabera </li> proiektua zehazteko"
           projects_rule_maximum_only:
-            description: Zure ustez, zein proiekturi eman behar diegu aurrekontua? Hautatu gehienez %{maximum_number} proiektu eta eman botoa zure lehentasunen arabera aurrekontua osatzeko.
-            instruction: "<li>Aurrekontuaren arauak. Hautatu gehienez %{maximum_number} proiektu zure lehentasunen arabera aurrekontua osatzeko</li>"
+            description: Zure ustez, zein proiekturi eman beharko genieke aurrekontua? Hautatu %{maximum_number} arte eta eman botoa zure lehentasunen arabera aurrekontua zehazteko.
+            instruction: "<li>Hautatu %{maximum_number} arte nahi beste proiektu eta eman botoa zure lehentasunen arabera aurrekontua zehazteko </li>"
           rules:
             title: Aurrekontuaren arauak
           title: Zure esku dago aurrekontua erabakitzea
@@ -195,7 +195,7 @@ eu:
           filter_by: 'Iragazi honen arabera:'
           unfold: Zabaldu
         order_progress:
-          vote: Eman Botoa
+          vote: Proiektuaren alde egin
         order_selected_projects:
           remove: Kendu
           selected_projects:

@@ -1062,14 +1062,14 @@ eu:
           headline: Zifretan parte hartzea
         statistics:
           answers_count: Amaitutako inkestak
-          assemblies_count: Batzar
+          assemblies_count: Batzarrak
           comments_count: Iruzkinak
           conferences_count: Jardunaldiak
           debates_count: Eztabaidak
-          endorsements_count: Oniritziak
+          endorsements_count: Atxikimenduak
           headline: '%{organization} erakundearen egungo egoera'
-          meetings_count: Topaketa-zerrenda
-          orders_count: Euskarriak
+          meetings_count: Aurrez aurreko topaketak
+          orders_count: Babesak
           pages_count: orrialdeak
           processes_count: Prozesuak
           projects_count: Proiektuak
@@ -1078,7 +1078,7 @@ eu:
           results_count: Emaitzak
           surveys_count: Inkestak
           users_count: Parte-hartzaileak
-          votes_count: Euskarriak
+          votes_count: Botoak
         sub_hero:
           register: Erregistroa
       index:
@@ -1408,17 +1408,17 @@ eu:
       invitation_instructions:
         accept: Onartu gonbita
         accept_until: 'Gonbit hau data honetan iraungiko da: %{due_date}.'
-        decline: Deuseztatu gonbidapena
+        decline: Baztertu gonbita
         hello: Kaixo, %{email},
         ignore: |-
-          Gonbidapena onartu nahi ez baduzu, ez ikusi mezu hau.<br />
-          Zure kontua ez da sortu goiko estekan sartzeko eta zure ezizena eta pasahitza ezartzeko.
+          Ez baduzu gonbita onartu nahi, ez erantzun mezu honi.<br />
+          Zure kontua ez da sortuko goiko estekan sartu eta zure ezizena eta pasahitza ezarri arte.
         invited_you_as_admin: "%{invited_by} %{application} administratzaile gisa gonbidatu zaitu. Beheko estekan onartu dezakezu."
-        invited_you_as_private_user: "%{invited_by} erabiltzaile gonbidatu zaitu %{application}erabiltzaile pribatu gisa. Beheko estekan onartu dezakezu."
+        invited_you_as_private_user: "%{invited_by} erabiltzaileak gonbidatu zaitu %{application}erabiltzaile pribatu gisa. Beheko estekan onartu dezakezu."
         someone_invited_you: Norbaitek %{application} gonbidatu zaitu. Beheko estekan onartu dezakezu.
-        someone_invited_you_as_admin: Norbaitek %{application} admin gisa gonbidatu zaitu, beheko estekan onartu dezakezu.
-        someone_invited_you_as_private_user: Norbaitek %{application}erabiltzaile pribatu gisa gonbidatu zaitu, beheko estekan sar dezakezu.
-        subject: Gonbidapenaren argibideak
+        someone_invited_you_as_admin: Norbaitek %{application} administratzaile gisa gonbidatu zaitu, beheko estekan onartu dezakezu.
+        someone_invited_you_as_private_user: Norbaitek %{application}erabiltzaile pribatu gisa gonbidatu zaitu, beheko estekan onartu dezakezu.
+        subject: Gonbidapenaren inguruko argibideak
       invite_admin:
         subject: 'Gonbita jaso duzu erakunde hau kudeatzeko: %{organization}'
       invite_collaborator:
@@ -1435,8 +1435,8 @@ eu:
         action: Aldatu nire pasahitza
         greeting: Kaixo %{recipient}!
         instruction: Norbaitek zure pasahitza aldatzeko esteka eskatu du, eta beheko estekan egin dezakezu.
-        instruction_2: Ez baduzu eskatu, mesedez jaramonik egin mezu hau.
-        instruction_3: Pasahitza ez da aldatuko goiko estekan sartzeko eta beste bat sortu arte.
+        instruction_2: Zuk ez baduzu eskatu ez egin jaramonik mezu honi. 
+        instruction_3: Pasahitza ez da aldatuko goiko estekan sartu eta beste bat sortu arte.
         subject: Berrezarri pasahitzaren argibideak
       unlock_instructions:
         action: Desblokeatu nire kontua

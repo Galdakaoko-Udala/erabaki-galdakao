@@ -449,19 +449,19 @@ eu:
         answers_count: Erantzunak
         comments_count: Iruzkinak
         debates_count: eztabaidak
-        endorsements_count: Oniritziak
+        endorsements_count: Atxikimenduak 
         followers_count: Jarraitzaileak
         headline: Jarduera
-        meetings_count: Topaketak
+        meetings_count: Aurrez aurreko topaketak
         no_stats: Oraindik ez dago estatistikarik.
-        orders_count: Euskarriak
+        orders_count: Babesak 
         pages_count: Orriak
         participants_count: Parte-hartzaileak
         processes_count: Prozesuak
         projects_count: Proiektuak
         proposals_count: Proposamenak
         results_count: Emaitzak
-        supports_count: Euskarriak
+        supports_count: Babesak
         surveys_count: Inkestak
         users_count: Parte-hartzaileak
   layouts:
