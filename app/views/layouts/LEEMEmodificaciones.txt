@@ -1,0 +1,2 @@
+20/09/2022 Creada la carpeta decidim en la que se incluye el archivo _head_extra.html.erb en el que modificaremos codigo CSS.
+
