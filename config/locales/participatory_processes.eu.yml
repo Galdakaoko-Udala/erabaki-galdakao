@@ -336,7 +336,7 @@ eu:
         participatory_processes:
           name: Prozesu parte-hartzaileak
         stats:
-          name: Jarduera
+          name: Estatistikak
         title:
           meta_scope: Eremua
           name: Izenburua, deskribapena eta traola
@@ -451,7 +451,7 @@ eu:
         debates_count: eztabaidak
         endorsements_count: Atxikimenduak 
         followers_count: Jarraitzaileak
-        headline: Jarduera
+        headline: Estatistikak
         meetings_count: Aurrez aurreko topaketak
         no_stats: Oraindik ez dago estatistikarik.
         orders_count: Babesak 
