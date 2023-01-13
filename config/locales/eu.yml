@@ -565,13 +565,13 @@ eu:
           notification_title: <a href="%{resource_path}"> dokumentu berri bat</a> gehitu da <a href="%{attached_to_url}">%{resource_title}</a>
       components:
         component_published:
-          email_intro: '%{resource_title} osagaia %{participatory_space_title}da aktibo dagoenean. Orrialde hau ikusi dezakezu:'
-          email_outro: Jakinarazpena jaso duzu %{participatory_space_title}jarraituz gero. Aurreko esteka jarraituz jakinarazpenak jasotzeari uztea erabaki dezakezu.
-          email_subject: '%{participatory_space_title} eguneratze bat'
+          email_intro: '%{resource_title} osagaia aktibatu da %{participatory_space_title} espazioan. Orrialde honetan ikus dezakezu:'
+          email_outro: Jakinarazpen hau jaso duzu %{participatory_space_title} jarraitzen ari zarelako. Aurreko estekan sartuz jakinarazpenak jasotzeari utzi ahal diozu.
+          email_subject: '%{participatory_space_title} espazioan eguneratze bat'
           notification_title: '%{resource_title} osagaia aktibo dago <a href="%{resource_path}">%{participatory_space_title}</a>'
       email_event:
         email_greeting: Kaixo, %{user_name},
-        email_intro: 'Eguneratze da "%{resource_title}". Orri honetan ikus daiteke:'
+        email_intro: 'Eguneratze berri bat dago "%{resource_title}" espazioan. Orri honetan ikus daiteke:'
         email_outro: Jakinarazpen hau jaso duzu "%{resource_title}” jarraitzen duzulako. Jarraitzeari utzi diezaiokezu aurreko estekan.
         email_subject: '%{resource_title} eguneratzea'
       gamification:
