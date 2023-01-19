@@ -299,10 +299,10 @@ eu:
           email_subject: '%{participatory_space_title} eguneratze bat'
           notification_title: '%{resource_title} fase aktiboa da <a href="%{resource_path}">%{participatory_space_title}</a>'
         step_changed:
-          email_intro: '%{participatory_space_title} %{resource_title} urratsen datak eguneratu dira. Orrialde hau ikusi dezakezu:'
-          email_outro: Jakinarazpena jaso duzu %{participatory_space_title}jarraituz gero. Aurreko esteka jarraituz jakinarazpenak jasotzeari uztea erabaki dezakezu.
+          email_intro: '%{participatory_space_title} %{resource_title} faseen datak eguneratu dira. Orrialde honetan ikusi ditzakezu:'
+          email_outro: Jakinarazpena jaso duzu %{participatory_space_title} jarraitzen ari zarelako. Aurreko estekan sartuz jakinarazpenak jasotzeari utzi ahal diozu.
           email_subject: '%{participatory_space_title} eguneratze bat'
-          notification_title: <a href="%{resource_path}">%{resource_title}</a> urratsean datak <a href="%{participatory_space_url}">%{participatory_space_title}</a> eguneratu dira.
+          notification_title: <a href="%{resource_path}">%{resource_title}</a> faseen datak <a href="%{participatory_space_url}">%{participatory_space_title}</a> eguneratu dira.
     help:
       participatory_spaces:
         participatory_processes:
