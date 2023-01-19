@@ -1,0 +1,86 @@
+eu:
+  activemodel:
+    models:
+      decidim/blogs/create_post_event: Blogeko post berria
+  activerecord:
+    models:
+      decidim/blogs/post:
+        one: Argitalpena
+        other: Argitalpenak
+  decidim:
+    blogs:
+      actions:
+        confirm_destroy: Ziur mezua ezabatu nahi duzula?
+        destroy: Ezabatu
+        edit: Editatu
+        new: Argitalpen berria
+        title: Ekintzak
+      admin:
+        models:
+          components:
+            body: Testua
+          post:
+            name: Argitaratu
+        posts:
+          create:
+            invalid: Arazo bat izan da argitalpen hau sortzean
+            success: Argitalpena ondo sortu da
+          destroy:
+            success: Argitalpena ondo ezabatu da
+          edit:
+            save: Eguneratu
+            title: Editatu argitalpena
+          index:
+            title: Argitalpenak
+          new:
+            create: Sortu
+            title: Sortu argitalpena
+          update:
+            invalid: Erroreak gertatu dira argitalpena gordetzean.
+            success: Argitalpena ondo gorde da
+      last_activity:
+        new_post_at_html: "<span>Argitalpen berria %{link}</span>"
+      models:
+        post:
+          fields:
+            author: Egilea
+            body: Testua
+            created_at: Sortuta
+            title: Izenburua
+      posts:
+        show:
+          back: Itzuli zerrendara
+          comments: Iruzkinak
+          view: ikusi
+        sidebar_blog:
+          comments: iruzkinak
+          most_commented_posts: Gehien iruzkinatutako argitalpenak
+      read_more: Irakurri gehiago
+    components:
+      blogs:
+        name: Bloga
+        settings:
+          global:
+            announcement: Oharra
+            comments_enabled: Iruzkinak gaituta
+            comments_max_length: Iruzkinen gehieneko luzera (utzi 0 lehenetsitako konfigurazioa mantendu nahi baduzu)
+          step:
+            announcement: Oharra
+            comments_blocked: Iruzkinak blokeatuta
+            endorsements_blocked: Atxikimenduak blokeatuta
+            endorsements_enabled: Atxikimenduak gaituta
+    events:
+      blogs:
+        post_created:
+          email_intro: '"%{resource_title}" argitalpena jarraitzen ari zaren "%{participatory_space_title}" espazioan argitaratu da.'
+          email_outro: Jakinarazpen hau jaso duzu "%{participatory_space_title}" jarraitzen ari zarelako. Aurreko estekan utzi ahal diozu jarraitzeari.
+          email_subject: 'Argitalpen berria %{participatory_space_title} espazioan'
+          notification_title: <a href="%{resource_path}">%{resource_title}</a> argitalpena %{participatory_space_title} argitaratu da
+    pages:
+      home:
+        statistics:
+          posts_count: Argitalpenak
+    participatory_processes:
+      statistics:
+        posts_count: Argitalpenak
+
