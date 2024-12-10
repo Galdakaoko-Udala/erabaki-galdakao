@@ -45,5 +45,5 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   # No precompilation on demand on first request
-  config.assets.check_precompiled_asset = false
+  # config.assets.check_precompiled_asset = false
 end
