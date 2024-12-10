@@ -1,0 +1,62 @@
+/*!
+  SerializeJSON jQuery plugin.
+  https://github.com/marioizquierdo/jquery.serializeJSON
+  version 2.9.0 (Jan, 2018)
+
+  Copyright (c) 2012-2018 Mario Izquierdo
+  Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+  and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
+*/
+
+/*!
+ * Select2 4.1.0-rc.0
+ * https://select2.github.io
+ *
+ * Released under the MIT license
+ * https://github.com/select2/select2/blob/master/LICENSE.md
+ */
+
+/*!
+ * jQuery UI :data 1.13.3
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Mouse 1.13.3
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Scroll Parent 1.13.3
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Sortable 1.13.3
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Widget 1.13.3
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */

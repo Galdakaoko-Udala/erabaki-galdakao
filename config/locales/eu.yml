@@ -444,10 +444,12 @@ eu:
           username_help: Zure mezuetan agertuko den izen publikoa. Anonimatua bermatze aldera, edozein izen izan daiteke.
       registrations:
         new:
-          already_have_an_account?: Baduzu kontu bat?
+          already_have_an_account?: 'Baduzu kontu bat?'
           newsletter: Jaso nahi dut noizbehinka informazio garrantzitsua duen buletina
           newsletter_title: Harremanetarako baimena
-          sign_in: Sartu
+          password_help: "%{minimun_characters} karaktere gutxienez, ez dira oso ohikoak izan behar (adibidez, 123456) eta zure goitizenetik eta zure helbide elektronikoarekin desberdinak izan behar dira."
+          password_help_admin: "%{minimun_characters} karaktere gutxienez, ez dira oso ohikoak izan behar (adibidez, 123456) eta zure goitizenetik eta zure helbide elektronikoarekin desberdinak izan behar dira."
+          sign_in: Hasi saioa
           sign_up: Erregistratu
           sign_up_as:
             legend: Izena eman honako hau gisa
@@ -572,19 +574,19 @@ eu:
       email_event:
         email_greeting: Kaixo, %{user_name},
         email_intro: 'Eguneratze berri bat dago "%{resource_title}" espazioan. Orri honetan ikus daiteke:'
-        email_outro: Jakinarazpen hau jaso duzu "%{resource_title}” jarraitzen duzulako. Jarraitzeari utzi diezaiokezu aurreko estekan.
+        email_outro: Jakinarazpen hau jaso duzu "%{resource_title}" jarraitzen duzulako. Jarraitzeari utzi diezaiokezu aurreko estekan.
         email_subject: '%{resource_title} eguneratzea'
       gamification:
         badge_earned:
-          email_intro: Lan handia! <a href="%{resource_path}">%{badge_name} txapela irabazi duzu</a> ( %{current_level}maila).
-          email_outro: Jakinarazpena jaso duzu gure webgunean egin duzun jarduera delako.
-          email_subject: 'Idatzi berri bat irabazi duzu: %{badge_name}!'
-          notification_title: Lan handia! <a href="%{resource_path}">%{badge_name} txapela irabazi duzu</a> ( %{current_level}maila).
+          email_intro: 'Lan bikaina! <a href="%{resource_url}">"%{badge_name}"</a> domina irabazi duzu (%{current_level} maila).'
+          email_outro: Jakinarazpena jaso duzu gure webgunean egin duzun jarduera batengatik.
+          email_subject: 'Domina berri bat irabazi duzu: %{badge_name}!'
+          notification_title: Lan bikaina! <a href="%{resource_path}">%{badge_name} domina irabazi duzu</a> (%{current_level} maila).
         level_up:
-          email_intro: Lan handia! Maila %{current_level} lortu duzu <a href="%{resource_path}">%{badge_name} badge</a>!
-          email_outro: Jakinarazpena jaso duzu gure webgunean egin duzun jarduera delako.
-          email_subject: Nik iritsi zara mailan %{current_level} on the %{badge_name} plaka!
-          notification_title: Lan handia! Maila %{current_level} lortu duzu <a href="%{resource_path}">%{badge_name} badge</a>!
+          email_intro: 'Lan bikaina! %{current_level}. maila lortu duzu "<a href="%{resource_url}">%{badge_name}</a>" izeneko kategorian!'
+          email_outro: Jakinarazpena jaso duzu gure webgunean egin duzun jarduera batengatik.
+          email_subject: '%{current_level}. maila lortu duzu %{badge_name} kategorian!'
+          notification_title: Lan bikaina! %{current_level}, maila lortu duzu <a href="%{resource_path}">%{badge_name} badge</a> kategorian!
       groups:
         demoted_membership:
           email_intro: <a href="%{resource_url}">%{user_group_name}</a> taldeko administratzaileak taldeko administratzaile eskubideak kendu ditu.
@@ -1099,7 +1101,7 @@ eu:
           agreement: Ados nago irizpide hauekin
           legend: Erabiltzeko baldintzak eta baldintzak onartzen dituzu
         refuse:
-          modal_body: Uko egiten baduzu, ezin izango duzu plataforman erabiltzeko gai, ezin duzu <a href="%{data_portability_path}">deskargatu zure datu</a> edo / <a href="%{delete_path}">zure kontua ezabatu</a>.
+          modal_body: Uko egiten baduzu, ezin izango duzu plataforman erabiltzeko gai, ezin duzu <a href="%{download_your_data_path}">deskargatu zure datu</a> edo / <a href="%{delete_path}">zure kontua ezabatu</a>.
           modal_btn_continue: Baldintzak onartu eta jarraitu
           modal_btn_exit: Berriro berrikusiko dut geroago
           modal_button: Ezetsi terminoak
@@ -1453,6 +1455,8 @@ eu:
         change_your_password: Aldatu zure pasahitza
         confirm_new_password: Berretsi pasahitz berria
         new_password: Pasahitza
+        password_help: "%{minimun_characters} karaktere gutxienez, ez dira oso ohikoak izan behar (adibidez, 123456) eta zure goitizenetik eta zure helbide elektronikoarekin desberdinak izan behar dira."
+        password_help_admin: "%{minimun_characters} karaktere gutxienez, ez dira oso ohikoak izan behar (adibidez, 123456) eta zure goitizenetik eta zure helbide elektronikoarekin desberdinak izan behar dira."
       new:
         forgot_your_password: Zure pasahitza ahaztu duzu?
         send_me_reset_password_instructions: Bidali berrezarri pasahitzaren argibideak
@@ -1672,3 +1676,4 @@ eu:
       previous_title: Lotura aurreko orrialdearekin
       title: 'Orrialde zenbakia: '
       truncate: "&hellip;"
+

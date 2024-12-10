@@ -1108,7 +1108,7 @@ es:
           agreement: Estoy de acuerdo con estos términos
           legend: Acepto los Términos y Condiciones de uso
         refuse:
-          modal_body: Si no aceptas, no podrás utilizar la plataforma, puedes <a href="%{data_portability_path}">descargar tus datos</a> y / o <a href="%{delete_path}">eliminar tu cuenta</a>.
+          modal_body: Si no aceptas, no podrás utilizar la plataforma, puedes <a href="%{download_your_data_path}">descargar tus datos</a> y / o <a href="%{delete_path}">eliminar tu cuenta</a>.
           modal_btn_continue: Aceptar los términos y continuar
           modal_btn_exit: Lo revisaré más tarde
           modal_button: Rechazar los términos

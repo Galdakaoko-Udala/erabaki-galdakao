@@ -139,13 +139,13 @@ Decidim.configure do |config|
   # config.data_portability_expiry_time = 7.days
 
   # Max requests in a time period to prevent DoS attacks. Only applied on production.
-  # config.throttling_max_requests = 100
+  config.throttling_max_requests = 300
 
   # Time window in which the throttling is applied.
   # config.throttling_period = 1.minute
 
   # Time window were users can access the website even if their email is not confirmed.
-  # config.unconfirmed_access_for = 2.days
+  config.unconfirmed_access_for = 0.days
 
   # A base path for the uploads. If set, make sure it ends in a slash.
   # Uploads will be set to `<base_path>/uploads/`. This can be useful if you
@@ -284,3 +284,7 @@ end
 
 Rails.application.config.i18n.available_locales = Decidim.available_locales
 Rails.application.config.i18n.default_locale = Decidim.default_locale
+
+# Inform Decidim about the assets folder 
+Decidim.register_assets_path File.expand_path("app/packs", Rails.application.root)
+

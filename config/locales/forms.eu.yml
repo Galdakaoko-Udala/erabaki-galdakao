@@ -156,7 +156,7 @@ eu:
           questionnaire_js_disabled:
             body: Galdetegi honen ezaugarri batzuk desaktibatu egingo dira. Zure esperientzia hobetzeko, gaitu JavaScript zure nabigatzailean.
             title: Javascript desaktibatuta dago
-          tos_agreement: Zerbitzu-baldintzak onartzen dituzunean parte hartuz
+          tos_agreement: Parte hartzean erabileraren baldintzak onartzen dituzu
       step_navigation:
         show:
           are_you_sure: Ekintza hau ezin da desegin eta ezin izango dituzu zure erantzunak editatu. Ziur zaude?
