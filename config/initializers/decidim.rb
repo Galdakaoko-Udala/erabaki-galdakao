@@ -37,10 +37,10 @@ Decidim.configure do |config|
   #
   # == HERE Maps ==
   config.maps = {
-     provider: :here,
-     api_key: Rails.application.secrets.maps[:api_key],
-     static: { url: "https://image.maps.ls.hereapi.com/mia/1.6/mapview" },
-     geocoding: { host: "nominatim.openstreetmap.org", use_https: true }
+    provider: :here,
+    api_key: Rails.application.secrets.maps[:api_key],
+    static: { url: "https://image.maps.ls.hereapi.com/mia/1.6/mapview" },
+    geocoding: { host: "nominatim.openstreetmap.org", use_https: true }
   }
   #
   # == OpenStreetMap (OSM) services ==
@@ -285,6 +285,5 @@ end
 Rails.application.config.i18n.available_locales = Decidim.available_locales
 Rails.application.config.i18n.default_locale = Decidim.default_locale
 
-# Inform Decidim about the assets folder 
+# Inform Decidim about the assets folder
 Decidim.register_assets_path File.expand_path("app/packs", Rails.application.root)
-

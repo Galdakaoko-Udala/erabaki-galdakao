@@ -9,40 +9,36 @@ gem "decidim", DECIDIM_VERSION
 gem "decidim-conferences", DECIDIM_VERSION
 gem "decidim-initiatives", DECIDIM_VERSION
 
-# Extra modules old versions 
-# gem "decidim-file_authorization_handler", git: "https://github.com/CodiTramuntana/decidim-file_authorization_handler.git", branch: 'master' #Para Decidim 0.27.x
-# gem "decidim-extra_user_fields", git: "https://github.com/alabs/decidim-module-extra_user_fields", branch: "release/0.27-stable" #Para Decidim 0.27.5+ con traducciones a espanol y euskera
-
-gem "decidim-term_customizer", github: "mainio/decidim-module-term_customizer"
 gem "decidim-decidim_awesome"
+gem "decidim-term_customizer", github: "mainio/decidim-module-term_customizer"
 
 # Aditional Gems
-gem "bootsnap","~> 1.10.3"
+gem "bootsnap", "~> 1.7"
 
 gem "puma", ">= 6.3.1"
-gem "uglifier", "~> 4.1"
 
 gem "figaro"
-
 gem "wicked_pdf"
 
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
-  gem "faker", "~> 3.2"
+
+  gem "brakeman", "~> 5.4"
   gem "decidim-dev", DECIDIM_VERSION
+  gem "net-imap", "~> 0.2.3"
+  gem "net-pop", "~> 0.1.1"
+  gem "net-smtp", "~> 0.3.1"
+  gem "rubocop-rspec", "~> 2.20.0"
 end
 
 group :development do
-  gem "letter_opener_web"
-  gem "listen"
-  gem "rubocop-faker"
-  gem "spring"
-  gem "spring-watcher-listen"
-  gem "web-console"
+  gem "letter_opener_web", "~> 2.0"
+  gem "listen", "~> 3.1"
+  gem "web-console", "~> 4.2"
 end
 
 group :production do
-  gem "passenger"
-  gem 'delayed_job_active_record'
   gem "daemons"
+  gem "delayed_job_active_record"
+  gem "passenger"
 end
