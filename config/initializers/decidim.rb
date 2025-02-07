@@ -39,8 +39,7 @@ Decidim.configure do |config|
   config.maps = {
      provider: :here,
      api_key: Rails.application.secrets.maps[:api_key],
-     static: { url: "https://image.maps.ls.hereapi.com/mia/1.6/mapview" },
-     geocoding: { host: "nominatim.openstreetmap.org", use_https: true }
+     static: { url: "https://image.maps.ls.hereapi.com/mia/1.6/mapview" }
   }
   #
   # == OpenStreetMap (OSM) services ==
