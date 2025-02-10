@@ -34,7 +34,9 @@
 /public/uploads/config/application.yml
 /config/application.yml
 /public/uploads
-
+/public/sw.*
+*.sql
+certs/*
 /public/packs
 /public/packs-test
 /node_modules

@@ -34,8 +34,9 @@ RUN gem install bundler:$(grep -A 1 'BUNDLED WITH' Gemfile.lock | tail -n 1 | xa
     find /usr/local/bundle/ -name "*.o" -delete && \
     find /usr/local/bundle/ -name ".git" -exec rm -rf {} + && \
     find /usr/local/bundle/ -name ".github" -exec rm -rf {} + && \
-    # Remove additional unneded decidim files
-    find /usr/local/bundle/ -name "spec" -exec rm -rf {} +
+    # Remove additional unneeded decidim files
+    find /usr/local/bundle/ -name "spec" -exec rm -rf {} + && \
+    find /usr/local/bundle/ -wholename "*/decidim-dev/lib/decidim/dev/assets/*" -exec rm -rf {} +
 
 RUN npm ci
 
@@ -104,14 +105,13 @@ RUN addgroup --system --gid 1000 app && \
 
 WORKDIR /app
 COPY ./entrypoint.sh /app/entrypoint.sh
-COPY ./supervisord.conf /etc/supervisord.conf
+COPY ./supervisord.conf /etc/supervisord.conf 
 COPY --from=builder --chown=app:app /usr/local/bundle/ /usr/local/bundle/
 COPY --from=builder --chown=app:app /app /app
 
 USER app
 HEALTHCHECK --interval=1m --timeout=5s --start-period=30s \
-    CMD (curl -sSH "Content-Type: application/json" -d '{"query": "{ decidim { version } }"}' http://localhost:3000/api) || exit 1
-
+    CMD (curl -sS http://localhost:3000/health_check | grep success) || exit 1
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["/usr/bin/supervisord"]

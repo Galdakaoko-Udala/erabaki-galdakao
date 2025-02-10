@@ -1,54 +1,102 @@
-version: '3'
 services:
+  traefik:
+    image: traefik:v3.3
+    command:
+      - --api
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - "--entrypoints.websecure.http.tls=true" # allows default traefik certificate
+      # - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      # - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      # - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      # - --certificatesresolvers.myresolver.acme.email=letsencrypt@pokecode.net
+      # - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The HTTPS port
+      - "443:443"
+      # todo: The Traefik Dashboard in a separate path
+      - "8080:8080"
+    restart: unless-stopped
+    volumes:
+      # Traefik can listen to the Docker events
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      # acme.json should be created on host instance
+      # - "./acme.json:/letsencrypt/acme.json"
+    labels:
+      # Traefik Dashboard HTTP with BasicAuth
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.service=api@internal"
   app:
     build: .
+    pull_policy: build
     volumes:
-      - ./entrypoint.sh:/app/entrypoint.sh
-      - ./tmp/pids:/app/tmp/pids
-    #   - .:/app
-    #   - bundle:/usr/local/bundle
-    #   - node_modules:/app/node_modules
+      - ./storage:/app/storage
+    restart: ${RESTART_POLICY:-always}
+    labels:
+      - "traefik.enable=true"
+      # - "traefik.http.routers.app.rule=host(`erabaki.galdakao.eus `)" # when using a domain
+      - "traefik.http.routers.app.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.app.entrypoints=web,websecure"
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
+    env_file:
+      - .env
     environment:
-      - DATABASE_URL=postgres://postgres:decidim@db/decidim_app
-      - SECRET_KEY_BASE=02b1511d769fcf6aec3a816f202e524f7c0fd12080ebd3aa18cfbb141c4d1307213124e93cba1b1547c296f00c3ccaa9a5995e5b9747ba2cf91cde0fa5a44f19
-      - DECIDIM_FORCE_SSL=false
-      - QUEUE_ADAPTER=sidekiq
-      - REDIS_URL=redis://redis:6379/1
-    ports:
-      - 3000:3000
+      - RUN_RAILS=true
+      - RUN_SIDEKIQ=true
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:decidim@db/decidim}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-132a6ee88fe7cbc9bfd8f6dfeda5casdf03d0278e16dd40ec199109acde7fdda524d495a013d20e2b962dbafb61234136278ea6d6ac2c134776bd445da9671e}
+      - DECIDIM_FORCE_SSL=${DECIDIM_FORCE_SSL:-false}
+      - QUEUE_ADAPTER=${QUEUE_ADAPTER:-sidekiq}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - DECIDIM_ENABLE_HTML_HEADER_SNIPPETS
+      - DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS=${DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS:-360}
+      - CHANGE_ACTIVE_STEP=${CHANGE_ACTIVE_STEP:-enabled}
+      - SEND_REMINDERS=${SEND_REMINDERS:-enabled}
+      - WEEKLY_NOTIFICATIONS_DIGEST=${WEEKLY_NOTIFICATIONS_DIGEST:-enabled}
+      - DAILY_NOTIFICATIONS_DIGEST=${DAILY_NOTIFICATIONS_DIGEST:-enabled}
+      - HEALTHCHECK_EXCLUDE_CHECKS=${HEALTHCHECK_EXCLUDE_CHECKS:-emailconf}
+      - SMTP_STARTTLS_AUTO=${SMTP_STARTTLS_AUTO:-true}
+      - SMTP_USERNAME
+      - SMTP_PASSWORD
+      - SMTP_ADDRESS
+      - SMTP_DOMAIN
+      - SMTP_PORT
+      - DECIDIM_MAILER_SENDER
+      - MAPS_API_KEY
+      - MAPS_PROVIDER=${MAPS_PROVIDER:-here}
+      - RACK_ATTACK_SECRET
+      - OMNIAUTH_FACEBOOK_APP_ID
+      - OMNIAUTH_FACEBOOK_APP_SECRET
+      - OMNIAUTH_GOOGLE_CLIENT_ID
+      - OMNIAUTH_GOOGLE_CLIENT_SECRET
+      - RECAPTCHA_SITE_KEY
+      - RECAPTCHA_SECRET_KEY
     depends_on:
       - db
       - redis
-  sidekiq:
-    build: .
-    volumes:
-      - ./entrypoint.sh:/app/entrypoint.sh
-    #   - .:/app
-    #   - bundle:/usr/local/bundle
-    #   - node_modules:/app/node_modules
-    environment:
-      - DATABASE_URL=postgres://postgres:decidim@db/decidim_app
-      - SECRET_KEY_BASE=02b1511d769fcf6aec3a816f202e524f7c0fd12080ebd3aa18cfbb141c4d1307213124e93cba1b1547c296f00c3ccaa9a5995e5b9747ba2cf91cde0fa5a44f19
-      - DECIDIM_FORCE_SSL=false
-      - QUEUE_ADAPTER=sidekiq
-      - REDIS_URL=redis://redis:6379/1
-      - RUN_SIDEKIQ=true
-    depends_on:
-      - redis
   db:
     image: postgres:14
-    ports:
-      - "54321:5432"
     environment:
-      - POSTGRES_PASSWORD=decidim
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-decidim}
+      - POSTGRES_DB=${POSTGRES_DB:-decidim}
     volumes:
       - pg_data:/var/lib/postgresql/data
+    restart: ${RESTART_POLICY:-always}
   redis:
     image: redis
     volumes:
       - redis_data:/data
+    restart: ${RESTART_POLICY:-always}
 volumes:
   pg_data:
   redis_data:
-  # bundle:
-  # node_modules:
+  decidim_uploads:
+  decidim_storage:

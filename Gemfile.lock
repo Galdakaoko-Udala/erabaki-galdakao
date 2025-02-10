@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/decidim/decidim.git
-  revision: 4f07e946c21c2efec16e72208836f5cd903b9377
+  revision: 0159ff4e46196be80f0f6fee7e3eb11419b0cd45
   branch: release/0.28-stable
   specs:
     decidim (0.28.4)
@@ -314,14 +314,18 @@ GEM
     cmdparse (3.0.7)
     commonmarker (0.23.11)
     concurrent-ruby (1.2.2)
+    connection_pool (2.5.0)
     crack (1.0.0)
       bigdecimal
       rexml
     crass (1.0.6)
+    cronex (0.15.0)
+      tzinfo
+      unicode (>= 0.4.4.5)
     css_parser (1.21.0)
       addressable
     csv (3.3.2)
-    daemons (1.4.1)
+    date (3.4.1)
     date_validator (0.12.0)
       activemodel (>= 3)
       activesupport (>= 3)
@@ -339,11 +343,6 @@ GEM
       polyglot
       railties (>= 5.2)
       rainbow (>= 2.1.0)
-    delayed_job (4.1.13)
-      activesupport (>= 3.0, < 9.0)
-    delayed_job_active_record (4.1.11)
-      activerecord (>= 3.0, < 9.0)
-      delayed_job (>= 3.0, < 5)
     devise (4.9.4)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -357,7 +356,6 @@ GEM
       devise (>= 4.6)
     diff-lcs (1.5.1)
     diffy (3.4.3)
-    digest (3.2.0)
     doc2text (0.4.7)
       nokogiri (>= 1.13.2, < 1.17.0)
       rubyzip (~> 2.3.0)
@@ -376,6 +374,8 @@ GEM
       temple
     erubi (1.13.1)
     escape_utils (1.2.2)
+    et-orbi (1.2.11)
+      tzinfo
     excon (1.2.3)
     extended-markdown-filter (0.7.0)
       html-pipeline (~> 2.9)
@@ -393,8 +393,6 @@ GEM
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
     ffi (1.17.1)
-    figaro (1.2.0)
-      thor (>= 0.14.0, < 2)
     file_validators (3.0.0)
       activemodel (>= 3.2)
       mime-types (>= 1.0)
@@ -411,6 +409,9 @@ GEM
       activemodel (>= 4.1, < 7.1)
       activesupport (>= 4.1, < 7.1)
       railties (>= 4.1, < 7.1)
+    fugit (1.11.1)
+      et-orbi (~> 1, >= 1.2.11)
+      raabro (~> 1.4)
     gemoji (3.0.1)
     geocoder (1.8.5)
       base64 (>= 0.1.0)
@@ -430,6 +431,8 @@ GEM
       sass (~> 3.4)
     hashdiff (1.1.2)
     hashie (5.0.0)
+    health_check (3.1.0)
+      railties (>= 5.0)
     hexapdf (0.32.2)
       cmdparse (~> 3.0, >= 3.0.3)
       geom2d (~> 0.3)
@@ -462,7 +465,7 @@ GEM
     invisible_captcha (0.13.0)
       rails (>= 3.2.0)
     io-console (0.8.0)
-    json (2.9.1)
+    json (2.10.0)
     jwt (2.10.1)
       base64
     kaminari (1.2.2)
@@ -506,19 +509,19 @@ GEM
     mime-types (3.6.0)
       logger
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2025.0107)
+    mime-types-data (3.2025.0204)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
     minitest (5.25.4)
-    msgpack (1.7.5)
-    multi_xml (0.6.0)
+    msgpack (1.8.0)
+    multi_xml (0.7.1)
+      bigdecimal (~> 3.1)
     net-http (0.6.0)
       uri
-    net-imap (0.2.4)
-      digest
+    net-imap (0.5.6)
+      date
       net-protocol
-      strscan
     net-pop (0.1.2)
       net-protocol
     net-protocol (0.2.2)
@@ -575,13 +578,9 @@ GEM
     parallel (1.26.3)
     parallel_tests (4.9.0)
       parallel
-    parser (3.3.7.0)
+    parser (3.3.7.1)
       ast (~> 2.4.1)
       racc
-    passenger (6.0.23)
-      rack (>= 1.6.13)
-      rackup
-      rake (>= 12.3.3)
     pg (1.4.6)
     pg_search (2.3.7)
       activerecord (>= 6.1)
@@ -600,6 +599,7 @@ GEM
     public_suffix (6.0.1)
     puma (6.6.0)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.8.1)
     rack (2.2.10)
     rack-attack (6.7.0)
@@ -613,9 +613,6 @@ GEM
       rack
     rack-test (2.2.0)
       rack (>= 1.3)
-    rackup (1.0.1)
-      rack (< 3)
-      webrick
     rails (6.1.7.10)
       actioncable (= 6.1.7.10)
       actionmailbox (= 6.1.7.10)
@@ -662,6 +659,8 @@ GEM
       ffi (~> 1.0)
     redcarpet (3.6.0)
     redis (4.8.1)
+    redis-client (0.23.2)
+      connection_pool
     regexp_parser (2.10.0)
     reline (0.6.0)
       io-console (~> 0.5)
@@ -678,7 +677,7 @@ GEM
     rspec-cells (0.3.10)
       cells (>= 4.0.0, < 6.0.0)
       rspec-rails (>= 3.0.0)
-    rspec-core (3.13.2)
+    rspec-core (3.13.3)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.3)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -728,7 +727,7 @@ GEM
       rubocop (~> 1.33)
       rubocop-capybara (~> 2.17)
     ruby-progressbar (1.13.0)
-    ruby-vips (2.2.2)
+    ruby-vips (2.2.3)
       ffi (~> 1.12)
       logger
     rubyXL (3.4.33)
@@ -754,6 +753,17 @@ GEM
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
       semantic_range (>= 2.3.0)
+    sidekiq (7.3.8)
+      base64
+      connection_pool (>= 2.3.0)
+      logger
+      rack (>= 2.2.4)
+      redis-client (>= 0.22.2)
+    sidekiq-cron (2.1.0)
+      cronex (>= 0.13.0)
+      fugit (~> 1.8, >= 1.11.1)
+      globalid (>= 1.0.1)
+      sidekiq (>= 6.5.0)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -780,7 +790,6 @@ GEM
       sprockets (>= 3.0.0)
     ssrf_filter (1.2.0)
     stringio (3.1.2)
-    strscan (3.1.2)
     temple (0.10.3)
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
@@ -791,6 +800,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uber (0.1.0)
+    unicode (0.4.4.5)
     unicode-display_width (2.6.0)
     uniform_notifier (1.16.0)
     uri (1.0.2)
@@ -816,11 +826,10 @@ GEM
     web-push (3.0.1)
       jwt (~> 2.0)
       openssl (~> 3.0)
-    webmock (3.24.0)
+    webmock (3.25.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    webrick (1.9.1)
     websocket (1.2.11)
     websocket-driver (0.7.7)
       base64
@@ -842,25 +851,20 @@ DEPENDENCIES
   bootsnap (~> 1.7)
   brakeman (~> 5.4)
   byebug (~> 11.0)
-  daemons
   decidim!
   decidim-conferences!
   decidim-decidim_awesome
   decidim-dev!
   decidim-initiatives!
   decidim-term_customizer!
-  delayed_job_active_record
-  figaro
+  health_check
   letter_opener_web (~> 2.0)
   listen (~> 3.1)
-  net-imap (~> 0.2.3)
-  net-pop (~> 0.1.1)
-  net-smtp (~> 0.3.1)
-  passenger
   puma (>= 6.3.1)
   rubocop-rspec (~> 2.20.0)
+  sidekiq
+  sidekiq-cron
   web-console (~> 4.2)
-  wicked_pdf
 
 RUBY VERSION
    ruby 3.1.6p260
