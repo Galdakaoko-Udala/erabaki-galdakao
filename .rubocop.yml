@@ -1,0 +1,7 @@
+inherit_gem:
+  decidim-dev: rubocop-decidim.yml
+
+AllCops:
+  Exclude:
+    - "db/**/*.rb"
+    - "vendor/**/*"
