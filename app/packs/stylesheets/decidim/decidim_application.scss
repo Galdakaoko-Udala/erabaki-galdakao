@@ -5,3 +5,31 @@
 // To override CSS variables or Foundation settings use _decidim-settings.scss
 //
 // By default this is empty.
+
+.main-bar__links-desktop {
+  @media (min-width: 768px){
+    [data-target*=dropdown] {
+      @apply block min-w-16;;
+      div {
+        @apply block text-secondary text-sm text-center;
+        svg {
+          @apply inline-block;
+        }
+      }
+    }
+  }
+
+  .main-header__language-chooser {
+    @apply relative z-10;
+
+    > ul {
+      @apply absolute left-0 bg-white p-4 shadow-md text-left;
+      >li {
+        @apply text-secondary text-md hover:underline hover:bg-secondary hover:text-white transition;
+        >a {
+          @apply p-2 w-full block;
+        }
+      }
+    }
+  }
+}

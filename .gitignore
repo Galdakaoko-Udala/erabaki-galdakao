@@ -44,3 +44,4 @@ certs/*
 yarn-debug.log*
 .yarn-integrity
 tailwind.config.js
+.rspec-failures
