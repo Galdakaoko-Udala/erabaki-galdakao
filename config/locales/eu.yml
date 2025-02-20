@@ -1,2 +1,9 @@
 ---
 eu:
+  layouts:
+    decidim:
+      language_chooser:
+        choose_language: Aukeratu hizkuntza
+  locale:
+    name: Euskara
+

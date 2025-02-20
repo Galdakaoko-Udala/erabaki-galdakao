@@ -1,2 +1,9 @@
 ---
 es:
+  layouts:
+    decidim:
+      language_chooser:
+        choose_language: Elegir el idioma
+  locale:
+    name: Castellano
+

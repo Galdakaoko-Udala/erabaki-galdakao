@@ -1,2 +1,8 @@
 ---
 en:
+  layouts:
+    decidim:
+      language_chooser:
+        choose_language: Choose language
+  locale:
+    name: English
