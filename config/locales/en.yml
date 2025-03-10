@@ -1,12 +1,5 @@
 ---
 en:
-  decidim:
-    verifications:
-      id_documents:
-        identification_number: ID number
-        dni: DNI
-        nie: NIE
-        passport: Passport
   layouts:
     decidim:
       language_chooser:
