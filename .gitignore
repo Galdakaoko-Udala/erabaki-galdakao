@@ -35,12 +35,12 @@
 /config/application.yml
 /public/uploads
 /public/sw.*
+# Ignore the files and folders generated through Webpack
+/public/decidim-packs
+/public/packs-test
+
 *.sql
 certs/*
-/public/packs
-/public/packs-test
-/node_modules
-/yarn-error.log
 yarn-debug.log*
 .yarn-integrity
 tailwind.config.js
