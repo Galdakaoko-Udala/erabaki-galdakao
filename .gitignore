@@ -34,7 +34,7 @@
 /public/uploads/config/application.yml
 /config/application.yml
 /public/uploads
-/public/sw.*
+/public/sw.js*
 # Ignore the files and folders generated through Webpack
 /public/decidim-packs
 /public/packs-test
