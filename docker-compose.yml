@@ -2,18 +2,22 @@ services:
   traefik:
     image: traefik:v3.3
     command:
+      # - --log.level=DEBUG
       - --api
       - --api.dashboard=true
       - --api.insecure=true
-      - --providers.docker
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      - "--entrypoints.websecure.http.tls=true" # allows default traefik certificate
-      # - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      # - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      # - --certificatesresolvers.myresolver.acme.tlschallenge=true
-      # - --certificatesresolvers.myresolver.acme.email=letsencrypt@pokecode.net
-      # - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --providers.file.directory=/certs/traefik
+      #- --certificatesresolvers.letsencrypt.acme.email=letsencrypt@pokecode.net
+      #- --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      #- --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      #- --certificatesresolvers.letsencrypt.acme.httpChallenge=true
+      #- --certificatesresolvers.letsencrypt.acme.httpChallenge.entrypoint=web
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
     ports:
       # The HTTP port
       - "80:80"
@@ -26,7 +30,8 @@ services:
       # Traefik can listen to the Docker events
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       # acme.json should be created on host instance
-      # - "./acme.json:/letsencrypt/acme.json"
+      #- "./letsencrypt:/letsencrypt"
+      - ./certs:/certs
     labels:
       # Traefik Dashboard HTTP with BasicAuth
       - "traefik.enable=true"
@@ -39,10 +44,12 @@ services:
     restart: ${RESTART_POLICY:-always}
     labels:
       - "traefik.enable=true"
-      # - "traefik.http.routers.app.rule=host(`erabaki.galdakao.eus `)" # when using a domain
+      #- "traefik.http.routers.app.rule=host(`preerabaki.galdakao.eus`)"
       - "traefik.http.routers.app.rule=PathPrefix(`/`)"
       - "traefik.http.routers.app.entrypoints=web,websecure"
+      - "traefik.http.routers.app.tls=true"
       - "traefik.http.services.app.loadbalancer.server.port=3000"
+      #- "traefik.http.routers.app.tls.certresolver=letsencrypt"
     env_file:
       - .env
     environment:
@@ -78,6 +85,7 @@ services:
       - OMNIAUTH_GOOGLE_CLIENT_SECRET
       - RECAPTCHA_SITE_KEY
       - RECAPTCHA_SECRET_KEY
+      - RORVSWILD_API_KEY
     depends_on:
       - db
       - redis

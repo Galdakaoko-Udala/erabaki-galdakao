@@ -16,6 +16,7 @@ gem "bootsnap", "~> 1.7"
 gem "deface", ">= 1.9"
 gem "health_check"
 gem "puma", ">= 6.3.1"
+gem "rorvswild"
 
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
