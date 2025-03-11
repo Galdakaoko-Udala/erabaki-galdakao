@@ -1,4 +1,4 @@
-FROM ruby:3.1.6 AS builder
+FROM ruby:3.2.6 AS builder
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y ca-certificates curl gnupg && \
     mkdir -p /etc/apt/keyrings && \
@@ -11,6 +11,16 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y ca-certificates c
     p7zip \
     libpq-dev && \
     apt-get clean
+
+# Remove outdated files and prepare for esbuild
+RUN rm -f config/initializers/carrierwave.rb \
+           babel.config.json \
+           Gemfile.lock \
+           package-lock.json
+
+# Download new shakapacker configs
+RUN curl -o config/webpack/custom.js https://raw.githubusercontent.com/decidim/decidim/develop/decidim-core/lib/decidim/webpacker/webpack/custom.js && \
+    curl -o config/shakapacker.yml https://raw.githubusercontent.com/decidim/decidim/develop/decidim-core/lib/decidim/webpacker/shakapacker.yml
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
@@ -50,10 +60,9 @@ COPY ./packages /app/packages
 COPY ./public/*.* /app/public/
 COPY ./config.ru /app/config.ru
 COPY ./Rakefile /app/Rakefile
-COPY ./babel.config.json /app/babel.config.json
 COPY ./postcss.config.js /app/postcss.config.js
 
-# Compile assets with Webpacker or Sprockets
+# Compile assets with Shakapacker
 #
 # Notes:
 #   1. Executing "assets:precompile" runs "webpacker:compile", too
@@ -76,7 +85,7 @@ RUN mv config/credentials.bak config/credentials 2>/dev/null || true
 RUN rm -rf node_modules tmp/cache vendor/bundle test spec app/packs .git
 
 # This image is for production env only
-FROM ruby:3.1.6-slim AS final
+FROM ruby:3.2.6-slim AS final
 
 RUN apt-get update && \
     apt-get install -y postgresql-client \

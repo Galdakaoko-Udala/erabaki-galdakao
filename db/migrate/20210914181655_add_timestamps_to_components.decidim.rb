@@ -1,10 +1,10 @@
 # frozen_string_literal: true
-# This migration comes from decidim (originally 20181025082245)
 
 class AddTimestampsToComponents < ActiveRecord::Migration[5.2]
   class Component < ApplicationRecord
     self.table_name = :decidim_components
   end
+
   def change
     add_timestamps :decidim_components, null: true
     # rubocop:disable Rails/SkipsModelValidations
