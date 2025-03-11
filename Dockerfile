@@ -81,7 +81,7 @@ ARG GIT_REPO=https://github.com/Galdakaoko-Udala/erabaki-galdakao
 ENV GIT_REPO=${GIT_REPO}
 RUN git init . && \
     git remote add origin $GIT_REPO && \
-    git fetch origin upgrade-28 --depth 1 && \
+    git fetch origin $GIT_BRANCH --depth 1 && \
     echo "REVISION=$(git describe --tags --always $GIT_BRANCH)" > /app/.env && \
     echo "AUTHOR=$(git log -1 --pretty=%an $GIT_BRANCH)" >> /app/.env && \
     echo "EMAIL=$(git log -1 --pretty=%ae $GIT_BRANCH)" >> /app/.env && \
