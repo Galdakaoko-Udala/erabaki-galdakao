@@ -12,15 +12,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y ca-certificates c
     libpq-dev && \
     apt-get clean
 
-# Remove outdated files and prepare for esbuild
-RUN rm -f config/initializers/carrierwave.rb \
-           babel.config.json \
-           Gemfile.lock \
-           package-lock.json
-
-# Download new shakapacker configs
-RUN curl -o config/webpack/custom.js https://raw.githubusercontent.com/decidim/decidim/develop/decidim-core/lib/decidim/webpacker/webpack/custom.js && \
-    curl -o config/shakapacker.yml https://raw.githubusercontent.com/decidim/decidim/develop/decidim-core/lib/decidim/webpacker/shakapacker.yml
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
