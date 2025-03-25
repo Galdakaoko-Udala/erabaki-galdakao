@@ -86,6 +86,7 @@ services:
       - RECAPTCHA_SITE_KEY
       - RECAPTCHA_SECRET_KEY
       - RORVSWILD_API_KEY
+      - DISABLE_SEMANTIC_LOGGER
     depends_on:
       - db
       - redis
