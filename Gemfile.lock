@@ -9,8 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/decidim-ice/decidim-module-decidim_awesome.git
-  revision: 20af4aa5d4471a73ec5a06ebe5e02d33ce79bd17
-  branch: upgrade-0.29
+  revision: 9da093f854b1bafb812ca093e7e61a61afe21369
+  branch: main
   specs:
     decidim-decidim_awesome (0.12.0)
       decidim-admin (>= 0.29.1, < 0.30)
@@ -655,6 +655,10 @@ GEM
     rails-i18n (7.0.10)
       i18n (>= 0.7, < 2)
       railties (>= 6.0.0, < 8)
+    rails_semantic_logger (4.17.0)
+      rack
+      railties (>= 5.1)
+      semantic_logger (~> 4.16)
     railties (7.0.8.7)
       actionpack (= 7.0.8.7)
       activesupport (= 7.0.8.7)
@@ -767,6 +771,8 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    semantic_logger (4.16.1)
+      concurrent-ruby (~> 1.0)
     semantic_range (3.1.0)
     shakapacker (7.1.0)
       activesupport (>= 5.2)
@@ -874,6 +880,7 @@ DEPENDENCIES
   letter_opener_web (~> 2.0)
   listen (~> 3.1)
   puma (>= 6.3.1)
+  rails_semantic_logger
   rorvswild
   sidekiq
   sidekiq-cron

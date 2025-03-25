@@ -26,6 +26,13 @@ environment ENV.fetch("RAILS_ENV", "development")
 # Specifies the `pidfile` that Puma will use.
 pidfile ENV.fetch("PIDFILE", "tmp/pids/server.pid")
 
+if defined?(SemanticLogger)
+  on_worker_boot do
+    # Re-open appenders after forking the process
+    SemanticLogger.reopen
+  end
+end
+
 if ENV.fetch("RAILS_ENV") == "production"
   workers ENV.fetch("WEB_CONCURRENCY", 2)
 
