@@ -130,7 +130,7 @@ services:
       - DB01_TYPE=pgsql
       - DB01_HOST=db
       - DB01_USER=${POSTGRES_USER:-postgres}
-      - DB01_PASS=${DB_PASSWORD:-decidim}
+      - DB01_PASS=${POSTGRES_PASSWORD:-decidim}
       - DB01_NAME=${POSTGRES_DB:-decidim}
 volumes:
   pg_data:
