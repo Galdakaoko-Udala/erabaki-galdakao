@@ -68,7 +68,9 @@ jobs:
           npm ci
           bundle exec rake assets:precompile
         env:
-          RAILS_ENV: test
+          RAILS_ENV: production
+          DB_ADAPTER: nulldb
+          SECRET_KEY_BASE: 1234567890
 
       - name: Run RSpec
         run: SIMPLECOV=1 CODECOV=1 bundle exec rspec
