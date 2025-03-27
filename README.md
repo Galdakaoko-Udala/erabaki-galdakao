@@ -4,6 +4,22 @@ Free Open-Source participatory democracy, citizen participation and open governm
 
 This is the open-source repository for decidim-app, based on [Decidim](https://github.com/decidim/decidim).
 
+## Deploy
+
+This instance uses Docker Compose to deploy the application with Traefik as a proxy.
+
+You need to build and tag the image:
+
+1. Ensure you have the ENV value DECIDIM_ENV=staging or DECIDIM_ENV=production
+2. Run
+   ```
+   ./build.sh
+   ```
+3. Deploy
+  ```
+  docker compose up -d
+  ```
+
 ## Setting up the application
 
 You will need to do some steps before having the app working properly once you've deployed it:
