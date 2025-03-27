@@ -41,6 +41,7 @@
 
 *.sql
 certs/*
+!certs/.keep
 yarn-debug.log*
 .yarn-integrity
 tailwind.config.js

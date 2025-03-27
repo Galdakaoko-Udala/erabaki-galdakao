@@ -1,6 +1,7 @@
 services:
   traefik:
     image: traefik:v3.3
+    container_name: traefik
     command:
       # - --log.level=DEBUG
       - --api
@@ -37,8 +38,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.service=api@internal"
   app:
-    build: .
-    pull_policy: build
+    container_name: decidim
+    image: decidim_${DECIDIM_ENV:-production}
     volumes:
       - ./storage:/app/storage
     restart: ${RESTART_POLICY:-always}
@@ -91,6 +92,7 @@ services:
       - db
       - redis
   db:
+    container_name: postgres
     image: postgres:14
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
@@ -100,6 +102,7 @@ services:
       - pg_data:/var/lib/postgresql/data
     restart: ${RESTART_POLICY:-always}
   redis:
+    container_name: redis
     image: redis
     volumes:
       - redis_data:/data
@@ -107,5 +110,3 @@ services:
 volumes:
   pg_data:
   redis_data:
-  decidim_uploads:
-  decidim_storage:
