@@ -111,9 +111,10 @@ services:
     image: tiredofit/db-backup
     container_name: db_backup
     volumes:
-      - ./backups:/backups
+      - ./backups:/backup
     environment:
       - TIMEZONE=Europe/Vienna
+      - CONTAINER_ENABLE_MONITORING=FALSE
       - USER_DBBACKUP=${USER_DBBACKUP:-1000}
       - GROUP_DBBACKUP=${GROUP_DBBACKUP:-1000}
       - BACKUP_JOB_CONCURRENCY=1     # Only run one job at a time
