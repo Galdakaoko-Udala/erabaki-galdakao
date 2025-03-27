@@ -1,4 +1,4 @@
-if sentry_dsn = ENV.fetch("SENTRY_DSN", nil)
+if (sentry_dsn = ENV.fetch("SENTRY_DSN", nil))
   Sentry.init do |config|
     config.dsn = sentry_dsn
     # get breadcrumbs from logs
