@@ -94,6 +94,8 @@ services:
   db:
     container_name: postgres
     image: postgres:14
+    env_file:
+      - .env
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-decidim}
@@ -112,6 +114,8 @@ services:
     container_name: db_backup
     volumes:
       - ./backups:/backup
+    env_file:
+      - .env
     environment:
       - TIMEZONE=Europe/Vienna
       - CONTAINER_ENABLE_MONITORING=FALSE
