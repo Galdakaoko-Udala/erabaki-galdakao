@@ -86,7 +86,7 @@ services:
       - OMNIAUTH_GOOGLE_CLIENT_SECRET
       - RECAPTCHA_SITE_KEY
       - RECAPTCHA_SECRET_KEY
-      - RORVSWILD_API_KEY
+      - SENTRY_DSN
       - DISABLE_SEMANTIC_LOGGER
     depends_on:
       - db
