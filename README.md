@@ -4,6 +4,39 @@ Free Open-Source participatory democracy, citizen participation and open governm
 
 This is the open-source repository for decidim-app, based on [Decidim](https://github.com/decidim/decidim).
 
+This is the instance for Erabaki Galdakao https://erabaki.galdakao.eus
+
+## Server configuration
+
+Docker & Docker Compose is needed, then clone this repository:
+
+```
+git clone https://github.com/Galdakaoko-Udala/erabaki-galdakao decidim_production
+```
+
+or update:
+```
+cd decidim_production
+git pull
+```
+
+Ensure the `.env` file has these values defined:
+```
+POSTGRES_USER=XXXXXX
+POSTGRES_PASSWORD=XXXXXX
+POSTGRES_DB=XXXXXX
+SECRET_KEY_BASE=XXXXXX
+MAPS_PROVIDER=here
+MAPS_API_KEY=XXXXXX
+EMAIL=XXXXXX
+SMTP_USERNAME=XXXXXX
+SMTP_PASSWORD=XXXXXX
+SMTP_ADDRESS=XXXXXX
+SMTP_DOMAIN=XXXXXX
+SMTP_PORT=XXXXXX
+DECIDIM_ENV=production
+```
+
 ## Deploy
 
 This instance uses Docker Compose to deploy the application with Traefik as a proxy.
@@ -19,6 +52,10 @@ You need to build and tag the image:
   ```
   docker compose up -d
   ```
+
+## Backups
+
+Database is backup every day using https://github.com/tiredofit/docker-db-backup (see docker-compose.yml for details)
 
 ## Setting up the application
 
