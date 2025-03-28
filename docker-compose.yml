@@ -117,16 +117,16 @@ services:
     env_file:
       - .env
     environment:
-      - TIMEZONE=Europe/Vienna
-      - CONTAINER_ENABLE_MONITORING=FALSE
+      - TIMEZONE=${TIMEZONE:-Europe/Vienna}
+      - CONTAINER_ENABLE_MONITORING=${CONTAINER_ENABLE_MONITORING:-FALSE}
       - USER_DBBACKUP=${USER_DBBACKUP:-1000}
       - GROUP_DBBACKUP=${GROUP_DBBACKUP:-1000}
-      - BACKUP_JOB_CONCURRENCY=1     # Only run one job at a time
-      - DEFAULT_CHECKSUM=NONE        # Don't create checksums
-      - DEFAULT_COMPRESSION=Bzip2     # Compress all with ZSTD
-      - DEFAULT_BACKUP_INTERVAL=1440   # Backup every 1440 minutes
-      - DEFAULT_BACKUP_BEGIN=2200      # Start backing up at midnight
-      - DEFAULT_CLEANUP_TIME=43200    # Cleanup backups after a month
+      - BACKUP_JOB_CONCURRENCY=${BACKUP_JOB_CONCURRENCY:-1}     # Only run one job at a time
+      - DEFAULT_CHECKSUM=${DEFAULT_CHECKSUM:-NONE}        # Don't create checksums
+      - DEFAULT_COMPRESSION=${DEFAULT_COMPRESSION:-Bzip2}     # Compress all with ZSTD
+      - DEFAULT_BACKUP_INTERVAL=${DEFAULT_BACKUP_INTERVAL:-1440}   # Backup every 1440 minutes
+      - DEFAULT_BACKUP_BEGIN=${DEFAULT_BACKUP_BEGIN:-0100}      # Start backing up at midnight
+      - DEFAULT_CLEANUP_TIME=${DEFAULT_CLEANUP_TIME:-10080}    # Cleanup backups after a week
       - DB01_TYPE=pgsql
       - DB01_HOST=db
       - DB01_USER=${POSTGRES_USER:-postgres}
