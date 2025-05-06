@@ -1,25 +1,16 @@
-# Be sure to restart your server when you modify this file.
+# frozen_string_literal: true
 
-# Define an application-wide content security policy
-# For further information see the following documentation
-# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-
-# Rails.application.config.content_security_policy do |policy|
-#   policy.default_src :self, :https
-#   policy.font_src    :self, :https, :data
-#   policy.img_src     :self, :https, :data
-#   policy.object_src  :none
-#   policy.script_src  :self, :https
-#   policy.style_src   :self, :https
-
-#   # Specify URI for violation reports
-#   # policy.report_uri "/csp-violation-report-endpoint"
-# end
-
-# If you are using UJS then enable automatic nonce generation
-# Rails.application.config.content_security_policy_nonce_generator = -> request { SecureRandom.base64(16) }
-
-# Report CSP violations to a specified URI
-# For further information see the following documentation:
-# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only
-# Rails.application.config.content_security_policy_report_only = true
+# For tuning the Content Security Policy, check the Decidim documentation site
+# https://docs.decidim.org/develop/en/customize/content_security_policy
+Decidim.configure do |config|
+  config.content_security_policies_extra = {
+    "connect-src" => ENV.fetch("CONTENT_SECURITY_POLICY", "").split,
+    "img-src" => ENV.fetch("CONTENT_SECURITY_POLICY", "").split,
+    "default-src" => ENV.fetch("CONTENT_SECURITY_POLICY", "").split,
+    "script-src" => ENV.fetch("CONTENT_SECURITY_POLICY", "").split,
+    "style-src" => ENV.fetch("CONTENT_SECURITY_POLICY", "").split,
+    "font-src" => ENV.fetch("CONTENT_SECURITY_POLICY", "").split,
+    "frame-src" => ENV.fetch("CONTENT_SECURITY_POLICY", "").split,
+    "media-src" => ENV.fetch("CONTENT_SECURITY_POLICY", "").split
+  }
+end

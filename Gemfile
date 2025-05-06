@@ -3,56 +3,38 @@
 source "https://rubygems.org"
 
 ruby RUBY_VERSION
+DECIDIM_VERSION = { github: "decidim/decidim", branch: "release/0.29-stable" }.freeze
 
-gem "decidim", "0.27.5"
-gem "decidim-conferences", "0.27.5"
-gem "decidim-consultations", "0.27.5"
-# gem "decidim-elections", "0.24.3"
-gem "decidim-initiatives", "0.27.5"
-# gem "decidim-templates", "0.24.3"
+gem "decidim", DECIDIM_VERSION
+gem "decidim-conferences", DECIDIM_VERSION
+gem "decidim-initiatives", DECIDIM_VERSION
 
-# Extra modules old versions 
-# gem "decidim-file_authorization_handler", git: "https://github.com/Patuksa/decidim-file_authorization_handler.git"
-# gem "decidim-file_authorization_handler", git: "https://github.com/CodiTramuntana/decidim-file_authorization_handler.git", branch: 'release/0.25-stable' # Para Decidim 0.25.x
-# gem "decidim-file_authorization_handler", git: "https://github.com/CodiTramuntana/decidim-file_authorization_handler.git", branch: 'release/0.26-stable' # Para Decidim 0.26.x
+gem "decidim-decidim_awesome", github: "decidim-ice/decidim-module-decidim_awesome", branch: "main"
+gem "decidim-file_authorization_handler", github: "CodiTramuntana/decidim-file_authorization_handler", branch: "master"
+gem "decidim-term_customizer", github: "CodiTramuntana/decidim-module-term_customizer", branch: "upgrade/decidim_0.29"
 
-# Extra modules
-gem "decidim-file_authorization_handler", git: "https://github.com/CodiTramuntana/decidim-file_authorization_handler.git", branch: 'master' #Para Decidim 0.27.x
-
-gem "decidim-extra_user_fields", git: "https://github.com/alabs/decidim-module-extra_user_fields", branch: "release/0.27-stable" #Para Decidim 0.27.5+ con traducciones a espanol y euskera
-
-gem "decidim-term_customizer", git: "https://github.com/mainio/decidim-module-term_customizer", branch: "release/0.27-stable"
-
-gem "decidim-decidim_awesome"
-
-# Aditional Gems
-#gem "bootsnap", "1.4.6"
-gem "bootsnap","~> 1.10.3"
-
-gem "puma", ">= 5.0.0"
-gem "uglifier", "~> 4.1"
-
-gem "faker", "~> 2.14"
-gem "figaro"
-
-gem "wicked_pdf"
-gem "webpacker"
+gem "bootsnap", "~> 1.7"
+gem "deface", ">= 1.9"
+gem "health_check"
+gem "puma", ">= 6.3.1"
+gem "rails_semantic_logger"
+gem "sentry-rails"
+gem "sentry-ruby"
 
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
-  gem "decidim-dev", "0.27.5"
+
+  gem "brakeman", "~> 5.4"
+  gem "decidim-dev", DECIDIM_VERSION
 end
 
 group :development do
-  gem "letter_opener_web", "~> 1.3"
+  gem "letter_opener_web", "~> 2.0"
   gem "listen", "~> 3.1"
-  gem "spring", "~> 2.0"
-  gem "spring-watcher-listen", "~> 2.0"
-  gem "web-console", "~> 3.5"
+  gem "web-console", "~> 4.2"
 end
 
 group :production do
-  gem "passenger"
-  gem 'delayed_job_active_record'
-  gem "daemons"
+  gem "sidekiq"
+  gem "sidekiq-cron"
 end

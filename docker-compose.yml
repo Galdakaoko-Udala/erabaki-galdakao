@@ -1,26 +1,137 @@
-version: '3'
 services:
-  app:
-    image: decidim/decidim:0.24.3
-    volumes:
-      - .:/app
-      - bundle:/usr/local/bundle
-      - node_modules:/app/node_modules
-    environment:
-      - PORT=3000
-      - DATABASE_HOST=pg
-      - DATABASE_USERNAME=postgres
-      - RAILS_ENV=development
+  traefik:
+    image: traefik:v3.3
+    container_name: traefik
+    command:
+      # - --log.level=DEBUG
+      - --api
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --providers.file.directory=/certs/traefik
+      #- --certificatesresolvers.letsencrypt.acme.email=letsencrypt@pokecode.net
+      #- --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      #- --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      #- --certificatesresolvers.letsencrypt.acme.httpChallenge=true
+      #- --certificatesresolvers.letsencrypt.acme.httpChallenge.entrypoint=web
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
     ports:
-      - 3000:3000
-    links:
-      - pg
-    command: bundle exec puma
-  pg:
-    image: postgres
+      # The HTTP port
+      - "80:80"
+      # The HTTPS port
+      - "443:443"
+      # todo: The Traefik Dashboard in a separate path
+      - "8080:8080"
+    restart: unless-stopped
     volumes:
-      - pg-data:/var/lib/postgresql/data
+      # Traefik can listen to the Docker events
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      # acme.json should be created on host instance
+      #- "./letsencrypt:/letsencrypt"
+      - ./certs:/certs
+    labels:
+      # Traefik Dashboard HTTP with BasicAuth
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.service=api@internal"
+  app:
+    container_name: decidim
+    image: decidim_${DECIDIM_ENV:-production}
+    volumes:
+      - ./storage:/app/storage
+    restart: ${RESTART_POLICY:-always}
+    labels:
+      - "traefik.enable=true"
+      #- "traefik.http.routers.app.rule=host(`preerabaki.galdakao.eus`)"
+      - "traefik.http.routers.app.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.app.entrypoints=web,websecure"
+      - "traefik.http.routers.app.tls=true"
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
+      #- "traefik.http.routers.app.tls.certresolver=letsencrypt"
+    env_file:
+      - .env
+    environment:
+      - RUN_RAILS=true
+      - RUN_SIDEKIQ=true
+      - DATABASE_URL=${DATABASE_URL:-postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-decidim}@db/${POSTGRES_DB:-decidim}}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-132a6ee88fe7cbc9bfd8f6dfeda5casdf03d0278e16dd40ec199109acde7fdda524d495a013d20e2b962dbafb61234136278ea6d6ac2c134776bd445da9671e}
+      - DECIDIM_FORCE_SSL=${DECIDIM_FORCE_SSL:-false}
+      - QUEUE_ADAPTER=${QUEUE_ADAPTER:-sidekiq}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - DECIDIM_ENABLE_HTML_HEADER_SNIPPETS
+      - DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS=${DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS:-360}
+      - CHANGE_ACTIVE_STEP=${CHANGE_ACTIVE_STEP:-enabled}
+      - SEND_REMINDERS=${SEND_REMINDERS:-enabled}
+      - WEEKLY_NOTIFICATIONS_DIGEST=${WEEKLY_NOTIFICATIONS_DIGEST:-enabled}
+      - DAILY_NOTIFICATIONS_DIGEST=${DAILY_NOTIFICATIONS_DIGEST:-enabled}
+      - HEALTHCHECK_EXCLUDE_CHECKS=${HEALTHCHECK_EXCLUDE_CHECKS:-emailconf}
+      - SMTP_STARTTLS_AUTO=${SMTP_STARTTLS_AUTO:-true}
+      - SMTP_USERNAME
+      - SMTP_PASSWORD
+      - SMTP_ADDRESS
+      - SMTP_DOMAIN
+      - SMTP_PORT
+      - DECIDIM_MAILER_SENDER
+      - MAPS_API_KEY
+      - MAPS_PROVIDER=${MAPS_PROVIDER:-here}
+      - RACK_ATTACK_SECRET
+      - OMNIAUTH_FACEBOOK_APP_ID
+      - OMNIAUTH_FACEBOOK_APP_SECRET
+      - OMNIAUTH_GOOGLE_CLIENT_ID
+      - OMNIAUTH_GOOGLE_CLIENT_SECRET
+      - RECAPTCHA_SITE_KEY
+      - RECAPTCHA_SECRET_KEY
+      - SENTRY_DSN
+      - DISABLE_SEMANTIC_LOGGER
+    depends_on:
+      - db
+      - redis
+  db:
+    container_name: postgres
+    image: postgres:14
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-decidim}
+      - POSTGRES_DB=${POSTGRES_DB:-decidim}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: ${RESTART_POLICY:-always}
+  redis:
+    container_name: redis
+    image: redis
+    volumes:
+      - redis_data:/data
+    restart: ${RESTART_POLICY:-always}
+  db_backup:
+    image: tiredofit/db-backup
+    container_name: db_backup
+    volumes:
+      - ./backups:/backup
+    env_file:
+      - .env
+    environment:
+      - TIMEZONE=${TIMEZONE:-Europe/Vienna}
+      - CONTAINER_ENABLE_MONITORING=${CONTAINER_ENABLE_MONITORING:-FALSE}
+      - USER_DBBACKUP=${USER_DBBACKUP:-1000}
+      - GROUP_DBBACKUP=${GROUP_DBBACKUP:-1000}
+      - BACKUP_JOB_CONCURRENCY=${BACKUP_JOB_CONCURRENCY:-1}     # Only run one job at a time
+      - DEFAULT_CHECKSUM=${DEFAULT_CHECKSUM:-NONE}        # Don't create checksums
+      - DEFAULT_COMPRESSION=${DEFAULT_COMPRESSION:-Bzip2}     # Compress all with ZSTD
+      - DEFAULT_BACKUP_INTERVAL=${DEFAULT_BACKUP_INTERVAL:-1440}   # Backup every 1440 minutes
+      - DEFAULT_BACKUP_BEGIN=${DEFAULT_BACKUP_BEGIN:-0100}      # Start backing up at midnight
+      - DEFAULT_CLEANUP_TIME=${DEFAULT_CLEANUP_TIME:-10080}    # Cleanup backups after a week
+      - DB01_TYPE=pgsql
+      - DB01_HOST=db
+      - DB01_USER=${POSTGRES_USER:-postgres}
+      - DB01_PASS=${POSTGRES_PASSWORD:-decidim}
+      - DB01_NAME=${POSTGRES_DB:-decidim}
 volumes:
-  node_modules: {}
-  bundle: {}
-  pg-data: {}
+  pg_data:
+  redis_data:
