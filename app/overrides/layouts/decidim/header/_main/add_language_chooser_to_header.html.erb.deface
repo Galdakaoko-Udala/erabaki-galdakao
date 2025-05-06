@@ -1,0 +1,27 @@
+<!-- insert_top ".main-bar__links-desktop" -->
+
+<% if available_locales.length > 1 %>
+  <div class="main-header__language-container">
+    <button id="trigger-dropdown-language-top" data-component="dropdown" data-target="dropdown-menu-language-top" class="main-header__language-trigger">
+      <div><%= icon "global-line" %> <%= icon "arrow-down-s-line" %></div>
+      <div><%= t("name", scope: "locale" ) %></div>
+      <span class="sr-only">
+        <% available_locales.each do |locale| %>
+          <span lang="<%= locale %>">
+            <%= I18n.with_locale(locale) { t("layouts.decidim.language_chooser.choose_language") } %>
+          </span>
+        <% end %>
+      </span>
+    </button>
+
+    <div id="dropdown-menu-language-top" class="main-header__language-chooser" aria-hidden="true">
+      <ul class="main-header__language" role="menu">
+        <% (available_locales - [I18n.locale.to_s]).each do |locale| %>
+          <li role="presentation">
+            <%= link_to locale_name(locale), decidim.locale_path(locale:), method: :post, role: "menuitem", lang: locale %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>

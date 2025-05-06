@@ -34,10 +34,20 @@
 /public/uploads/config/application.yml
 /config/application.yml
 /public/uploads
-
-/public/packs
+/public/sw.js*
+# Ignore the files and folders generated through Webpack
+/public/decidim-packs
 /public/packs-test
-/node_modules
-/yarn-error.log
+
+*.sql
+certs/*
+!certs/.keep
+backups/*
+!backups/.keep
 yarn-debug.log*
 .yarn-integrity
+tailwind.config.js
+.rspec-failures
+.env
+.rbenv-vars
+coverage/*

@@ -1,0 +1,83 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  RUBY_VERSION: 3.2.8
+  NODE_VERSION: 18.17.1
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.head_ref, 'chore/l10n')"
+    timeout-minutes: 60
+    env:
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_HOST: localhost
+      RUBYOPT: '-W:no-deprecated'
+    services:
+      postgres:
+        image: postgres:14
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        env:
+          RAILS_ENV: test
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install GraphicsMagick
+        run: sudo apt-get update && sudo apt-get install -y graphicsmagick
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+
+      - name: Setup & create Database
+        run: |
+          bundle exec rails db:create db:schema:load
+        env:
+          RAILS_ENV: test
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: postgres
+
+      - name: Precompile assets
+        run: |
+          npm ci
+          bundle exec rake assets:precompile
+        env:
+          RAILS_ENV: production
+          DB_ADAPTER: nulldb
+          SECRET_KEY_BASE: 1234567890
+
+      - name: Run RSpec
+        run: SIMPLECOV=1 CODECOV=1 bundle exec rspec
+        env:
+          RAILS_ENV: test
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: postgres
+
+      - name: Lint Ruby files
+        run: bundle exec rubocop -P
