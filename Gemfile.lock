@@ -1,13 +1,4 @@
 GIT
-  remote: https://github.com/CodiTramuntana/decidim-file_authorization_handler.git
-  revision: 227e679dc06526c0d275078e4e972fc38139d24d
-  branch: master
-  specs:
-    decidim-file_authorization_handler (0.29.2.0)
-      decidim (~> 0.29.2)
-      decidim-admin (~> 0.29.2)
-
-GIT
   remote: https://github.com/CodiTramuntana/decidim-module-term_customizer.git
   revision: e369bc933f06fd1e47d6987fa6e408f0a2549e73
   branch: upgrade/decidim_0.29
@@ -214,6 +205,15 @@ GIT
       devise_invitable (~> 2.0, >= 2.0.9)
     decidim-verifications (0.29.4)
       decidim-core (= 0.29.4)
+
+GIT
+  remote: https://github.com/openpoke/decidim-file_authorization_handler.git
+  revision: 150678aeb772d2e840b62a4eedfbc4f304c8147b
+  branch: master
+  specs:
+    decidim-file_authorization_handler (0.29.2.0)
+      decidim (~> 0.29.2)
+      decidim-admin (~> 0.29.2)
 
 GEM
   remote: https://rubygems.org/
@@ -711,7 +711,7 @@ GEM
     rspec-cells (0.3.10)
       cells (>= 4.0.0, < 6.0.0)
       rspec-rails (>= 3.0.0)
-    rspec-core (3.13.4)
+    rspec-core (3.13.5)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
