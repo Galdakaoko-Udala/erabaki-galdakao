@@ -12,11 +12,6 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --providers.file.directory=/certs/traefik
-      #- --certificatesresolvers.letsencrypt.acme.email=letsencrypt@pokecode.net
-      #- --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-      #- --certificatesresolvers.letsencrypt.acme.tlschallenge=true
-      #- --certificatesresolvers.letsencrypt.acme.httpChallenge=true
-      #- --certificatesresolvers.letsencrypt.acme.httpChallenge.entrypoint=web
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
     ports:
@@ -30,8 +25,6 @@ services:
     volumes:
       # Traefik can listen to the Docker events
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      # acme.json should be created on host instance
-      #- "./letsencrypt:/letsencrypt"
       - ./certs:/certs
     labels:
       # Traefik Dashboard HTTP with BasicAuth
@@ -45,12 +38,10 @@ services:
     restart: ${RESTART_POLICY:-always}
     labels:
       - "traefik.enable=true"
-      #- "traefik.http.routers.app.rule=host(`preerabaki.galdakao.eus`)"
       - "traefik.http.routers.app.rule=PathPrefix(`/`)"
       - "traefik.http.routers.app.entrypoints=web,websecure"
       - "traefik.http.routers.app.tls=true"
       - "traefik.http.services.app.loadbalancer.server.port=3000"
-      #- "traefik.http.routers.app.tls.certresolver=letsencrypt"
     env_file:
       - .env
     environment:

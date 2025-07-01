@@ -31,23 +31,42 @@
 /config/master.key
 
 # Ignore public uploads
-/public/uploads/config/application.yml
-/config/application.yml
-/public/uploads
-/public/sw.js*
-# Ignore the files and folders generated through Webpack
-/public/decidim-packs
-/public/packs-test
+public/uploads
 
+# Do not track secrets in GIT
+/config/application.yml
+
+# Ignore deploy secrets
+/config/deploy*
+/Capfile
+
+# Ignore .rspec-failures
+.rspec-failures
+
+# Ignore .rbenv-vars
+.env
+.rbenv-vars
+spec/decidim_dummy_app
+
+/public/packs
+/public/packs-test
+/public/decidim-packs
+/node_modules
+/packages/*/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+/public/sw.js*
+coverage/
+.local
 *.sql
 certs/*
 !certs/.keep
+!certs/traefik
 backups/*
 !backups/.keep
 yarn-debug.log*
 .yarn-integrity
 tailwind.config.js
-.rspec-failures
-.env
-.rbenv-vars
-coverage/*
+.rubocop-http*

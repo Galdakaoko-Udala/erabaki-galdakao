@@ -2,7 +2,9 @@
 
 Free Open-Source participatory democracy, citizen participation and open government for cities and organizations
 
-This is the open-source repository for decidim-app, based on [Decidim](https://github.com/decidim/decidim).
+This is the open-source repository for decidim-galdakao, based on [Decidim](https://github.com/decidim/decidim).
+
+[![Test](https://github.com/Galdakaoko-Udala/erabaki-galdakao/actions/workflows/test.yml/badge.svg)](https://github.com/Galdakaoko-Udala/erabaki-galdakao/actions/workflows/test.yml)
 
 This is the instance for Erabaki Galdakao https://erabaki.galdakao.eus
 
@@ -21,7 +23,9 @@ git pull
 ```
 
 Ensure the `.env` file has these values defined:
-```
+
+```bash
+DATABASE_URL=postgres://xxxxx:xxxxx@db/xxxxx
 POSTGRES_USER=XXXXXX
 POSTGRES_PASSWORD=XXXXXX
 POSTGRES_DB=XXXXXX
@@ -37,25 +41,32 @@ SMTP_PORT=XXXXXX
 DECIDIM_ENV=production
 ```
 
+### SSL configuration
+
+This application uses Traefik to handle the certificates, ensure that the following files are available:
+
+- `certs/cert.crt`
+- `certs/cert.key`
+
 ## Deploy
 
 This instance uses Docker Compose to deploy the application with Traefik as a proxy.
 
 You need to build and tag the image:
 
-1. Ensure you have the ENV value DECIDIM_ENV=staging or DECIDIM_ENV=production
-2. Run
-   ```
-   ./build.sh
-   ```
-3. Deploy
-  ```
-  docker compose up -d
-  ```
+1. Ensure you have the ENV value `DECIDIM_ENV=staging` or `DECIDIM_ENV=production`
+2. Run:
+   `./build.sh`
+3. Deploy:
+  `docker compose up -d`
 
 ## Backups
 
 Database is backup every day using https://github.com/tiredofit/docker-db-backup (see docker-compose.yml for details)
+
+Backups are stored in:
+
+- `backups/*`
 
 ## Setting up the application
 
