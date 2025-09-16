@@ -1,4 +1,4 @@
-FROM ruby:3.2.8 AS builder
+FROM ruby:3.2-bookworm AS builder
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y ca-certificates curl gnupg && \
     mkdir -p /etc/apt/keyrings && \
@@ -23,7 +23,7 @@ COPY ./Gemfile /app/Gemfile
 COPY ./Gemfile.lock /app/Gemfile.lock
 
 RUN gem install bundler:$(grep -A 1 'BUNDLED WITH' Gemfile.lock | tail -n 1 | xargs) && \
-    bundle config --local without 'development test' && \
+    bundle config --deployment --local without 'development test' && \
     bundle install -j4 --retry 3 && \
     # Remove unneeded gems
     bundle clean --force && \
@@ -76,7 +76,7 @@ RUN mv config/credentials.bak config/credentials 2>/dev/null || true
 RUN rm -rf node_modules packages/*/node_modules tmp/cache vendor/bundle test spec app/packs .git
 
 # This image is for production env only
-FROM ruby:3.2.8-slim AS final
+FROM ruby:3.2-slim-bookworm AS final
 
 RUN apt-get update && \
     apt-get install -y postgresql-client \
