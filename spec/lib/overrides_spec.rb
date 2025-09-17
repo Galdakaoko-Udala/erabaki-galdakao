@@ -9,7 +9,7 @@ checksums = [
   {
     package: "decidim-core",
     files: {
-      "/app/views/layouts/decidim/header/_main.html.erb" => "69acfdeade5dab8cd73e1d19f37fef2c"
+      "/app/views/layouts/decidim/header/_main.html.erb" => "6d3c2d50fad1644c73427d4cb2dd368e"
     }
   }
 ]
