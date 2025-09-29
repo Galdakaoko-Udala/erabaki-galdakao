@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/decidim-ice/decidim-module-decidim_awesome.git
-  revision: f1eb032d3dbe4d2684a1b39b2b01fde1b10eb6bf
+  revision: f2c71529cfb362d2144f8728de9c98cf92f27342
   branch: release/0.29-stable
   specs:
-    decidim-decidim_awesome (0.12.4)
+    decidim-decidim_awesome (0.12.5)
       active_hashcash (~> 0.4.0)
       decidim-admin (>= 0.29.1, < 0.30)
       decidim-core (>= 0.29.1, < 0.30)
@@ -791,10 +791,10 @@ GEM
     semantic_logger (4.17.0)
       concurrent-ruby (~> 1.0)
     semantic_range (3.1.0)
-    sentry-rails (5.27.0)
+    sentry-rails (5.27.1)
       railties (>= 5.0)
-      sentry-ruby (~> 5.27.0)
-    sentry-ruby (5.27.0)
+      sentry-ruby (~> 5.27.1)
+    sentry-ruby (5.27.1)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     shakapacker (7.1.0)
