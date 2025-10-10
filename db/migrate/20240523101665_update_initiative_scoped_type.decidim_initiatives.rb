@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-# This migration comes from decidim_initiatives (originally 20171017095143)
 
+# This migration comes from decidim_initiatives (originally 20171017095143)
+# This file has been modified by `decidim upgrade:migrations` task on 2025-10-10 11:37:27 UTC
 class UpdateInitiativeScopedType < ActiveRecord::Migration[5.1]
   class InitiativesTypeScope < ApplicationRecord
     self.table_name = :decidim_initiatives_type_scopes
@@ -53,6 +54,6 @@ class UpdateInitiativeScopedType < ActiveRecord::Migration[5.1]
   end
 
   def down
-    raise ActiveRecord::IrreversibleMigration, "Can't undo initialization of mandatory attribute"
+    raise ActiveRecord::IrreversibleMigration, "Cannot undo initialization of mandatory attribute"
   end
 end
