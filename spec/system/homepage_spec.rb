@@ -13,6 +13,9 @@ describe "Visit_the_homepage", perform_enqueued: true do
   it "renders the home page" do
     visit decidim.root_path
     expect(page).to have_content("Welcome")
+    expect(page).to have_content("Participate")
+    expect(page).to have_content("Meetings")
+    expect(page).to have_content("Activity")
   end
 
   it "renders the language chooser on header" do
