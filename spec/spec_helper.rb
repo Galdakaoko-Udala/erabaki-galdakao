@@ -96,9 +96,9 @@ RSpec.configure do |config|
 
   # Make :en locale available in tests.
   config.before do
-    I18n.available_locales = [:eu, :en, :es]
+    I18n.available_locales = [:eu, :en, :es, :ca]
     I18n.default_locale = :en
-    Decidim.available_locales = [:eu, :en, :es]
+    Decidim.available_locales = [:eu, :en, :es, :ca]
     Decidim.default_locale = :en
   end
 
