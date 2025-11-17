@@ -8,11 +8,12 @@ on:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    secrets: inherit
     steps:
       - name: Build docker image and push it to registry
         uses: openpoke/decidim-shared-actions/build_and_push_image@main
         with:
           registry: ghcr.io
+        secrets:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
 
