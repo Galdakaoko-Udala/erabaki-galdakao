@@ -9,9 +9,10 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       packages: write
       id-token: write
+      attestations: write
     steps:
       - name: Build docker image and push it to registry
         uses: openpoke/decidim-shared-actions/build_and_push_image@main
