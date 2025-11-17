@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-# This migration comes from decidim_participatory_processes (originally 20201006072346)
 
+# This migration comes from decidim_participatory_processes (originally 20201006072346)
+# This file has been modified by `decidim upgrade:migrations` task on 2025-10-10 11:37:27 UTC
 class FixAttachmentsTitles < ActiveRecord::Migration[5.2]
   def up
     reset_column_information
