@@ -13,7 +13,7 @@ jobs:
         uses: openpoke/decidim-shared-actions/build_and_push_image@main
         with:
           registry: ghcr.io
-        secrets:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
 
