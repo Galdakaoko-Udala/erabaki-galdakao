@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-# This migration comes from decidim_initiatives (originally 20171013090432)
 
+# This migration comes from decidim_initiatives (originally 20171013090432)
+# This file has been modified by `decidim upgrade:migrations` task on 2025-10-10 11:37:27 UTC
 class AddInitiativeSupportsCountToInitiative < ActiveRecord::Migration[5.1]
   class Initiative < ApplicationRecord
     self.table_name = :decidim_initiatives

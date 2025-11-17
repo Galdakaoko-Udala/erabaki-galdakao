@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  RUBY_VERSION: 3.2
+  RUBY_VERSION: 3.3.4
   NODE_VERSION: 18.17.1
 
 jobs:
@@ -41,8 +41,8 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install GraphicsMagick
-        run: sudo apt-get update && sudo apt-get install -y graphicsmagick
+      - run: |
+          sudo apt-get update; sudo apt-get -f install wkhtmltopdf imagemagick
 
       - uses: ruby/setup-ruby@v1
         with:

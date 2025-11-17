@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-# This migration comes from decidim_initiatives (originally 20170922152432)
 
+# This migration comes from decidim_initiatives (originally 20170922152432)
+# This file has been modified by `decidim upgrade:migrations` task on 2025-10-10 11:37:27 UTC
 # Migration that creates the decidim_initiatives_committee_members table
 class CreateDecidimInitiativesCommitteeMembers < ActiveRecord::Migration[5.1]
   def change
