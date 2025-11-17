@@ -31,8 +31,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.service=api@internal"
   app:
-    container_name: decidim
-    image: decidim_${DECIDIM_ENV:-production}
+    container_name: decidim_${DECIDIM_ENV:-production}
+    image: ghcr.io/galdakaoko-udala/erabaki-galdakao:${GIT_REF:-main}
     volumes:
       - ./storage:/app/storage
     restart: ${RESTART_POLICY:-always}

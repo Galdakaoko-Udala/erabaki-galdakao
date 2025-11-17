@@ -50,7 +50,30 @@ This application uses Traefik to handle the certificates, ensure that the follow
 
 ## Deploy
 
+### Pull from Github Repository
+
+This instance uses Docker Compose to deploy the application into the port 3015.
+
+First, you need to make sure you are logged into the Github Docker registry (ghcr.io).
+
+1. Go to your personal Github account, into tokens settings https://github.com/settings/tokens
+2. Generate a new token (Classic)
+3. Ensure you check the permission "read:packages" and "No expiration".
+4. In the server, login into docker, introduce your username and the token generated:
+  ```bash
+  docker login ghcr.io --username github-username
+  ```
+5. You should stay logged permanently, you should not need to repeat this process.
+
+To re-deploy the image this should suffice:
+
+`docker compose up -d`
+
+### Locally building the Docker image
+
 This instance uses Docker Compose to deploy the application with Traefik as a proxy.
+
+> If you want to locally build the docker image, change the line `image: ghcr.io/galdakaoko-udala/erabaki-galdakao:${GIT_REF:-main}` for `image: decidim_${DECIDIM_ENV:-production}` first!
 
 You need to build and tag the image:
 
