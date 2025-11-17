@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:17
+        image: postgres:17-alpine
         ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready
@@ -27,4 +27,4 @@ jobs:
       - name: Upgrade instance dependencies
         uses: openpoke/decidim-shared-actions/upgrade_instance@main
         with:
-          ruby-version: "3.2.9"
+          ruby-version: .ruby-version
