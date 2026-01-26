@@ -10,5 +10,5 @@ Rails.application.routes.draw do
   end
 
   mount Decidim::Core::Engine => "/"
-  mount Decidim::FileAuthorizationHandler::AdminEngine => "/admin"
+  # mount Decidim::FileAuthorizationHandler::AdminEngine => "/admin"
 end
