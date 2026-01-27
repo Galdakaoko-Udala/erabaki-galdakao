@@ -9,10 +9,10 @@ gem "decidim", DECIDIM_VERSION
 gem "decidim-conferences", DECIDIM_VERSION
 gem "decidim-initiatives", DECIDIM_VERSION
 
-gem "decidim-decidim_awesome", github: "decidim-ice/decidim-module-decidim_awesome", branch: "release/0.31-stable"
+gem "decidim-decidim_awesome", github: "decidim-ice/decidim-module-decidim_awesome", branch: "main"
+gem "decidim-file_authorization_handler", github: "openpoke/decidim-file_authorization_handler", branch: "upgrade-0.31"
 gem "decidim-pokecode", github: "openpoke/decidim-module-pokecode", branch: "main"
-# gem "decidim-file_authorization_handler", github: "openpoke/decidim-file_authorization_handler", branch: "master"
-gem "decidim-term_customizer", github: "openpoke/decidim-module-term_customizer", branch: "release/0.31-stable"
+gem "decidim-term_customizer", github: "openpoke/decidim-module-term_customizer", branch: "main"
 
 gem "bootsnap", "~> 1.7"
 gem "puma", ">= 6.3.1"

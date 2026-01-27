@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/decidim-ice/decidim-module-decidim_awesome.git
-  revision: b8bbaef4fb1bae845f8ce4beede7323faed674f8
-  branch: release/0.31-stable
+  revision: 9ce4acae26a1161799cd0fc9ac767dcbaa11eadf
+  branch: main
   specs:
     decidim-decidim_awesome (0.14.0)
       active_hashcash (~> 0.4.0)
@@ -205,6 +205,16 @@ GIT
       decidim-core (= 0.31.0)
 
 GIT
+  remote: https://github.com/openpoke/decidim-file_authorization_handler.git
+  revision: cea2ab836871e6a7f1941e1e2a80fd0d456c3612
+  branch: upgrade-0.31
+  specs:
+    decidim-file_authorization_handler (0.31.0)
+      decidim (~> 0.31)
+      decidim-admin (~> 0.31)
+      decidim-initiatives (~> 0.31)
+
+GIT
   remote: https://github.com/openpoke/decidim-module-pokecode.git
   revision: de1b475846314af7116a544f23ce034d0f978190
   branch: main
@@ -223,7 +233,7 @@ GIT
 GIT
   remote: https://github.com/openpoke/decidim-module-term_customizer.git
   revision: 8cd8bafc273b34ff7dae7c0dcbf231062aa68466
-  branch: release/0.31-stable
+  branch: main
   specs:
     decidim-term_customizer (0.31)
       decidim-admin (~> 0.31.0)
@@ -1021,6 +1031,7 @@ DEPENDENCIES
   decidim-conferences!
   decidim-decidim_awesome!
   decidim-dev!
+  decidim-file_authorization_handler!
   decidim-initiatives!
   decidim-pokecode!
   decidim-term_customizer!
