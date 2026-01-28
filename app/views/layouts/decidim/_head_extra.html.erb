@@ -1,0 +1,35 @@
+<% if tag_id = ENV.fetch("GOOGLE_TAG_MANAGER", nil) %>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script type="text/plain" data-consent="marketing" async src="https://www.googletagmanager.com/gtag/js?id=<%= tag_id %>"></script>
+  <script type="text/plain" data-consent="marketing">
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', '<%= tag_id %>');
+  </script>
+<% end %>
+
+<% if tag_id = ENV.fetch("PLAUSIBLE_ANALYTICS", nil) %>
+  <script type="text/plain" data-consent="marketing" async defer data-domain="<%= tag_id %>" src="<%= ENV.fetch("PLAUSIBLE_URL", nil) %>"></script>
+<% end %>
+
+<% if tag_id = ENV.fetch("MATOMO_ANALYTICS", nil) %>
+  <script type="text/plain" data-consent="marketing">
+    var _paq = window._paq = window._paq || [];
+    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="<%= ENV.fetch("MATOMO_URL", nil) %>";
+      _paq.push(['setTrackerUrl', u+'matomo.php']);
+      _paq.push(['setSiteId', '<%= tag_id %>']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+<% end %>
+
+<% if tag_id = ENV.fetch("UMAMI_ANALYTICS", nil) %>
+  <script async defer data-website-id="<%= tag_id %>" src="<%= ENV.fetch("UMAMI_URL", nil) %>"></script>
+<% end %>
