@@ -206,13 +206,12 @@ GIT
 
 GIT
   remote: https://github.com/openpoke/decidim-file_authorization_handler.git
-  revision: cea2ab836871e6a7f1941e1e2a80fd0d456c3612
-  branch: upgrade-0.31
+  revision: b3da3322b7ff96abe15a584521398ab7fba5cf12
+  branch: main
   specs:
     decidim-file_authorization_handler (0.31.0)
       decidim (~> 0.31)
       decidim-admin (~> 0.31)
-      decidim-initiatives (~> 0.31)
 
 GIT
   remote: https://github.com/openpoke/decidim-module-pokecode.git

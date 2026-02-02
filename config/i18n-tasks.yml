@@ -106,9 +106,7 @@ search:
 # - '{devise,simple_form}.*'
 
 ## Consider these keys used:
-ignore_unused:
-- 'layouts.decidim.language_chooser.*'
-- 'locale.*'
+# ignore_unused:
 # - 'activerecord.attributes.*'
 # - '{devise,kaminari,will_paginate}.*'
 # - 'simple_form.{yes,no}'
