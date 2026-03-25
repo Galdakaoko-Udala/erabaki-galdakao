@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/decidim-ice/decidim-module-decidim_awesome.git
-  revision: 5e17a61aafe1f9d00f902a395a07f3f9b1ca0028
+  revision: dd3d9e355e0ec37570b2edaee366ba2b80b4d918
   branch: main
   specs:
     decidim-decidim_awesome (0.14.1)
@@ -46,7 +46,7 @@ GIT
 
 GIT
   remote: https://github.com/openpoke/decidim.git
-  revision: e21e01f13c2df82fea3d4daa9f6ad879b633de49
+  revision: 32b857ff3d011f2ede0739f7ea8427541267066b
   branch: 0.31-backports
   specs:
     decidim (0.31.2)
@@ -326,7 +326,7 @@ GEM
       public_suffix (>= 2.0.2, < 8.0)
     ast (2.4.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1228.0)
+    aws-partitions (1.1229.0)
     aws-sdk-core (3.244.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
@@ -471,7 +471,7 @@ GEM
     escape_utils (1.3.0)
     et-orbi (1.4.0)
       tzinfo
-    excon (1.4.1)
+    excon (1.4.2)
       logger
     extended-markdown-filter (0.7.0)
       html-pipeline (~> 2.9)
@@ -512,7 +512,7 @@ GEM
     geom2d (0.4.1)
     globalid (1.3.0)
       activesupport (>= 6.1)
-    google-protobuf (4.34.0)
+    google-protobuf (4.34.1)
       bigdecimal
       rake (~> 13.3)
     graphql (2.4.17)
@@ -559,7 +559,7 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.8, >= 1.8.1)
       terminal-table (>= 1.5.1)
-    icalendar (2.12.1)
+    icalendar (2.12.2)
       base64
       ice_cube (~> 0.16)
       logger
