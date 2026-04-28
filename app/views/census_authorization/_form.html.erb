@@ -1,0 +1,7 @@
+<%# app/views/census_authorization/_form.html.erb %>
+
+<% Rails.logger.info "!!! Renderizando _form.html.erb para CensusAuthorizationHandler" %>
+
+<%= form.text_field :document_number %>
+<%= form.date_field :date_of_birth %>
+<%= form.hidden_field :handler_name %>

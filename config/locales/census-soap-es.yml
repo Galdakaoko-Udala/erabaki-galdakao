@@ -1,0 +1,5 @@
+es:
+  census_authorization_handler:
+    invalid_document: "El formato del documento no es válido"
+    no_record: "No se ha encontrado ningún registro con estos datos"
+    service_unavailable: "El servicio de verificación no está disponible"
