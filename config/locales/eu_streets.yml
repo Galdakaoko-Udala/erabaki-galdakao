@@ -1,0 +1,28 @@
+eu:
+  decidim:
+    admin:
+      galdakao:
+        sync:
+          success: "Kaleak ondo sinkronizatu dira."
+        index:
+          title: "Galdakaoko panela — Erroldaren kudeaketa"
+          last_sync: "Azken sinkronizazioa: %{time}"
+          never_synced: "Kaleak oraindik ez dira sinkronizatu."
+          sync_button: "Sinkronizatu kaleak erroldatik"
+          sync_confirm: "Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuk behar izan ditzake."
+          streets_link: "Ikusi kaleen zerrenda"
+        streets:
+          title: "Sinkronizatutako kaleak"
+          name: "Kalearen izena"
+          updated_at: "Azken eguneraketa"
+    authorization_handlers:
+      census_authorization_handler:
+        name: "Galdakaoko udal erroldea"
+        explanation: "Egiaztatu zure nortasuna Galdakaoko udal erroldearen bidez."
+        fields:
+          document_number: "Agiri-zenbakia (NAN/AIZ)"
+          date_of_birth: "Jaiotze-data"
+        invalid_document: "Ezin izan da zure nortasuna egiaztatu emandako datuekin."
+        connection_error: "Ezin izan da erroldaren zerbitzuarekin konektatu. Mesedez, saiatu beranduago."
+        service_unavailable: "Erroldaren zerbitzua ez dago erabilgarri une honetan."
+        no_record: "Ez da aurkitu erregistrorik emandako datuekin."

@@ -15,14 +15,21 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
 
   validate :document_number_valid
 
+  # Se guarda en decidim_authorizations.metadata (JSON)
+  # RGPD: contiene fecha de nacimiento y calle de empadronamiento (dato personal)
   def metadata
     super.merge(
-      date_of_birth: date_of_birth&.strftime("%Y-%m-%d")
+      date_of_birth: date_of_birth&.strftime("%Y-%m-%d"),
+      streets: [response&.xpath("//calle")&.text&.strip].compact.reject(&:empty?)
     )
   end
 
   def unique_id
     Digest::MD5.hexdigest("#{document_number&.upcase}-#{Rails.application.secrets.secret_key_base}")
+  end
+
+  def slim_response
+    response&.search("Body")&.children
   end
 
   private
@@ -39,7 +46,7 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
     document_number.to_s[/[a-zA-Z]\z/]&.upcase
   end
 
-  # 🔥 VALIDACIÓN PRINCIPAL
+  # VALIDACIÓN PRINCIPAL
   def document_number_valid
     return if errors.any? # si ya falló el formato, no llamamos a la API
 
@@ -57,10 +64,13 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
     end
   end
 
-  # 🔥 LLAMADA SOAP SEGURA
+  # LLAMADA SOAP SEGURA
+  # NOTA: cuando tu API devuelva la calle del ciudadano en la respuesta de
+  # autenticación, debe ir dentro de un nodo <calle>. Si el nodo se llama
+  # diferente (p.ej. <nombreCalle>), actualiza el xpath en metadata arriba.
   def response
     return @response if defined?(@response)
-    
+
     Rails.logger.info ">> DEV aLabs >> ENV CENSUS_URL directo: #{ENV['CENSUS_URL'].inspect}"
     census_url = ENV["CENSUS_URL"] || Rails.application.secrets.census_url
     Rails.logger.info ">> DEV aLabs >> Census URL: #{census_url.inspect}"

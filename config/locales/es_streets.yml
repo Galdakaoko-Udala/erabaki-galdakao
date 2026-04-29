@@ -1,0 +1,28 @@
+es:
+  decidim:
+    admin:
+      galdakao:
+        sync:
+          success: "Calles sincronizadas correctamente."
+        index:
+          title: "Panel de Galdakao — Gestión del Padrón"
+          last_sync: "Última sincronización: %{time}"
+          never_synced: "Las calles todavía no han sido sincronizadas."
+          sync_button: "Sincronizar calles desde el padrón"
+          sync_confirm: "¿Seguro que quieres sincronizar las calles? Esto puede tardar unos segundos."
+          streets_link: "Ver listado de calles"
+        streets:
+          title: "Calles sincronizadas"
+          name: "Nombre de la calle"
+          updated_at: "Última actualización"
+    authorization_handlers:
+      census_authorization_handler:
+        name: "Padrón municipal de Galdakao"
+        explanation: "Verifica tu identidad mediante el padrón municipal de Galdakao."
+        fields:
+          document_number: "Número de documento (DNI/NIE)"
+          date_of_birth: "Fecha de nacimiento"
+        invalid_document: "No hemos podido verificar tu identidad con los datos proporcionados."
+        connection_error: "No ha sido posible conectar con el servicio del padrón. Por favor, inténtalo más tarde."
+        service_unavailable: "El servicio del padrón no está disponible en este momento."
+        no_record: "No se ha encontrado ningún registro con los datos proporcionados."

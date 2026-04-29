@@ -1,0 +1,30 @@
+<%# Vista: /admin/galdakao/streets — Listado de calles sincronizadas %>
+
+<div class="row column">
+  <div class="process-title">
+    <h1><%= t("decidim.admin.galdakao.streets.title") %></h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="columns medium-12">
+    <table>
+      <thead>
+        <tr>
+          <th><%= t("decidim.admin.galdakao.streets.name") %></th>
+          <th><%= t("decidim.admin.galdakao.streets.updated_at") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% streets_list.each do |street| %>
+          <tr>
+            <td><%= street.name %></td>
+            <td><%= l(street.updated_at, format: :short) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%== paginate streets_list %>
+  </div>
+</div>

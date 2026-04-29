@@ -1,0 +1,35 @@
+<%# Vista: /admin/galdakao — Panel de gestión de calles %>
+
+<div class="row column">
+  <div class="process-title">
+    <h1><%= t("decidim.admin.galdakao.index.title") %></h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="columns medium-8">
+
+    <%# Estado de la última sincronización %>
+    <% if last_sync %>
+      <div class="callout <%= last_sync_class(last_sync) %>">
+        <%= t("decidim.admin.galdakao.index.last_sync", time: l(last_sync, format: :long)) %>
+      </div>
+    <% else %>
+      <div class="callout warning">
+        <%= t("decidim.admin.galdakao.index.never_synced") %>
+      </div>
+    <% end %>
+
+    <%# Botón de sincronización %>
+    <%= link_to t("decidim.admin.galdakao.index.sync_button"),
+                sync_admin_galdakao_index_path,
+                method: :post,
+                class: "button",
+                data: { confirm: t("decidim.admin.galdakao.index.sync_confirm") } %>
+
+    <%# Enlace a ver listado de calles %>
+    <%= link_to t("decidim.admin.galdakao.index.streets_link"),
+                streets_admin_galdakao_index_path,
+                class: "button hollow" %>
+  </div>
+</div>
