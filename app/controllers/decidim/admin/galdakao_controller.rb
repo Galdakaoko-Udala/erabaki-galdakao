@@ -6,7 +6,7 @@ module Decidim
     # Panel de administración en /admin/galdakao
     class GaldakaoController < Decidim::Admin::ApplicationController
       include Paginable
-      layout "decidim/admin/galdakao"
+      layout "decidim/admin"
 
       helper_method :streets_list, :last_sync, :last_sync_class, :service
 
