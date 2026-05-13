@@ -2,25 +2,26 @@
 
 module Decidim
   module Admin
-    # Controlador para la sincronización de calles de Galdakao
-    # Panel de administración en /admin/galdakao
     class GaldakaoController < Decidim::Admin::ApplicationController
       include Paginable
-      layout "decidim/admin"
+      layout "decidim/admin/application"
 
       helper_method :streets_list, :last_sync, :last_sync_class, :service
 
       def index
+        enforce_permission_to :read, :admin_user
         @form = form(CensusAuthorizationHandler).instance
       end
 
       def check
+        enforce_permission_to :read, :admin_user
         @form = form(CensusAuthorizationHandler).from_params(params)
         @response = @form.slim_response
         render :index
       end
 
       def streets
+        enforce_permission_to :read, :admin_user
         respond_to do |format|
           format.html
           format.json do
@@ -30,8 +31,9 @@ module Decidim
       end
 
       def sync
+        enforce_permission_to :read, :admin_user
         GaldakaoStreet.import_streets!(current_organization)
-        redirect_to streets_admin_galdakao_index_path,
+        redirect_to decidim_admin.streets_galdakao_index_path,
                     notice: I18n.t("decidim.admin.galdakao.sync.success")
       end
 

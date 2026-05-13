@@ -21,15 +21,15 @@
     <% end %>
 
     <%# Botón de sincronización %>
-    <%= link_to t("decidim.admin.galdakao.index.sync_button"),
-                sync_admin_galdakao_index_path,
-                method: :post,
-                class: "button",
-                data: { confirm: t("decidim.admin.galdakao.index.sync_confirm") } %>
+    <%= button_to t("decidim.admin.galdakao.index.sync_button"),
+              decidim_admin.sync_galdakao_index_path,
+              method: :post,
+              class: "button",
+              data: { confirm: t("decidim.admin.galdakao.index.sync_confirm") } %>
 
     <%# Enlace a ver listado de calles %>
     <%= link_to t("decidim.admin.galdakao.index.streets_link"),
-                streets_admin_galdakao_index_path,
+                streets_galdakao_index_path,
                 class: "button hollow" %>
   </div>
 </div>

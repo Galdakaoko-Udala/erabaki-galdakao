@@ -20,7 +20,7 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
   def metadata
     super.merge(
       date_of_birth: date_of_birth&.strftime("%Y-%m-%d"),
-      streets: [response&.xpath("//calle")&.text&.strip].compact.reject(&:empty?)
+      streets: [response&.xpath("//autenticarResult/calle")&.text&.strip].compact.reject(&:empty?)
     )
   end
 
@@ -57,7 +57,7 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
       return
     end
 
-    result = soap_response.at_xpath("//autenticarResult")&.text
+    result = soap_response.at_xpath("//autenticarResult/autenticarResult")&.text
 
     unless result == "true"
       errors.add(:document_number, I18n.t("census_authorization_handler.no_record"))

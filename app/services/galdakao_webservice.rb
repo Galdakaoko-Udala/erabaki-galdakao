@@ -48,14 +48,13 @@ class GaldakaoWebservice
   private
 
   def request_body
+    element = body.strip.empty? ? "<tns:#{action}/>" : "<tns:#{action}>#{body.strip}</tns:#{action}>"
     @request_body ||= <<~XML
       <?xml version="1.0" encoding="UTF-8"?>
       <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
                      xmlns:tns="http://example.com/soap">
         <soap:Body>
-          <tns:#{action}>
-            #{body}
-          </tns:#{action}>
+          #{element}
         </soap:Body>
       </soap:Envelope>
     XML
