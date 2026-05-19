@@ -200,6 +200,10 @@ GIT
       w3c_rspec_validators (~> 0.3.0)
       webmock (~> 3.18)
       wisper-rspec (~> 1.0)
+    decidim-elections (0.31.4)
+      decidim-admin (= 0.31.4)
+      decidim-core (= 0.31.4)
+      decidim-forms (= 0.31.4)
     decidim-forms (0.31.4)
       decidim-core (= 0.31.4)
     decidim-generators (0.31.4)
@@ -1038,6 +1042,7 @@ DEPENDENCIES
   decidim-conferences!
   decidim-decidim_awesome!
   decidim-dev!
+  decidim-elections!
   decidim-file_authorization_handler!
   decidim-initiatives!
   decidim-pokecode!
