@@ -2,8 +2,6 @@
 // Reemplaza el input de calles en la configuración de permisos de componentes
 // por un select2 multi con búsqueda Ajax contra /admin/galdakao/streets
 
-// = require select2
-// = require_self
 
 $(() => {
   const url_streets = "/admin/galdakao/streets";
@@ -15,7 +13,7 @@ $(() => {
   const select2InputTags = (queryStr) => {
     const $input = $(queryStr);
 
-    const $select = $('<select class="' + $input.attr("class") + '" style="width:100%" multiple="multiple"><select>');
+    const $select = $('<select class="' + $input.attr("class") + '" style="width:100%" multiple="multiple"></select>');
 
     if ($input.val() !== "") {
       const values = $input.val().split(",");
@@ -46,19 +44,37 @@ $(() => {
 
   // Aplica el select2 al campo de calles en los permisos de recursos
   $("input[name$='[authorization_handlers_options][census_authorization_handler][streets]'").each((idx, input) => {
-    select2InputTags(input).select2({
+    const $select = select2InputTags(input);
+    $select.select2({
       ajax: {
         url: url_streets,
         delay: 100,
         dataType: "json",
         processResults: (data) => {
-          return {
-            results: data
-          };
+          return { results: data };
         }
       },
       multiple: true,
-      theme: "foundation"
+      theme: "default"
     });
+  });
+
+  $(document).on("select2:open", function() {
+    setTimeout(function() {
+      const sf = document.activeElement;
+      if (sf && sf.classList.contains("select2-search__field")) {
+        const obs = new MutationObserver(() => {
+          obs.disconnect();
+          if (parseFloat(sf.style.width) < 10) {
+            sf.style.width = "150px";
+          }
+          obs.observe(sf, { attributes: true, attributeFilter: ["style"] });
+        });
+        obs.observe(sf, { attributes: true, attributeFilter: ["style"] });
+        if (parseFloat(sf.style.width) < 10) {
+          sf.style.width = "150px";
+        }
+      }
+    }, 0);
   });
 });

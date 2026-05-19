@@ -1,0 +1,9 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<%= csrf_meta_tags %>
+<%= legacy_favicon %>
+<%= favicon %>
+<%= apple_favicon %>
+<%= append_stylesheet_pack_tag "decidim_admin_overrides", media: "all" %>
+<%= stylesheet_pack_tag "decidim_core", "decidim_admin", "decidim_admin_select2", media: "all" %>
+<%= javascript_pack_tag "decidim_core", "decidim_admin", "decidim_admin_select2", defer: false %>
+<%= snippets.display(:head) %>

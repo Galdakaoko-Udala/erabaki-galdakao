@@ -18,11 +18,3 @@
 // import * as ActiveStorage from "@rails/activestorage"
 // ActiveStorage.start()
 //
-// Select2 y multiselect de calles (Galdakao)
-import $ from "jquery";
-window.jQuery = $;
-window.$ = $;
-import "../src/select2.js";
-import "../stylesheets/select2.css";
-import "../stylesheets/select2-foundation-theme.css";
-import "../src/resource_permissions_multiselect.js";
