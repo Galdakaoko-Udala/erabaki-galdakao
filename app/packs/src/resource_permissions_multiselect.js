@@ -4,7 +4,7 @@
 
 
 $(() => {
-  const url_streets = "/admin/galdakao/streets";
+  const url_zones = "/admin/galdakao/zones";
 
   /**
    * Convierte un input de texto (IDs separados por coma) en un select2 múltiple.
@@ -22,7 +22,7 @@ $(() => {
       });
 
       // Cargar los textos reales vía Ajax
-      $.get(url_streets, { ids: values }, (data) => {
+      $.get(url_zones, { ids: values }, (data) => {
         $select.val("");
         $select.contents("option").remove();
         data.forEach((item) => {
@@ -43,7 +43,7 @@ $(() => {
   };
 
   // Aplica el select2 al campo de calles en los permisos de recursos
-  $("input[name$='[authorization_handlers_options][census_authorization_handler][streets]'").each((idx, input) => {
+  $("input[name$='[authorization_handlers_options][census_authorization_handler][zones]'").each((idx, input) => {
     const $select = select2InputTags(input);
     $select.select2({
       ajax: {

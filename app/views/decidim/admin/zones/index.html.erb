@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="row">
+    <div class="columns">
+      <h2>Zonas de verificación</h2>
+
+      <%= link_to "Nueva zona", decidim_admin.new_galdakao_zone_path, class: "button" %>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Calle</th>
+            <th>Restricción</th>
+            <th>Rango</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% zone_list.each do |zone| %>
+            <tr>
+              <td><%= zone.name %></td>
+              <td><%= zone.street&.name %></td>
+              <td><%= zone.numbers_constraint %></td>
+              <td><%= zone.numbers_range %></td>
+              <td>
+                <%= link_to "Editar", decidim_admin.edit_galdakao_zone_path(zone), class: "button small" %>
+                <%= button_to "Eliminar",
+                    decidim_admin.galdakao_zone_path(zone),
+                    method: :delete,
+                    data: { confirm: "¿Seguro que quieres eliminar esta zona?" },
+                    class: "button small alert" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>

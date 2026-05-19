@@ -1,0 +1,19 @@
+es:
+  decidim:
+    admin:
+      galdakao:
+        zones:
+          index:
+            title: "Zonas de verificación"
+          new:
+            title: "Nueva zona"
+          edit:
+            title: "Editar zona"
+          destroy:
+            success: "Zona eliminada correctamente"
+          create:
+            success: "Nueva zona creada correctamente"
+            error: "Error al crear la zona"
+          update:
+            success: "Zona actualizada correctamente"
+            error: "Error al actualizar la zona"
