@@ -11,6 +11,7 @@ gem "decidim-elections", DECIDIM_VERSION
 gem "decidim-initiatives", DECIDIM_VERSION
 
 gem "decidim-decidim_awesome", github: "decidim-ice/decidim-module-decidim_awesome", branch: "main"
+gem "decidim-extra_censuses", git: "https://github.com/openpoke/decidim-module-extra_censuses"
 gem "decidim-file_authorization_handler", github: "openpoke/decidim-file_authorization_handler", branch: "main"
 gem "decidim-pokecode", github: "openpoke/decidim-module-pokecode", branch: "main"
 gem "decidim-term_customizer", github: "openpoke/decidim-module-term_customizer", branch: "main"

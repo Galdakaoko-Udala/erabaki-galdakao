@@ -20,6 +20,17 @@ GIT
       decidim-admin (~> 0.31)
 
 GIT
+  remote: https://github.com/openpoke/decidim-module-extra_censuses
+  revision: 5060041abfd0cc5eae6de0474e95b2409d97e60d
+  specs:
+    decidim-extra_censuses (0.2.0)
+      decidim-admin (>= 0.31.0, < 0.32)
+      decidim-core (>= 0.31.0, < 0.32)
+      decidim-elections (>= 0.31.0, < 0.32)
+      decidim-surveys (>= 0.31.0, < 0.32)
+      deface (>= 1.5)
+
+GIT
   remote: https://github.com/openpoke/decidim-module-pokecode.git
   revision: 99367209c69b958038ee83ff3008c4b0bc672efd
   branch: main
@@ -1043,6 +1054,7 @@ DEPENDENCIES
   decidim-decidim_awesome!
   decidim-dev!
   decidim-elections!
+  decidim-extra_censuses!
   decidim-file_authorization_handler!
   decidim-initiatives!
   decidim-pokecode!

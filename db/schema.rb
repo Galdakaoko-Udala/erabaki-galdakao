@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_19_093546) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_19_093854) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "ltree"
   enable_extension "pg_trgm"
@@ -911,6 +911,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_19_093546) do
     t.datetime "voting_enabled_at"
     t.integer "votes_count", default: 0, null: false
     t.integer "response_options_count", default: 0, null: false
+    t.integer "min_choices"
+    t.jsonb "settings", default: {}, null: false
     t.index ["election_id"], name: "index_questions_on_election_id"
   end
 
@@ -920,6 +922,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_19_093546) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "votes_count", default: 0, null: false
+    t.string "group_id"
     t.index ["question_id"], name: "index_response_options_on_question_id"
   end
 
