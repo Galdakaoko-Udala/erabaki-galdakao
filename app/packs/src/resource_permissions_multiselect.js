@@ -15,11 +15,13 @@ const initCensusZonesSelect = (input) => {
   select.multiple = true;
   select.name = input.name;
   select.id = input.id + "_ts";
+  // Marcar el select para no reinicializarlo
+  select.dataset.tsInitialized = "1";
 
   input.type = "hidden";
   input.parentNode.insertBefore(select, input.nextSibling);
 
-  new TomSelect(select, {
+  const ts = new TomSelect(select, {
     plugins: ["remove_button", "clear_button"],
     valueField: "id",
     labelField: "text",
@@ -59,18 +61,31 @@ const initCensusZonesSelect = (input) => {
       input.value = values.join(",");
     }
   });
+
+  return ts;
 };
 
-const initAllSelects = () => {
-  document.querySelectorAll(SELECTOR).forEach(initCensusZonesSelect);
+const initAllSelects = (openAfter = false) => {
+  document.querySelectorAll(SELECTOR).forEach((input) => {
+    // Saltar inputs ya procesados (ahora hidden con dataset marcado)
+    if (input.dataset.tsInitialized) return;
+    // Saltar también si ya existe un select _ts hermano
+    const existingSelect = input.parentNode.querySelector(`#${input.id}_ts`);
+    if (existingSelect) return;
+
+    const ts = initCensusZonesSelect(input);
+    if (openAfter && ts) {
+      setTimeout(() => ts.open(), 100);
+    }
+  });
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  initAllSelects();
+  initAllSelects(false);
 
   document.addEventListener("change", (e) => {
     if (e.target.matches(CHECKBOX_SELECTOR) && e.target.checked) {
-      setTimeout(initAllSelects, 50);
+      setTimeout(() => initAllSelects(true), 50);
     }
   });
 });
