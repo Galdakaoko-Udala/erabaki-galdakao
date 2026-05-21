@@ -27,6 +27,13 @@ Si hay poco margen, limpiar primero con `docker image prune -f && docker builder
 
 ---
 
+Git push habitual:
+```
+git push alabs feature/zone-verifications
+```
+
+---
+
 ### docker-compose.override.yml
 
 Docker Compose carga automáticamente `docker-compose.override.yml` si existe, fusionándolo con el compose principal. Se usa para adaptar el compose de producción al entorno local sin tocar el archivo original (que es compartido con otros municipios).
