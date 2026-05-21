@@ -1,10 +1,78 @@
-# zone-verifications — Guía de aplicación para Galdakao
+## feature/zone-verifications — Guía de aplicación para Galdakao
 
 > **Rama base:** `feature/street-validation` (ya en producción)
 > **Rama nueva:** `feature/zone-verifications`
 > **Entorno:** LXC + Docker, código en `/opt/decidim_production`
-> **Rebuild:** `docker build . -t erabaki-galdakao:local && docker compose up -d`
-> **Cambios en volúmenes (vistas, JS packs):** `docker compose restart decidim_production`
+
+## Comandos habituales
+
+**Rebuild completo** (cambios en Ruby, modelos, migraciones, assets compilados):
+```bash
+docker build . -t erabaki-galdakao:local && docker compose up -d && docker image prune -f && docker builder prune -f
+```
+
+**Cambios en volúmenes** (vistas ERB, JS packs — no requieren rebuild):
+```bash
+docker compose restart app
+```
+
+**Nota:** No usar `docker image prune -a` ni `docker system prune` — hay imágenes en uso que no deben eliminarse (`postgres:14`, `redis`, `traefik`, `tiredofit/db-backup`, `node:18`). El `prune -f` sin `-a` solo elimina imágenes dangling (la versión anterior de `erabaki-galdakao:local`), que es lo único que sobra tras cada build.
+
+**Monitorizar espacio antes de buildear:**
+```bash
+docker system df
+```
+Si hay poco margen, limpiar primero con `docker image prune -f && docker builder prune -f`.
+
+---
+
+## Infraestructura Docker — entorno de desarrollo
+
+### docker-compose.override.yml
+
+Docker Compose carga automáticamente `docker-compose.override.yml` si existe, fusionándolo con el compose principal. Se usa para adaptar el compose de producción al entorno local sin tocar el archivo original (que es compartido con otros municipios).
+
+**El archivo NO está en git** (está en `.gitignore`). Si se pierde, recrearlo con:
+
+```bash
+cat > /opt/decidim_production/docker-compose.override.yml << 'EOF'
+services:
+  traefik:
+    image: traefik:v2.11
+    command:
+      - --log.level=DEBUG
+      - --api=true
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.forwardedHeaders.insecure=true
+    ports:
+      - "3015:80"
+      - "0.0.0.0:8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=PathPrefix(`/traefik`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
+
+  app:
+    image: erabaki-galdakao:local
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`galdakaocenso.demo.participa.cloud`) && PathPrefix(`/`)"
+      - "traefik.http.routers.app.entrypoints=web"
+      - "traefik.http.routers.app.tls=false"
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
+EOF
+```
+
+**Por qué existe:** el `docker-compose.yml` original apunta a `ghcr.io/galdakaoko-udala/erabaki-galdakao:main` (registry privado) y usa `traefik:v3.3` con SSL. Este override lo adapta para usar la imagen buildeada localmente y traefik sin SSL en el puerto 3015.
+
+**Nota:** las labels en el override reemplazan completamente las del servicio original — por eso hay que incluir `tls=false` explícitamente para neutralizar el `tls=true` del compose principal.
 
 ---
 
