@@ -3,7 +3,7 @@ import TomSelect from "tom-select";
 const initCensusZonesSelect = (input) => {
   // El input hidden original guarda los IDs separados por comas
   // Tom-select necesita un <select multiple> real, así que lo creamos
-  const urlZones = input.dataset.urlZones || input.getAttribute("data-url-zones");
+  const urlZones = "/admin/galdakao/zones";
   const existingValues = input.value ? input.value.split(",").filter(Boolean) : [];
 
   // Crear el <select multiple> que sustituye al input hidden
