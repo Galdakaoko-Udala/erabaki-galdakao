@@ -386,3 +386,174 @@ street_number: response&.xpath("//autenticarResult/portal")&.text&.strip&.to_i
 - `street_number` se guarda en `decidim_authorizations.metadata` junto con `street` — dato personal de empadronamiento → misma base legal ya documentada (art. 6.1.e RGPD).
 - La tabla `galdakao_zones` y `galdakao_zone_streets` solo contienen nombres de calles y rangos de números, sin datos personales.
 - Los metadatos de autorización se borran si el usuario revoca su autorización en Decidim.
+
+---
+
+## Migración select2 → tom-select ✅
+
+### Contexto
+
+El componente de permisos de recursos usaba `select2 4.1.0-beta.1` para el multiselect de zonas en `census_authorization_handler`. Esta versión estaba rota con webpack/webpacker y causaba errores en el build.
+
+`tom-select ^2.2.2` ya estaba en `package.json` — no requirió instalar nada nuevo. Es compatible con webpack, no depende de jQuery y tiene paridad funcional con select2 para este caso de uso.
+
+---
+
+### Archivos modificados
+
+- `app/packs/src/resource_permissions_multiselect.js` — reescrito completo
+- `app/packs/src/decidim/admin/application.js` — cambio de import CSS
+- `package.json` — eliminado select2
+
+---
+
+### Cambios concretos
+
+**`application.js`:**
+```js
+// Antes:
+import "../../../stylesheets/select2.css";
+// Después:
+import "tom-select/dist/css/tom-select.default.css";
+```
+
+**`package.json`:** eliminada la línea `"select2": "4.1.0-beta.1"` de dependencies.
+
+**`resource_permissions_multiselect.js`:** reescrito sin jQuery. Lógica principal:
+
+- Selector: `input[id*='authorization_handlers_options'][id*='zones']` — Rails genera un `input type="text"`, no un `<select>`
+- El JS crea un `<select multiple>` dinámico, convierte el input original a `hidden` y sincroniza los valores via `onChange`
+- `preload: true` — carga la lista completa de zonas al abrir, igual que hacía select2 con query vacía
+- Endpoint `/admin/galdakao/zones` sin parámetros devuelve todas las zonas; con `?q=` filtra; con `?ids=` carga valores iniciales
+- Guard de doble inicialización via `input.dataset.tsInitialized` **y** `input.closest(".ts-wrapper")` — este segundo guard es crítico (ver bug resuelto abajo)
+- Al marcar el checkbox `census_authorization_handler` se llama `initAllSelects(true)` que abre el dropdown automáticamente tras inicializar
+
+---
+
+### Bug resuelto: doble inicialización de tom-select ✅
+
+**Síntoma:** el dropdown aparecía anidado dentro de sí mismo — un `.ts-wrapper` dentro de otro `.ts-wrapper`, con dos instancias activas y el dropdown interior visualmente recortado.
+
+**Causa raíz:** tom-select genera internamente un `<input type="hidden">` dentro del `.ts-control`. El selector `input[id*='authorization_handlers_options'][id*='zones']` lo encontraba en la segunda pasada de `initAllSelects` (disparada por el evento `change` del checkbox) e inicializaba tom-select sobre él de nuevo. El guard `input.dataset.tsInitialized` no era suficiente porque ese atributo no estaba presente en el input interno generado por tom-select.
+
+**Estructura DOM errónea (antes del fix):**
+```
+.ts-wrapper                      ← instancia exterior
+  .ts-control
+    input[interno de tom-select]  ← era seleccionado por el SELECTOR
+    .ts-wrapper                   ← instancia interior (segunda init)
+      .ts-control
+        ...items...
+      .ts-dropdown                ← dropdown interior, recortado
+  .ts-dropdown                    ← dropdown exterior (display:none)
+```
+
+**Fix aplicado — dos cambios en `resource_permissions_multiselect.js`:**
+
+1. En `initAllSelects`, añadir como primera guarda:
+```js
+if (input.closest(".ts-wrapper")) return;
+```
+Cualquier input generado por tom-select estará siempre dentro de un `.ts-wrapper`, por lo que queda excluido antes de llegar al check de `dataset`.
+
+2. En `initCensusZonesSelect`, eliminar:
+```js
+// ← línea eliminada:
+select.dataset.tsInitialized = "1";
+```
+El atributo `tsInitialized` solo debe vivir en el input original, no en el `<select>` auxiliar creado por el JS.
+
+---
+
+### Estado final del archivo `resource_permissions_multiselect.js`
+
+```javascript
+import TomSelect from "tom-select";
+
+const URL_ZONES = "/admin/galdakao/zones";
+
+const SELECTOR = "input[id*='authorization_handlers_options'][id*='zones']";
+const CHECKBOX_SELECTOR = "input[type=checkbox][id*='census_authorization_handler']";
+
+const initCensusZonesSelect = (input) => {
+  if (input.dataset.tsInitialized) return;
+  input.dataset.tsInitialized = "1";
+
+  const existingValues = input.value ? input.value.split(",").filter(Boolean) : [];
+
+  const select = document.createElement("select");
+  select.multiple = true;
+  select.name = input.name;
+  select.id = input.id + "_ts";
+
+  input.type = "hidden";
+  input.parentNode.insertBefore(select, input.nextSibling);
+
+  const ts = new TomSelect(select, {
+    plugins: ["remove_button", "clear_button"],
+    valueField: "id",
+    labelField: "text",
+    searchField: "text",
+    preload: true,
+    maxOptions: 200,
+    load(query, callback) {
+      fetch(`${URL_ZONES}?q=${encodeURIComponent(query)}`, {
+        headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" }
+      })
+        .then((r) => r.json())
+        .then((json) => callback(json.results || json))
+        .catch(() => callback());
+    },
+    render: {
+      option: (data, escape) => `<div>${escape(data.text)}</div>`,
+      item:   (data, escape) => `<div>${escape(data.text)}</div>`,
+      no_results: () => `<div class="no-results">No se han encontrado resultados</div>`
+    },
+    onInitialize() {
+      if (existingValues.length === 0) return;
+      fetch(`${URL_ZONES}?ids=${existingValues.join(",")}`, {
+        headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" }
+      })
+        .then((r) => r.json())
+        .then((json) => {
+          const items = json.results || json;
+          items.forEach((item) => {
+            this.addOption({ id: String(item.id), text: item.text });
+            this.addItem(String(item.id), true);
+          });
+          this.refreshItems();
+        })
+        .catch(() => {});
+    },
+    onChange(values) {
+      input.value = values.join(",");
+    }
+  });
+
+  return ts;
+};
+
+const initAllSelects = (openAfter = false) => {
+  document.querySelectorAll(SELECTOR).forEach((input) => {
+    if (input.closest(".ts-wrapper")) return;
+    if (input.dataset.tsInitialized) return;
+
+    const ts = initCensusZonesSelect(input);
+    if (openAfter && ts) {
+      setTimeout(() => ts.open(), 100);
+    }
+  });
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  initAllSelects(false);
+
+  document.addEventListener("change", (e) => {
+    if (e.target.matches(CHECKBOX_SELECTOR) && e.target.checked) {
+      setTimeout(() => initAllSelects(true), 50);
+    }
+  });
+});
+```
+
+---
