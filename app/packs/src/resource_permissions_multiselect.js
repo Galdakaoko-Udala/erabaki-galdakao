@@ -15,8 +15,6 @@ const initCensusZonesSelect = (input) => {
   select.multiple = true;
   select.name = input.name;
   select.id = input.id + "_ts";
-  // Marcar el select para no reinicializarlo
-  select.dataset.tsInitialized = "1";
 
   input.type = "hidden";
   input.parentNode.insertBefore(select, input.nextSibling);
@@ -67,11 +65,8 @@ const initCensusZonesSelect = (input) => {
 
 const initAllSelects = (openAfter = false) => {
   document.querySelectorAll(SELECTOR).forEach((input) => {
-    // Saltar inputs ya procesados (ahora hidden con dataset marcado)
+    if (input.closest(".ts-wrapper")) return;
     if (input.dataset.tsInitialized) return;
-    // Saltar también si ya existe un select _ts hermano
-    const existingSelect = input.parentNode.querySelector(`#${input.id}_ts`);
-    if (existingSelect) return;
 
     const ts = initCensusZonesSelect(input);
     if (openAfter && ts) {
