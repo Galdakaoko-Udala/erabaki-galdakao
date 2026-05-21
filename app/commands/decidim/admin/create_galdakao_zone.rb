@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Decidim
   module Admin
     class CreateGaldakaoZone < Decidim::Command
@@ -25,11 +24,8 @@ module Decidim
 
       def create_zone!
         @zone = GaldakaoZone.create!(
-          organization:        form.current_organization,
-          street_id:           form.street_id,
-          numbers_constraint:  form.numbers_constraint,
-          numbers_range:       form.numbers_range,
-          name:                form.name
+          organization: form.current_organization,
+          name:         form.name
         )
       end
     end

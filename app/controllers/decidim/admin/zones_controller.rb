@@ -1,12 +1,10 @@
 # frozen_string_literal: true
-
 module Decidim
   module Admin
-    class ZonesController < GaldakaoApplicationController
+    class ZonesController < GaldakaoController
       include Paginable
       layout "decidim/admin/application"
-
-      helper_method :zone_list, :streets, :zone
+      helper_method :zone_list, :zone
 
       before_action -> { enforce_permission_to :read, :admin_user }
 
@@ -15,6 +13,10 @@ module Decidim
           format.html
           format.json { render json: json_zones }
         end
+      end
+
+      def show
+        @zone = zone
       end
 
       def new
@@ -41,7 +43,7 @@ module Decidim
 
       def update
         @form = form(GaldakaoZoneForm).from_params(params)
-        UpdateGaldakaoZone.call(@form) do
+        UpdateGaldakaoZone.call(@form, zone) do
           on(:ok) do
             flash[:notice] = "Zona actualizada correctamente"
             redirect_to decidim_admin.galdakao_zones_path
@@ -63,10 +65,6 @@ module Decidim
 
       def zone
         @zone ||= GaldakaoZone.find(params[:id])
-      end
-
-      def streets
-        GaldakaoStreet.where(organization: current_organization).order(name: :asc)
       end
 
       def json_zones

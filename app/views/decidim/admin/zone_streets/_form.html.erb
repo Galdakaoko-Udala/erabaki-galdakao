@@ -1,0 +1,25 @@
+<%= decidim_form_for @form, url: (@form.id ? decidim_admin.galdakao_zone_zone_street_path(zone, @form.id) : decidim_admin.galdakao_zone_zone_streets_path(zone)) do |f| %>
+  <div class="field">
+    <%= f.label :street_id, "Calle" %>
+    <%= f.select :street_id,
+        GaldakaoStreet.where(organization: current_organization).order(name: :asc).map { |s| [s.name, s.id] },
+        { include_blank: "Selecciona una calle" },
+        class: "form-control" %>
+  </div>
+  <div class="field">
+    <%= f.label :numbers_constraint, "Restricción de números" %>
+    <%= f.select :numbers_constraint,
+        @form.numbers_constraint_options.to_a,
+        {},
+        class: "form-control" %>
+  </div>
+  <div class="field">
+    <%= f.label :numbers_range, "Rango de portales (opcional)" %>
+    <%= f.text_field :numbers_range,
+        class: "form-control",
+        placeholder: "Ej: 1-50  o  2,4,6,8" %>
+    <p class="help-text">Dejar vacío para incluir todos los números de la restricción seleccionada.</p>
+  </div>
+  <%= f.submit "Guardar", class: "button" %>
+  <%= link_to "Cancelar", decidim_admin.galdakao_zone_path(zone), class: "button hollow" %>
+<% end %>

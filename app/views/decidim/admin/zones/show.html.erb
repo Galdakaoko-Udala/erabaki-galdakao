@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="row">
+    <div class="columns">
+      <h2><%= @zone.name %></h2>
+      <%= link_to "Editar zona", decidim_admin.edit_galdakao_zone_path(@zone), class: "button hollow small" %>
+      <%= link_to "Volver", decidim_admin.galdakao_zones_path, class: "button hollow small" %>
+
+      <h3>Calles de esta zona</h3>
+      <%= link_to "Añadir calle", decidim_admin.new_galdakao_zone_zone_street_path(@zone), class: "button small" %>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Calle</th>
+            <th>Restricción</th>
+            <th>Rango</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @zone.zone_streets.each do |zs| %>
+            <tr>
+              <td><%= zs.street.name %></td>
+              <td><%= zs.numbers_constraint %></td>
+              <td><%= zs.numbers_range.presence || "Todos" %></td>
+              <td>
+                <%= link_to "Editar", decidim_admin.edit_galdakao_zone_zone_street_path(@zone, zs), class: "button small" %>
+                <%= button_to "Eliminar",
+                    decidim_admin.galdakao_zone_zone_street_path(@zone, zs),
+                    method: :delete,
+                    data: { confirm: "¿Seguro?" },
+                    class: "button small alert" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
