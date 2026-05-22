@@ -4,7 +4,7 @@ module Decidim
     class GaldakaoZoneStreetForm < Form
       mimic :galdakao_zone_street
 
-      attribute :street_id,          Integer
+      attribute :street_id,           Integer
       attribute :numbers_constraint,  String, default: "all_numbers"
       attribute :numbers_range,       String
 
@@ -18,10 +18,10 @@ module Decidim
 
       def numbers_constraint_options
         {
-          "Todos los números"        => "all_numbers",
-          "Números pares"            => "even_numbers",
-          "Números impares"          => "odd_numbers",
-          "Solo estos portales"      => "only_range",
+          "Todos los números"          => "all_numbers",
+          "Números pares"              => "even_numbers",
+          "Números impares"            => "odd_numbers",
+          "Solo estos portales"        => "only_range",
           "Todos menos estos portales" => "except_range"
         }
       end

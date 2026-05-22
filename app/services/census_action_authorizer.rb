@@ -39,21 +39,27 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
     authorization_street == zone_street.street&.name
   end
 
+  def parse_range(numbers_range)
+    numbers_range.split(",").flat_map do |segment|
+      if segment.include?("-")
+        a, b = segment.split("-")
+        (a.to_i..b.to_i).to_a
+      else
+        segment.to_i
+      end
+    end
+  end
+
   def number_valid?(zone_street)
     passes_constraint = case zone_street.numbers_constraint
-                        when "even_numbers"  then authorization_number.even?
-                        when "odd_numbers"   then authorization_number.odd?
+                        when "even_numbers" then authorization_number.even?
+                        when "odd_numbers"  then authorization_number.odd?
                         else true
                         end
     return false unless passes_constraint
     return true if zone_street.numbers_range.blank?
 
-    portal_list = if zone_street.numbers_range.include?(",")
-                    zone_street.numbers_range.split(",").map(&:to_i)
-                  else
-                    a, b = zone_street.numbers_range.split("-")
-                    (a.to_i..b.to_i).to_a
-                  end
+    portal_list = parse_range(zone_street.numbers_range)
 
     case zone_street.numbers_constraint
     when "except_range" then !portal_list.include?(authorization_number)

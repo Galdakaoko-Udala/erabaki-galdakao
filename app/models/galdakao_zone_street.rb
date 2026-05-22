@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class GaldakaoZoneStreet < ApplicationRecord
-  RANGE_REGEXP = /(\A\d+(-(\d+)*)\z)|(\A[\d+(,\d)*]+\z)/.freeze
+  RANGE_REGEXP = /\A\d+(-\d+)?(,\d+(-\d+)?)*\z/.freeze
 
   belongs_to :zone, class_name: "GaldakaoZone"
   belongs_to :street, class_name: "GaldakaoStreet"
