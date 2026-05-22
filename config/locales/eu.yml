@@ -1,2 +1,7 @@
 ---
 eu:
+  decidim:
+    devise:
+      registrations:
+        new:
+          sign_up_also_with: Erabili zure gmail kontua sartzeko

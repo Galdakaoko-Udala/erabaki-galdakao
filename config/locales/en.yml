@@ -1,2 +1,7 @@
 ---
 en:
+  decidim:
+    devise:
+      registrations:
+        new:
+          sign_up_also_with: Sign up with your gmail account
