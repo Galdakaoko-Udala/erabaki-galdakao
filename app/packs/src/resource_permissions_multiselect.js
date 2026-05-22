@@ -56,7 +56,7 @@ const initCensusZonesSelect = (input) => {
         .catch(() => {});
     },
     onChange(values) {
-      input.value = values.join(",");
+      input.value = Array.isArray(values) ? values.join(",") : (values || "");
     }
   });
 
