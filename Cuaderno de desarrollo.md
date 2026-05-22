@@ -267,6 +267,160 @@ if (input.closest(".ts-wrapper")) return;
 select.dataset.tsInitialized = "1";
 ```
 
+## Bug resuelto: onChange de tom-select no sincronizaba el input hidden ✅
+
+### Síntoma
+
+Al guardar el formulario de permisos de componente, el campo `zones` llegaba vacío al servidor aunque el multiselect mostrara zonas seleccionadas visualmente. Las zonas seleccionadas no se persistían.
+
+### Diagnóstico
+
+El `onChange` estaba definido así:
+
+```js
+onChange(values) {
+  input.value = this.getValue(true).join(",");
+}
+```
+
+El problema era doble:
+
+**1. `getValue()` ignora el parámetro.** Según el código fuente de tom-select, `getValue()` no acepta argumentos. Cuando el `<select>` subyacente tiene el atributo `multiple`, devuelve `this.items` directamente como array. El `true` se ignoraba silenciosamente.
+
+**2. `this` dentro de `onChange` no apunta a la instancia.** En el contexto del callback, `this` no era la instancia de tom-select sino el contexto de llamada interno, por lo que `this.getValue()` fallaba sin lanzar ningún error visible en consola.
+
+### Solución
+
+Usar `this.items` directamente, que es el array interno que tom-select mantiene actualizado en todo momento. Se sincroniza en dos sitios:
+
+- En `onChange` — al añadir o quitar una zona.
+- Al final de `onInitialize` — para que los valores precargados al editar un permiso existente también queden escritos en el hidden antes del primer cambio.
+
+```js
+onInitialize() {
+  if (existingValues.length === 0) return;
+  fetch(`${URL_ZONES}?ids=${existingValues.join(",")}`, {
+    headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" }
+  })
+    .then((r) => r.json())
+    .then((json) => {
+      const items = json.results || json;
+      items.forEach((item) => {
+        this.addOption({ id: String(item.id), text: item.text });
+        this.addItem(String(item.id), true);
+      });
+      this.refreshItems();
+      input.value = this.items.join(",");  // ← añadido
+    })
+    .catch(() => {});
+},
+onChange() {
+  input.value = this.items.join(",");  // ← simplificado, sin getValue
+}
+```
+
+### Por qué `this.items` es la fuente correcta
+
+`this.items` es el array interno de tom-select que contiene los valores actualmente seleccionados. Se actualiza en cada `addItem` / `removeItem` y es la misma fuente que usa tom-select internamente para sincronizar el `<select>` subyacente. No depende del DOM ni de `getValue()`.
+
+### Verificación
+
+El formulario de permisos guarda correctamente las zonas seleccionadas (ver captura — multiselects de "Crear una propuesta" y "Retirar" con varias zonas). Al reabrir el formulario, las zonas se recuperan y se precargan en el multiselect via `onInitialize` → `?ids=`.
+
+---
+
+### Estado final — `app/packs/src/resource_permissions_multiselect.js`
+
+```javascript
+import TomSelect from "tom-select";
+
+const URL_ZONES = "/admin/galdakao/zones";
+
+const SELECTOR = "input[id*='authorization_handlers_options'][id*='zones']";
+const CHECKBOX_SELECTOR = "input[type=checkbox][id*='census_authorization_handler']";
+
+const initCensusZonesSelect = (input) => {
+  if (input.dataset.tsInitialized) return;
+  input.dataset.tsInitialized = "1";
+
+  const existingValues = input.value ? input.value.split(",").filter(Boolean) : [];
+
+  const select = document.createElement("select");
+  select.multiple = true;
+  select.name = input.name;
+  select.id = input.id + "_ts";
+
+  input.type = "hidden";
+  input.parentNode.insertBefore(select, input.nextSibling);
+
+  const ts = new TomSelect(select, {
+    plugins: ["remove_button", "clear_button"],
+    valueField: "id",
+    labelField: "text",
+    searchField: "text",
+    preload: true,
+    maxOptions: 200,
+    load(query, callback) {
+      fetch(`${URL_ZONES}?q=${encodeURIComponent(query)}`, {
+        headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" }
+      })
+        .then((r) => r.json())
+        .then((json) => callback(json.results || json))
+        .catch(() => callback());
+    },
+    render: {
+      option: (data, escape) => `<div>${escape(data.text)}</div>`,
+      item:   (data, escape) => `<div>${escape(data.text)}</div>`,
+      no_results: () => `<div class="no-results">No se han encontrado resultados</div>`
+    },
+    onInitialize() {
+      if (existingValues.length === 0) return;
+      fetch(`${URL_ZONES}?ids=${existingValues.join(",")}`, {
+        headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" }
+      })
+        .then((r) => r.json())
+        .then((json) => {
+          const items = json.results || json;
+          items.forEach((item) => {
+            this.addOption({ id: String(item.id), text: item.text });
+            this.addItem(String(item.id), true);
+          });
+          this.refreshItems();
+          input.value = this.items.join(",");
+        })
+        .catch(() => {});
+    },
+    onChange() {
+      input.value = this.items.join(",");
+    }
+  });
+
+  return ts;
+};
+
+const initAllSelects = (openAfter = false) => {
+  document.querySelectorAll(SELECTOR).forEach((input) => {
+    if (input.closest(".ts-wrapper")) return;
+    if (input.dataset.tsInitialized) return;
+
+    const ts = initCensusZonesSelect(input);
+    if (openAfter && ts) {
+      setTimeout(() => ts.open(), 100);
+    }
+  });
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  initAllSelects(false);
+
+  document.addEventListener("change", (e) => {
+    if (e.target.matches(CHECKBOX_SELECTOR) && e.target.checked) {
+      setTimeout(() => initAllSelects(true), 50);
+    }
+  });
+});
+```
+
 ### Estado final — `app/packs/src/resource_permissions_multiselect.js`
 
 ```javascript

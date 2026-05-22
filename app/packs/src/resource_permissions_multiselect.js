@@ -1,24 +1,16 @@
 import TomSelect from "tom-select";
-
 const URL_ZONES = "/admin/galdakao/zones";
-
 const SELECTOR = "input[id*='authorization_handlers_options'][id*='zones']";
 const CHECKBOX_SELECTOR = "input[type=checkbox][id*='census_authorization_handler']";
-
 const initCensusZonesSelect = (input) => {
   if (input.dataset.tsInitialized) return;
   input.dataset.tsInitialized = "1";
-
   const existingValues = input.value ? input.value.split(",").filter(Boolean) : [];
-
   const select = document.createElement("select");
   select.multiple = true;
-  select.name = input.name;
   select.id = input.id + "_ts";
-
   input.type = "hidden";
   input.parentNode.insertBefore(select, input.nextSibling);
-
   const ts = new TomSelect(select, {
     plugins: ["remove_button", "clear_button"],
     valueField: "id",
@@ -52,32 +44,28 @@ const initCensusZonesSelect = (input) => {
             this.addItem(String(item.id), true);
           });
           this.refreshItems();
+          input.value = this.items.join(",");
         })
         .catch(() => {});
     },
-    onChange(values) {
-      input.value = Array.isArray(values) ? values.join(",") : (values || "");
+    onChange() {
+      input.value = this.items.join(",");
     }
   });
-
   return ts;
 };
-
 const initAllSelects = (openAfter = false) => {
   document.querySelectorAll(SELECTOR).forEach((input) => {
     if (input.closest(".ts-wrapper")) return;
     if (input.dataset.tsInitialized) return;
-
     const ts = initCensusZonesSelect(input);
     if (openAfter && ts) {
       setTimeout(() => ts.open(), 100);
     }
   });
 };
-
 document.addEventListener("DOMContentLoaded", () => {
   initAllSelects(false);
-
   document.addEventListener("change", (e) => {
     if (e.target.matches(CHECKBOX_SELECTOR) && e.target.checked) {
       setTimeout(() => initAllSelects(true), 50);
