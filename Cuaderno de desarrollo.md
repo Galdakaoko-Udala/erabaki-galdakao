@@ -764,6 +764,40 @@ El usuario ve únicamente el mensaje genérico, sin datos propios ni pistas sobr
 
 ---
 
+## Override mensaje de no autorizado ✅
+
+### Clave de Decidim core
+
+El texto "Lo sentimos, no puedes realizar esta acción porque algunos de tus datos de autorización no coinciden." viene de Decidim core en:
+
+```
+decidim-core/config/locales/es.yml
+  decidim.actions.unauthorized.explanation
+```
+
+### Solución
+
+Añadir la misma clave en `config/locales/es.yml` del proyecto para sobreescribirla:
+
+```yaml
+es:
+  decidim:
+    actions:
+      unauthorized:
+        explanation: "No cumples los requisitos de participación para este proceso."
+```
+
+### ⚠️ Aviso importante
+
+Este override afecta a **todas las autorizaciones de la instalación**, no solo a `census_authorization_handler`. Si en el futuro se añaden otros handlers de verificación, todos mostrarán este mismo mensaje genérico. Es intencionado — no queremos exponer criterios específicos de verificación al usuario — pero hay que tenerlo en cuenta si se necesita personalizar por handler en el futuro.
+
+### Pendiente para fase de traducciones
+
+- [ ] Añadir la misma clave en `config/locales/eu.yml` (euskera)
+- [ ] Revisar si hay otras claves de `decidim.actions` que convenga sobreescribir (`pending`, `expired`, etc.)
+
+---
+
 ## Pendiente: revisión completa de textos y multiidioma
 
 - [ ] Auditar todos los textos hardcodeados en vistas ERB, helpers, commands y authorizers

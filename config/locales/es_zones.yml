@@ -17,6 +17,7 @@ es:
           update:
             success: "Zona actualizada correctamente"
             error: "Error al actualizar la zona"
-    actions:
-      unauthorized:
-        explanation: "No cumples los requisitos de participación para este proceso."
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: "No cumples los requisitos de participación para este proceso."
