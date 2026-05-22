@@ -4,7 +4,7 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
     return [:ok, {}] if zones.blank?
     return [:unauthorized, {}] if authorization_street.blank? || authorization_number.blank?
     return [:ok, {}] if belongs_to_zone?
-    [:unauthorized, { extra_explanation: { key: "not_in_zone", params: { scope: "census_authorization_handler" } } }]
+    [:unauthorized, {}]
   end
 
   private
