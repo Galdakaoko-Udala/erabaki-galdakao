@@ -201,300 +201,6 @@ El entrypoint `decidim_admin_select2.js` fue eliminado — no tenía referencias
 
 ---
 
-## Hoja de ruta: rediseño del modelo de zonas
-
-### Contexto
-
-El modelo inicial (`galdakao_zones`) solo soportaba una calle con un rango por zona. Galdakao necesita zonas con múltiples calles, donde una misma calle puede pertenecer a varias zonas con rangos de portales distintos (calles frontera entre zonas).
-
-### Diseño de datos final
-
-```
-galdakao_zones
-  id, name, decidim_organization_id
-
-galdakao_zone_streets
-  id, zone_id, street_id, numbers_constraint, numbers_range
-```
-
-Una zona tiene N entradas calle+rango. La misma calle puede aparecer en varias zonas con rangos distintos.
-
----
-
-### Paso 1 — Migración de base de datos ✅
-
-**Proceso ejecutado:**
-
-1. Bajar la migración original:
-```bash
-docker compose exec app rails db:migrate:down VERSION=20260428000002
-```
-
-2. Reescribir `db/migrate/20260428000002_create_galdakao_zones.rb`:
-```ruby
-class CreateGaldakaoZones < ActiveRecord::Migration[7.0]
-  def change
-    create_table :galdakao_zones do |t|
-      t.references :decidim_organization, null: false, index: true
-      t.string     :name, null: false
-      t.timestamps
-    end
-
-    create_table :galdakao_zone_streets do |t|
-      t.references :zone,   null: false, foreign_key: { to_table: :galdakao_zones }, index: true
-      t.references :street, null: false, index: true
-      t.integer    :numbers_constraint, default: 0, null: false
-      t.string     :numbers_range
-      t.timestamps
-    end
-  end
-end
-```
-
-3. Copiar al contenedor y migrar. El migrate falló en bucle porque el registro quedó marcado como ejecutado tras crear solo la primera tabla. Solución:
-```bash
-docker compose exec app rails runner "ActiveRecord::Base.connection.execute(\"DELETE FROM schema_migrations WHERE version = '20260428000002'\")"
-docker compose exec app rails db:migrate
-```
-
-**Resultado:** Tres tablas activas en BD:
-- `galdakao_streets` — calles del municipio (preexistente)
-- `galdakao_zones` — zonas (id, nombre, organización)
-- `galdakao_zone_streets` — relación zona↔calle con constraint y rango de portales
-
----
-
-### Paso 2 — Modelos Ruby ✅
-
-**`app/models/galdakao_zone.rb`:**
-```ruby
-class GaldakaoZone < ApplicationRecord
-  belongs_to :organization,
-             foreign_key: "decidim_organization_id",
-             class_name: "Decidim::Organization"
-  has_many :zone_streets,
-           class_name: "GaldakaoZoneStreet",
-           foreign_key: :zone_id,
-           dependent: :destroy
-  has_many :streets, through: :zone_streets, class_name: "GaldakaoStreet"
-
-  validates :name, presence: true
-end
-```
-
-**`app/models/galdakao_zone_street.rb`:**
-```ruby
-class GaldakaoZoneStreet < ApplicationRecord
-  RANGE_REGEXP = /(\A\d+(-(\d+)*)\z)|(\A[\d+(,\d)*]+\z)/.freeze
-
-  belongs_to :zone, class_name: "GaldakaoZone"
-  belongs_to :street, class_name: "GaldakaoStreet"
-
-  enum numbers_constraint: { all_numbers: 0, odd_numbers: 1, even_numbers: 2 }
-
-  validates :street, :numbers_constraint, presence: true
-  validates :numbers_range,
-            format: { with: GaldakaoZoneStreet::RANGE_REGEXP },
-            if: ->(zs) { zs.numbers_range.present? }
-end
-```
-
----
-
-### Paso 3 — Admin: CRUD de zonas y calles ✅
-
-Flujo en dos niveles: primero se crea la zona con nombre, luego desde su detalle se gestionan las calles una a una.
-
-**Archivos creados/modificados:**
-
-- `app/forms/decidim/admin/galdakao_zone_form.rb` — solo atributo `name`
-- `app/forms/decidim/admin/galdakao_zone_street_form.rb` — `street_id`, `numbers_constraint`, `numbers_range`
-- `app/commands/decidim/admin/create_galdakao_zone.rb` — crea zona con nombre
-- `app/commands/decidim/admin/update_galdakao_zone.rb` — actualiza nombre, recibe zona como parámetro
-- `app/commands/decidim/admin/create_galdakao_zone_street.rb` — crea entrada calle+rango en una zona
-- `app/commands/decidim/admin/update_galdakao_zone_street.rb` — actualiza entrada calle+rango
-- `app/controllers/decidim/admin/zones_controller.rb` — CRUD de zonas + acción `show`
-- `app/controllers/decidim/admin/zone_streets_controller.rb` — CRUD de calles de una zona
-- `app/views/decidim/admin/zones/` — index, show, new, edit, _form
-- `app/views/decidim/admin/zone_streets/` — new, edit, _form
-- `config/routes.rb` — `zone_streets` anidado dentro de `zones`
-
-**Pendiente menor:**
-- [ ] Traducir valores del enum `numbers_constraint` al castellano en las vistas (actualmente muestra `all_numbers`, `even_numbers`, `odd_numbers`)
-
----
-
-## Refactor constraints de portales en zone streets ✅
-
-### Contexto
-
-El modelo inicial de `GaldakaoZoneStreet` solo soportaba tres constraints (`all_numbers`, `odd_numbers`, `even_numbers`) y el campo `numbers_range` aceptaba únicamente un rango simple (`1-50`) o una lista de valores sueltos (`2,4,6,8`), pero no ambos mezclados.
-
-Galdakao tiene calles frontera entre zonas donde los portales asignados a cada zona no siguen un patrón par/impar ni un rango continuo — por ejemplo `3,5-8,12,24`. La solución es añadir dos nuevos constraints y un formato de rango flexible que permita expresar cualquier combinación.
-
----
-
-### Diseño final de constraints
-
-| Valor | Integer en BD | Descripción | ¿Requiere rango? |
-|---|---|---|---|
-| `all_numbers`  | 0 | Todos los portales | No |
-| `odd_numbers`  | 1 | Solo impares | No |
-| `even_numbers` | 2 | Solo pares | No |
-| `only_range`   | 3 | Solo estos portales | Sí |
-| `except_range` | 4 | Todos menos estos | Sí |
-
-**No requiere migración** — el enum es un integer en BD y los nuevos valores (3 y 4) se añaden sin tocar los existentes.
-
-### Caso de uso típico — calle frontera
-
-Una calle cuyos portales `3,5-8,12,24` pertenecen a Zona 1 y el resto a Zona 2:
-
-- Zona 1 → constraint `only_range`, rango `3,5-8,12,24`
-- Zona 2 → constraint `except_range`, rango `3,5-8,12,24`
-
-La calle queda cubierta al 100% entre las dos zonas sin solapamiento ni huecos.
-
----
-
-### Formato de rango flexible
-
-Antes solo se aceptaba un formato u otro. Ahora se acepta cualquier combinación de números sueltos y rangos separados por comas.
-
-**Regexp:**
-```ruby
-RANGE_REGEXP = /\A\d+(-\d+)?(,\d+(-\d+)?)*\z/.freeze
-```
-
-**Ejemplos válidos:**
-- `1` — portal suelto
-- `1-50` — rango continuo
-- `2,4,6,8` — lista de sueltos
-- `1,5-9,11,13` — mezcla
-- `3,5-8,12,24` — mezcla
-
----
-
-### Archivos modificados
-
-**`app/models/galdakao_zone_street.rb`:**
-- Nuevo `RANGE_REGEXP` con formato flexible
-- Enum ampliado con `only_range` y `except_range`
-- Constante `RANGE_REQUIRED = %w[only_range except_range]`
-- Validación de presencia de `numbers_range` cuando el constraint lo requiere
-
-**`app/forms/decidim/admin/galdakao_zone_street_form.rb`:**
-- Nuevas opciones en `numbers_constraint_options`
-- Validación de presencia de `numbers_range` referenciando `GaldakaoZoneStreet::RANGE_REQUIRED`
-
-**`app/views/decidim/admin/zone_streets/_form.html.erb`:**
-- El campo `numbers_range` se muestra u oculta via JS según el constraint seleccionado
-- Solo visible cuando el constraint es `only_range` o `except_range`
-
-**`app/services/census_action_authorizer.rb`:**
-- Extraído método privado `parse_range` que expande segmentos mixtos (sueltos y rangos) a un array de integers
-- `number_valid?` usa `parse_range` en lugar del parser inline anterior
-- `except_range` niega el resultado de `portal_list.include?`
-
-### Estado final del authorizer — métodos afectados
-
-```ruby
-def parse_range(numbers_range)
-  numbers_range.split(",").flat_map do |segment|
-    if segment.include?("-")
-      a, b = segment.split("-")
-      (a.to_i..b.to_i).to_a
-    else
-      segment.to_i
-    end
-  end
-end
-
-def number_valid?(zone_street)
-  passes_constraint = case zone_street.numbers_constraint
-                      when "even_numbers" then authorization_number.even?
-                      when "odd_numbers"  then authorization_number.odd?
-                      else true
-                      end
-  return false unless passes_constraint
-  return true if zone_street.numbers_range.blank?
-
-  portal_list = parse_range(zone_street.numbers_range)
-
-  case zone_street.numbers_constraint
-  when "except_range" then !portal_list.include?(authorization_number)
-  else                     portal_list.include?(authorization_number)
-  end
-end
-```
-
----
-
-### Paso 4 — Authorizer: lógica de verificación
-
-El authorizer debe trabajar sobre `GaldakaoZoneStreet` en lugar de `GaldakaoZone` directamente.
-
-- [ ] Reescribir `belongs_to_zone?` en `CensusActionAuthorizer` para iterar sobre `GaldakaoZoneStreet.where(zone_id: zones_ids)`
-- [ ] Adaptar `street_valid?` y `number_valid?` para trabajar sobre `GaldakaoZoneStreet`
-- [ ] Verificar que el campo `zones` que llega en `options` sigue siendo lista de IDs de zona (no cambia)
-
----
-
-### Paso 5 — Tests y verificación del flujo completo
-
-- [ ] Crear zonas de prueba con el nuevo formulario (varias calles por zona, calles repetidas con rangos distintos)
-- [ ] Asignar zonas a un permiso de componente
-- [ ] Autorizar usuario con padrón y verificar que el authorizer resuelve correctamente
-- [ ] Probar caso de calle frontera: misma calle, portales en zonas distintas
-- [ ] Probar usuario no empadronado en ninguna zona asignada → debe devolver `:unauthorized`
-
----
-
-## Cambios en el API SOAP
-
-El endpoint `autenticar` debe pasar a devolver también el número de portal:
-
-```xml
-<autenticarResponse>
-  <autenticarResult>true</autenticarResult>
-  <calle>Calle Mayor</calle>
-  <portal>14</portal>
-</autenticarResponse>
-```
-
-Si usas Spyne (Python), el modelo de respuesta necesita añadir el campo `portal`:
-
-```python
-class AutenticarResponse(ComplexModel):
-    autenticarResult = Boolean
-    calle = Unicode
-    portal = Unicode  # se parsea como string y se convierte a Integer en Ruby
-```
-
-El método `metadata` del handler pasa de:
-```ruby
-# ANTES
-streets: [response&.xpath("//autenticarResult/calle")&.text&.strip].compact.reject(&:empty?)
-```
-a:
-```ruby
-# DESPUÉS — xpath un nivel extra por Spyne, confirmado con curl
-street:        response&.xpath("//autenticarResult/calle")&.text&.strip,
-street_number: response&.xpath("//autenticarResult/portal")&.text&.strip&.to_i
-```
-
-- [x] Actualizar API SOAP para devolver `<portal>`
-
----
-
-## Notas RGPD
-
-- `street_number` se guarda en `decidim_authorizations.metadata` junto con `street` — dato personal de empadronamiento → misma base legal ya documentada (art. 6.1.e RGPD).
-- La tabla `galdakao_zones` y `galdakao_zone_streets` solo contienen nombres de calles y rangos de números, sin datos personales.
-- Los metadatos de autorización se borran si el usuario revoca su autorización en Decidim.
-
----
-
 ## Migración select2 → tom-select ✅
 
 ### Contexto
@@ -503,15 +209,11 @@ El componente de permisos de recursos usaba `select2 4.1.0-beta.1` para el multi
 
 `tom-select ^2.2.2` ya estaba en `package.json` — no requirió instalar nada nuevo. Es compatible con webpack, no depende de jQuery y tiene paridad funcional con select2 para este caso de uso.
 
----
-
 ### Archivos modificados
 
 - `app/packs/src/resource_permissions_multiselect.js` — reescrito completo
 - `app/packs/src/decidim/admin/application.js` — cambio de import CSS
 - `package.json` — eliminado select2
-
----
 
 ### Cambios concretos
 
@@ -533,8 +235,6 @@ import "tom-select/dist/css/tom-select.default.css";
 - Endpoint `/admin/galdakao/zones` sin parámetros devuelve todas las zonas; con `?q=` filtra; con `?ids=` carga valores iniciales
 - Guard de doble inicialización via `input.dataset.tsInitialized` **y** `input.closest(".ts-wrapper")` — este segundo guard es crítico (ver bug resuelto abajo)
 - Al marcar el checkbox `census_authorization_handler` se llama `initAllSelects(true)` que abre el dropdown automáticamente tras inicializar
-
----
 
 ### Bug resuelto: doble inicialización de tom-select ✅
 
@@ -560,18 +260,14 @@ import "tom-select/dist/css/tom-select.default.css";
 ```js
 if (input.closest(".ts-wrapper")) return;
 ```
-Cualquier input generado por tom-select estará siempre dentro de un `.ts-wrapper`, por lo que queda excluido antes de llegar al check de `dataset`.
 
 2. En `initCensusZonesSelect`, eliminar:
 ```js
 // ← línea eliminada:
 select.dataset.tsInitialized = "1";
 ```
-El atributo `tsInitialized` solo debe vivir en el input original, no en el `<select>` auxiliar creado por el JS.
 
----
-
-### Estado final del archivo `resource_permissions_multiselect.js`
+### Estado final — `app/packs/src/resource_permissions_multiselect.js`
 
 ```javascript
 import TomSelect from "tom-select";
@@ -663,3 +359,346 @@ document.addEventListener("DOMContentLoaded", () => {
 ```
 
 ---
+
+## Hoja de ruta: rediseño del modelo de zonas
+
+### Contexto
+
+El modelo inicial (`galdakao_zones`) solo soportaba una calle con un rango por zona. Galdakao necesita zonas con múltiples calles, donde una misma calle puede pertenecer a varias zonas con rangos de portales distintos (calles frontera entre zonas).
+
+### Diseño de datos final
+
+```
+galdakao_zones
+  id, name, decidim_organization_id
+
+galdakao_zone_streets
+  id, zone_id, street_id, numbers_constraint, numbers_range
+```
+
+Una zona tiene N entradas calle+rango. La misma calle puede aparecer en varias zonas con rangos distintos.
+
+---
+
+### Paso 1 — Migración de base de datos ✅
+
+**Proceso ejecutado:**
+
+1. Bajar la migración original:
+```bash
+docker compose exec app rails db:migrate:down VERSION=20260428000002
+```
+
+2. Reescribir `db/migrate/20260428000002_create_galdakao_zones.rb`:
+```ruby
+class CreateGaldakaoZones < ActiveRecord::Migration[7.0]
+  def change
+    create_table :galdakao_zones do |t|
+      t.references :decidim_organization, null: false, index: true
+      t.string     :name, null: false
+      t.timestamps
+    end
+
+    create_table :galdakao_zone_streets do |t|
+      t.references :zone,   null: false, foreign_key: { to_table: :galdakao_zones }, index: true
+      t.references :street, null: false, index: true
+      t.integer    :numbers_constraint, default: 0, null: false
+      t.string     :numbers_range
+      t.timestamps
+    end
+  end
+end
+```
+
+3. Copiar al contenedor y migrar. El migrate falló en bucle porque el registro quedó marcado como ejecutado tras crear solo la primera tabla. Solución:
+```bash
+docker compose exec app rails runner "ActiveRecord::Base.connection.execute(\"DELETE FROM schema_migrations WHERE version = '20260428000002'\")"
+docker compose exec app rails db:migrate
+```
+
+**Resultado:** Tres tablas activas en BD:
+- `galdakao_streets` — calles del municipio (preexistente)
+- `galdakao_zones` — zonas (id, nombre, organización)
+- `galdakao_zone_streets` — relación zona↔calle con constraint y rango de portales
+
+---
+
+### Paso 2 — Modelos Ruby ✅
+
+**`app/models/galdakao_zone.rb`:**
+```ruby
+class GaldakaoZone < ApplicationRecord
+  belongs_to :organization,
+             foreign_key: "decidim_organization_id",
+             class_name: "Decidim::Organization"
+  has_many :zone_streets,
+           class_name: "GaldakaoZoneStreet",
+           foreign_key: :zone_id,
+           dependent: :destroy
+  has_many :streets, through: :zone_streets, class_name: "GaldakaoStreet"
+
+  validates :name, presence: true
+end
+```
+
+**`app/models/galdakao_zone_street.rb`:**
+```ruby
+# frozen_string_literal: true
+class GaldakaoZoneStreet < ApplicationRecord
+  RANGE_REGEXP = /\A\d+(-\d+)?(,\d+(-\d+)?)*\z/.freeze
+
+  belongs_to :zone, class_name: "GaldakaoZone"
+  belongs_to :street, class_name: "GaldakaoStreet"
+
+  enum numbers_constraint: {
+    all_numbers:  0,
+    odd_numbers:  1,
+    even_numbers: 2,
+    only_range:   3,
+    except_range: 4
+  }
+
+  RANGE_REQUIRED = %w[only_range except_range].freeze
+
+  validates :street, :numbers_constraint, presence: true
+  validates :numbers_range,
+            presence: true,
+            if: ->(zs) { zs.numbers_constraint.in?(RANGE_REQUIRED) }
+  validates :numbers_range,
+            format: { with: GaldakaoZoneStreet::RANGE_REGEXP },
+            if: ->(zs) { zs.numbers_range.present? }
+end
+```
+
+---
+
+### Paso 3 — Admin: CRUD de zonas y calles ✅
+
+Flujo en dos niveles: primero se crea la zona con nombre, luego desde su detalle se gestionan las calles una a una.
+
+**Archivos creados/modificados:**
+
+- `app/forms/decidim/admin/galdakao_zone_form.rb` — solo atributo `name`
+- `app/forms/decidim/admin/galdakao_zone_street_form.rb` — `street_id`, `numbers_constraint`, `numbers_range`
+- `app/commands/decidim/admin/create_galdakao_zone.rb` — crea zona con nombre
+- `app/commands/decidim/admin/update_galdakao_zone.rb` — actualiza nombre, recibe zona como parámetro
+- `app/commands/decidim/admin/create_galdakao_zone_street.rb` — crea entrada calle+rango en una zona
+- `app/commands/decidim/admin/update_galdakao_zone_street.rb` — actualiza entrada calle+rango
+- `app/controllers/decidim/admin/zones_controller.rb` — CRUD de zonas + acción `show`
+- `app/controllers/decidim/admin/zone_streets_controller.rb` — CRUD de calles de una zona
+- `app/views/decidim/admin/zones/` — index, show, new, edit, _form
+- `app/views/decidim/admin/zone_streets/` — new, edit, _form
+- `config/routes.rb` — `zone_streets` anidado dentro de `zones`
+
+**`app/forms/decidim/admin/galdakao_zone_street_form.rb`:**
+```ruby
+# frozen_string_literal: true
+module Decidim
+  module Admin
+    class GaldakaoZoneStreetForm < Form
+      mimic :galdakao_zone_street
+
+      attribute :street_id,           Integer
+      attribute :numbers_constraint,  String, default: "all_numbers"
+      attribute :numbers_range,       String
+
+      validates :street_id, :numbers_constraint, presence: true
+      validates :numbers_range,
+                presence: true,
+                if: ->(form) { form.numbers_constraint.in?(GaldakaoZoneStreet::RANGE_REQUIRED) }
+      validates :numbers_range,
+                format: { with: GaldakaoZoneStreet::RANGE_REGEXP },
+                if: ->(form) { form.numbers_range.present? }
+
+      def numbers_constraint_options
+        {
+          "Todos los números"          => "all_numbers",
+          "Números pares"              => "even_numbers",
+          "Números impares"            => "odd_numbers",
+          "Solo estos portales"        => "only_range",
+          "Todos menos estos portales" => "except_range"
+        }
+      end
+    end
+  end
+end
+```
+
+**`app/views/decidim/admin/zone_streets/_form.html.erb`:** el campo `numbers_range` se muestra u oculta via JS según el constraint — solo visible cuando es `only_range` o `except_range`, y en esos casos es obligatorio.
+
+**Pendiente menor:**
+- [ ] Traducir valores del enum `numbers_constraint` al castellano en las vistas (actualmente muestra `all_numbers`, `even_numbers`, `odd_numbers`)
+
+---
+
+### Paso 3b — Refactor constraints de portales ✅
+
+El modelo inicial solo soportaba tres constraints. Se añadieron `only_range` y `except_range` y se amplió el formato de rango para aceptar combinaciones mixtas.
+
+**Diseño final de constraints:**
+
+| Valor | Integer en BD | Descripción | ¿Requiere rango? |
+|---|---|---|---|
+| `all_numbers`  | 0 | Todos los portales | No |
+| `odd_numbers`  | 1 | Solo impares | No |
+| `even_numbers` | 2 | Solo pares | No |
+| `only_range`   | 3 | Solo estos portales | Sí |
+| `except_range` | 4 | Todos menos estos | Sí |
+
+No requiere migración — el enum es un integer en BD y los nuevos valores (3 y 4) se añaden sin tocar los existentes.
+
+**Formato de rango flexible** — acepta cualquier combinación de números sueltos y rangos:
+```
+1          → portal suelto
+1-50       → rango continuo
+2,4,6,8    → lista de sueltos
+1,5-9,11,13 → mezcla
+3,5-8,12,24 → mezcla
+```
+
+**Caso de uso típico — calle frontera:** una calle cuyos portales `3,5-8,12,24` pertenecen a Zona 1 y el resto a Zona 2:
+- Zona 1 → constraint `only_range`, rango `3,5-8,12,24`
+- Zona 2 → constraint `except_range`, rango `3,5-8,12,24`
+
+La calle queda cubierta al 100% entre las dos zonas sin solapamiento ni huecos.
+
+---
+
+### Paso 4 — Authorizer: lógica de verificación ✅
+
+**`app/services/census_action_authorizer.rb`:**
+```ruby
+class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
+  def authorize
+    return [:missing, { action: :authorize }] if authorization.blank?
+    return [:ok, {}] if zones.blank?
+    return [:unauthorized, {}] if authorization_street.blank? || authorization_number.blank?
+    @fields = { street: authorization_street, street_number: authorization_number }
+    return [:ok, {}] if belongs_to_zone?
+    [:unauthorized, { fields: @fields }]
+  end
+
+  private
+
+  def zones
+    options["zones"]
+  end
+
+  def authorization_street
+    authorization.metadata["street"]
+  end
+
+  def authorization_number
+    authorization.metadata["street_number"]
+  end
+
+  def belongs_to_zone?
+    GaldakaoZoneStreet
+      .joins(:street)
+      .where(zone_id: zones.split(","))
+      .find_each do |zone_street|
+        if street_valid?(zone_street)
+          @fields.except!(:street)
+          return true if number_valid?(zone_street)
+        end
+      end
+    false
+  end
+
+  def street_valid?(zone_street)
+    authorization_street == zone_street.street&.name
+  end
+
+  def parse_range(numbers_range)
+    numbers_range.split(",").flat_map do |segment|
+      if segment.include?("-")
+        a, b = segment.split("-")
+        (a.to_i..b.to_i).to_a
+      else
+        segment.to_i
+      end
+    end
+  end
+
+  def number_valid?(zone_street)
+    passes_constraint = case zone_street.numbers_constraint
+                        when "even_numbers" then authorization_number.even?
+                        when "odd_numbers"  then authorization_number.odd?
+                        else true
+                        end
+    return false unless passes_constraint
+    return true if zone_street.numbers_range.blank?
+
+    portal_list = parse_range(zone_street.numbers_range)
+
+    case zone_street.numbers_constraint
+    when "except_range" then !portal_list.include?(authorization_number)
+    else                     portal_list.include?(authorization_number)
+    end
+  end
+
+  def manifest
+    Decidim.authorization_handlers.find { |m| m.name == "census_authorization_handler" }
+  end
+end
+```
+
+---
+
+### Paso 5 — Tests y verificación del flujo completo
+
+- [ ] Crear zonas de prueba con el nuevo formulario (varias calles por zona, calles repetidas con rangos distintos)
+- [ ] Asignar zonas a un permiso de componente
+- [ ] Autorizar usuario con padrón y verificar que el authorizer resuelve correctamente
+- [ ] Probar caso de calle frontera: misma calle, portales en zonas distintas
+- [ ] Probar usuario no empadronado en ninguna zona asignada → debe devolver `:unauthorized`
+
+---
+
+## API SOAP y handler de autorización
+
+### API SOAP ✅
+
+El endpoint `autenticar` devuelve calle y portal del ciudadano:
+
+```xml
+<autenticarResponse>
+  <autenticarResult>true</autenticarResult>
+  <calle>Calle Mayor</calle>
+  <portal>14</portal>
+</autenticarResponse>
+```
+
+Modelo de respuesta en Spyne (Python):
+```python
+class AutenticarResult(ComplexModel):
+    autenticarResult = Boolean
+    calle = Unicode
+    portal = Unicode  # se convierte a Integer en Ruby con .to_i
+```
+
+- [x] Actualizar API SOAP para devolver `<portal>`
+- [x] Actualizar handler para leer `street` y `street_number` de la respuesta
+
+### CensusAuthorizationHandler — metadata ✅
+
+El método `metadata` pasó del formato antiguo (campo `streets` como array) al nuevo con `street` y `street_number`:
+
+```ruby
+# ANTES
+streets: [response&.xpath("//autenticarResult/calle")&.text&.strip].compact.reject(&:empty?)
+
+# DESPUÉS
+street:        response&.xpath("//autenticarResult/calle")&.text&.strip,
+street_number: response&.xpath("//autenticarResult/portal")&.text&.strip&.to_i
+```
+
+Los registros existentes con formato antiguo no se migran — requieren revocar y volver a pasar el flujo de verificación.
+
+---
+
+## Notas RGPD
+
+- `street_number` se guarda en `decidim_authorizations.metadata` junto con `street` — dato personal de empadronamiento → misma base legal ya documentada (art. 6.1.e RGPD).
+- La tabla `galdakao_zones` y `galdakao_zone_streets` solo contienen nombres de calles y rangos de números, sin datos personales.
+- Los metadatos de autorización se borran si el usuario revoca su autorización en Decidim.

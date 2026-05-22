@@ -3,9 +3,8 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
     return [:missing, { action: :authorize }] if authorization.blank?
     return [:ok, {}] if zones.blank?
     return [:unauthorized, {}] if authorization_street.blank? || authorization_number.blank?
-    @fields = { street: authorization_street, street_number: authorization_number }
     return [:ok, {}] if belongs_to_zone?
-    [:unauthorized, { fields: @fields }]
+    [:unauthorized, { extra_explanation: { key: "not_in_zone", params: { scope: "census_authorization_handler" } } }]
   end
 
   private
@@ -28,7 +27,6 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
       .where(zone_id: zones.split(","))
       .find_each do |zone_street|
         if street_valid?(zone_street)
-          @fields.except!(:street)
           return true if number_valid?(zone_street)
         end
       end
