@@ -324,6 +324,112 @@ Flujo en dos niveles: primero se crea la zona con nombre, luego desde su detalle
 
 ---
 
+## Refactor constraints de portales en zone streets ✅
+
+### Contexto
+
+El modelo inicial de `GaldakaoZoneStreet` solo soportaba tres constraints (`all_numbers`, `odd_numbers`, `even_numbers`) y el campo `numbers_range` aceptaba únicamente un rango simple (`1-50`) o una lista de valores sueltos (`2,4,6,8`), pero no ambos mezclados.
+
+Galdakao tiene calles frontera entre zonas donde los portales asignados a cada zona no siguen un patrón par/impar ni un rango continuo — por ejemplo `3,5-8,12,24`. La solución es añadir dos nuevos constraints y un formato de rango flexible que permita expresar cualquier combinación.
+
+---
+
+### Diseño final de constraints
+
+| Valor | Integer en BD | Descripción | ¿Requiere rango? |
+|---|---|---|---|
+| `all_numbers`  | 0 | Todos los portales | No |
+| `odd_numbers`  | 1 | Solo impares | No |
+| `even_numbers` | 2 | Solo pares | No |
+| `only_range`   | 3 | Solo estos portales | Sí |
+| `except_range` | 4 | Todos menos estos | Sí |
+
+**No requiere migración** — el enum es un integer en BD y los nuevos valores (3 y 4) se añaden sin tocar los existentes.
+
+### Caso de uso típico — calle frontera
+
+Una calle cuyos portales `3,5-8,12,24` pertenecen a Zona 1 y el resto a Zona 2:
+
+- Zona 1 → constraint `only_range`, rango `3,5-8,12,24`
+- Zona 2 → constraint `except_range`, rango `3,5-8,12,24`
+
+La calle queda cubierta al 100% entre las dos zonas sin solapamiento ni huecos.
+
+---
+
+### Formato de rango flexible
+
+Antes solo se aceptaba un formato u otro. Ahora se acepta cualquier combinación de números sueltos y rangos separados por comas.
+
+**Regexp:**
+```ruby
+RANGE_REGEXP = /\A\d+(-\d+)?(,\d+(-\d+)?)*\z/.freeze
+```
+
+**Ejemplos válidos:**
+- `1` — portal suelto
+- `1-50` — rango continuo
+- `2,4,6,8` — lista de sueltos
+- `1,5-9,11,13` — mezcla
+- `3,5-8,12,24` — mezcla
+
+---
+
+### Archivos modificados
+
+**`app/models/galdakao_zone_street.rb`:**
+- Nuevo `RANGE_REGEXP` con formato flexible
+- Enum ampliado con `only_range` y `except_range`
+- Constante `RANGE_REQUIRED = %w[only_range except_range]`
+- Validación de presencia de `numbers_range` cuando el constraint lo requiere
+
+**`app/forms/decidim/admin/galdakao_zone_street_form.rb`:**
+- Nuevas opciones en `numbers_constraint_options`
+- Validación de presencia de `numbers_range` referenciando `GaldakaoZoneStreet::RANGE_REQUIRED`
+
+**`app/views/decidim/admin/zone_streets/_form.html.erb`:**
+- El campo `numbers_range` se muestra u oculta via JS según el constraint seleccionado
+- Solo visible cuando el constraint es `only_range` o `except_range`
+
+**`app/services/census_action_authorizer.rb`:**
+- Extraído método privado `parse_range` que expande segmentos mixtos (sueltos y rangos) a un array de integers
+- `number_valid?` usa `parse_range` en lugar del parser inline anterior
+- `except_range` niega el resultado de `portal_list.include?`
+
+### Estado final del authorizer — métodos afectados
+
+```ruby
+def parse_range(numbers_range)
+  numbers_range.split(",").flat_map do |segment|
+    if segment.include?("-")
+      a, b = segment.split("-")
+      (a.to_i..b.to_i).to_a
+    else
+      segment.to_i
+    end
+  end
+end
+
+def number_valid?(zone_street)
+  passes_constraint = case zone_street.numbers_constraint
+                      when "even_numbers" then authorization_number.even?
+                      when "odd_numbers"  then authorization_number.odd?
+                      else true
+                      end
+  return false unless passes_constraint
+  return true if zone_street.numbers_range.blank?
+
+  portal_list = parse_range(zone_street.numbers_range)
+
+  case zone_street.numbers_constraint
+  when "except_range" then !portal_list.include?(authorization_number)
+  else                     portal_list.include?(authorization_number)
+  end
+end
+```
+
+---
+
 ### Paso 4 — Authorizer: lógica de verificación
 
 El authorizer debe trabajar sobre `GaldakaoZoneStreet` en lugar de `GaldakaoZone` directamente.
