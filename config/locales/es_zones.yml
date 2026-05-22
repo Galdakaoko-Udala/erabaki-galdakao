@@ -17,6 +17,6 @@ es:
           update:
             success: "Zona actualizada correctamente"
             error: "Error al actualizar la zona"
-    authorization_handlers:
-      census_authorization_handler:
-        not_in_zone: "No cumples los requisitos de participación para este proceso."
+    actions:
+      unauthorized:
+        explanation: "No cumples los requisitos de participación para este proceso."

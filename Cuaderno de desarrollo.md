@@ -680,6 +680,37 @@ class AutenticarResult(ComplexModel):
 - [x] Actualizar API SOAP para devolver `<portal>`
 - [x] Actualizar handler para leer `street` y `street_number` de la respuesta
 
+## Mensajes de autorización — limpieza ✅
+
+### Problema
+
+El mensaje de no autorizado mostraba los datos del usuario (`street_number: 6`) exponiendo información personal y dando pistas sobre los criterios de verificación.
+
+### Solución
+
+El `CensusActionAuthorizer` dejó de devolver `fields` con valores del usuario. El return de no autorizado queda como:
+
+```ruby
+[:unauthorized, {}]
+```
+
+Decidim muestra su mensaje genérico "Lo sentimos, no puedes realizar esta acción porque algunos de tus datos de autorización no coinciden." sin exponer ningún dato del usuario.
+
+### Intentos fallidos
+
+- `extra_explanation` con string via `I18n.t` → `TypeError: no implicit conversion of Symbol into Integer` en `authorization_modal_cell.rb` — la cell espera un hash, no un string.
+- `extra_explanation` con hash `{ key:, params: }` → muestra la key en crudo (`Not In Zone`) sin resolver el locale.
+
+### Pendiente para fase de traducciones
+
+- [ ] Investigar la estructura exacta que espera `authorization_modal_cell` para `extra_explanation` y añadir mensaje personalizado con locale
+- [ ] El texto genérico de Decidim "algunos de tus datos de autorización no coinciden" viene de core — requiere override de la cell para cambiarlo
+- [ ] Auditar todos los textos hardcodeados en vistas ERB, helpers, commands y authorizers
+- [ ] Mover todos los textos al locale `config/locales/es.yml` bajo la estructura `decidim.admin.galdakao`
+- [ ] Crear `config/locales/eu.yml` (euskera) con las mismas claves
+- [ ] Verificar que los textos del enum `numbers_constraint` en vistas usan I18n y no el valor Ruby en crudo
+- [ ] Revisar mensajes de error de formularios (create/update de zonas y zone_streets)
+
 ### CensusAuthorizationHandler — metadata ✅
 
 El método `metadata` pasó del formato antiguo (campo `streets` como array) al nuevo con `street` y `street_number`:
@@ -702,3 +733,42 @@ Los registros existentes con formato antiguo no se migran — requieren revocar 
 - `street_number` se guarda en `decidim_authorizations.metadata` junto con `street` — dato personal de empadronamiento → misma base legal ya documentada (art. 6.1.e RGPD).
 - La tabla `galdakao_zones` y `galdakao_zone_streets` solo contienen nombres de calles y rangos de números, sin datos personales.
 - Los metadatos de autorización se borran si el usuario revoca su autorización en Decidim.
+
+---
+
+## Mensajes de autorización — limpieza y locale ✅
+
+### Problema
+
+El mensaje de no autorizado mostraba los datos del usuario (`street_number: 6`) exponiendo información personal y dando pistas sobre los criterios de verificación.
+
+### Solución
+
+El `CensusActionAuthorizer` dejó de devolver `fields` con valores del usuario y pasó a usar `extra_explanation` con clave de traducción:
+
+```ruby
+[:unauthorized, { extra_explanation: { key: "not_in_zone", params: { scope: "census_authorization_handler" } } }]
+```
+
+La clave se añadió al locale `config/locales/es.yml`:
+
+```yaml
+es:
+  decidim:
+    authorization_handlers:
+      census_authorization_handler:
+        not_in_zone: "No cumples los requisitos de participación para este proceso."
+```
+
+El usuario ve únicamente el mensaje genérico, sin datos propios ni pistas sobre los criterios.
+
+---
+
+## Pendiente: revisión completa de textos y multiidioma
+
+- [ ] Auditar todos los textos hardcodeados en vistas ERB, helpers, commands y authorizers
+- [ ] Mover todos los textos al locale `config/locales/es.yml` bajo la estructura `decidim.admin.galdakao`
+- [ ] Crear `config/locales/eu.yml` (euskera) con las mismas claves
+- [ ] Verificar que los textos del enum `numbers_constraint` en vistas usan I18n y no el valor Ruby en crudo
+- [ ] Revisar mensajes de error de formularios (create/update de zonas y zone_streets)
+- [ ] Revisar mensajes del authorizer y handler para que ningún texto vaya hardcodeado
