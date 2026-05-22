@@ -6,20 +6,39 @@
         { include_blank: "Selecciona una calle" },
         class: "form-control" %>
   </div>
+
   <div class="field">
     <%= f.label :numbers_constraint, "Restricción de números" %>
     <%= f.select :numbers_constraint,
         @form.numbers_constraint_options.to_a,
         {},
-        class: "form-control" %>
+        class: "form-control",
+        id: "zone_street_numbers_constraint" %>
   </div>
-  <div class="field">
-    <%= f.label :numbers_range, "Rango de portales (opcional)" %>
+
+  <div class="field" id="numbers_range_field" style="display:none;">
+    <%= f.label :numbers_range, "Portales" %>
     <%= f.text_field :numbers_range,
         class: "form-control",
         placeholder: "Ej: 1-50  o  2,4,6,8" %>
-    <p class="help-text">Dejar vacío para incluir todos los números de la restricción seleccionada.</p>
+    <p class="help-text">Usa <strong>1-50</strong> para un rango o <strong>2,4,6,8</strong> para portales sueltos.</p>
   </div>
+
   <%= f.submit "Guardar", class: "button" %>
   <%= link_to "Cancelar", decidim_admin.galdakao_zone_path(zone), class: "button hollow" %>
 <% end %>
+
+<script>
+  (function() {
+    const RANGE_CONSTRAINTS = ["only_range", "except_range"];
+    const select = document.getElementById("zone_street_numbers_constraint");
+    const field  = document.getElementById("numbers_range_field");
+
+    function toggle() {
+      field.style.display = RANGE_CONSTRAINTS.includes(select.value) ? "" : "none";
+    }
+
+    select.addEventListener("change", toggle);
+    toggle(); // estado inicial al cargar (edición)
+  })();
+</script>

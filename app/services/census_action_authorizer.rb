@@ -41,20 +41,24 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
 
   def number_valid?(zone_street)
     passes_constraint = case zone_street.numbers_constraint
-                        when "even_numbers" then authorization_number.even?
-                        when "odd_numbers"  then authorization_number.odd?
+                        when "even_numbers"  then authorization_number.even?
+                        when "odd_numbers"   then authorization_number.odd?
                         else true
                         end
     return false unless passes_constraint
     return true if zone_street.numbers_range.blank?
 
-    valids = if zone_street.numbers_range.include?(",")
-               zone_street.numbers_range.split(",").map(&:to_i)
-             else
-               a, b = zone_street.numbers_range.split("-")
-               (a.to_i..b.to_i).to_a
-             end
-    valids.include?(authorization_number)
+    portal_list = if zone_street.numbers_range.include?(",")
+                    zone_street.numbers_range.split(",").map(&:to_i)
+                  else
+                    a, b = zone_street.numbers_range.split("-")
+                    (a.to_i..b.to_i).to_a
+                  end
+
+    case zone_street.numbers_constraint
+    when "except_range" then !portal_list.include?(authorization_number)
+    else                     portal_list.include?(authorization_number)
+    end
   end
 
   def manifest
