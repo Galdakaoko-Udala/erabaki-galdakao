@@ -468,6 +468,78 @@ La clave `census_authorization_handler.unauthorized_zone` en `config/locales/es_
 
 ---
 
+## Paso 6 — Accesos a gestión de calles y zonas en el panel de autorizaciones ✅
+
+### Objetivo
+
+Añadir accesos directos a las secciones de gestión de calles (`/admin/galdakao`) y zonas (`/admin/galdakao/zones`) desde el panel de métodos de verificación (`/admin/authorization_workflows`), evitando que el administrador tenga que conocer las URLs de memoria.
+
+### Solución
+
+Sobreescritura de la vista `decidim/admin/authorization_workflows/index.html.erb` del gem `decidim-admin`, añadiendo una tercera columna "Gestión" con los dos enlaces, condicionada al handler `census_authorization_handler`.
+
+**Notas importantes sobre el entorno:**
+- El `view_paths` de Rails tiene `/app/app/views` como primera ruta (volumen montado desde `/opt/decidim_production/app/views`). Las copias a `/app/views` son ignoradas por Rails.
+- `cache_template_loading` está en `true` en producción — cualquier cambio en vistas requiere `docker compose restart app` para invalidar la caché.
+- Antes de cualquier cambio: comprobar siempre dónde busca Rails las vistas (`ActionController::Base.view_paths`) y verificar que el archivo ha llegado al sitio correcto antes de hacer restart.
+
+### Archivo creado
+
+`app/views/decidim/admin/authorization_workflows/index.html.erb`
+
+Idéntico a la vista original del gem (`decidim-admin`), con la columna adicional en `<thead>`:
+
+```erb
+<th class="!text-left">Gestión</th>
+```
+
+Y la celda correspondiente en el `<tbody>`:
+
+```erb
+<td class="!text-left">
+  <% if workflow.key == "census_authorization_handler" %>
+    <div class="flex gap-2">
+      <%= link_to "Calles", decidim_admin.galdakao_index_path, class: "button button__sm button__secondary" %>
+      <%= link_to "Zonas", decidim_admin.galdakao_zones_path, class: "button button__sm button__secondary" %>
+    </div>
+  <% end %>
+</td>
+```
+
+### Helpers de ruta utilizados
+
+| Enlace | Helper | Ruta |
+|---|---|---|
+| Calles | `decidim_admin.galdakao_index_path` | `/admin/galdakao` |
+| Zonas | `decidim_admin.galdakao_zones_path` | `/admin/galdakao/zones` |
+
+Las dos secciones son independientes:
+- **Calles** → sincronización del listado de calles del municipio desde la API (index + sync + check)
+- **Zonas** → gestión del modelo de zonas y sus calles asociadas (CRUD completo)
+
+### Procedimiento de despliegue
+
+Las vistas ERB se sirven desde el volumen montado — no requieren rebuild de imagen. Sin embargo, con `cache_template_loading: true` (producción), Rails cachea las vistas en memoria al arrancar. Cualquier cambio en una vista requiere restart para invalidar la caché:
+
+```bash
+docker compose restart app
+```
+
+### Cómo verificar antes de hacer cambios
+
+```bash
+# Confirmar dónde busca Rails las vistas
+docker compose exec app rails runner "puts ActionController::Base.view_paths.map(&:to_s)"
+
+# Confirmar que el archivo llegó al sitio correcto
+docker compose exec app ls /app/app/views/decidim/admin/authorization_workflows/
+
+# Confirmar el contenido
+docker compose exec app cat /app/app/views/decidim/admin/authorization_workflows/index.html.erb
+```
+
+---
+
 ## Pendientes
 
 - [ ] Traducir valores del enum `numbers_constraint` al castellano en las vistas
