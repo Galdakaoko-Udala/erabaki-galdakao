@@ -1,8 +1,8 @@
 <%= decidim_form_for @form, url: (@form.id ? decidim_admin.galdakao_zone_path(@form.id) : decidim_admin.galdakao_zones_path) do |f| %>
   <div class="field">
-    <%= f.label :name, "Nombre de la zona" %>
+    <%= f.label :name, t("decidim.admin.galdakao.zones_form.name_label") %>
     <%= f.text_field :name, class: "form-control" %>
   </div>
-  <%= f.submit "Guardar", class: "button" %>
-  <%= link_to "Cancelar", decidim_admin.galdakao_zones_path, class: "button hollow" %>
+  <%= f.submit t("decidim.admin.galdakao.zones_form.submit"), class: "button" %>
+  <%= link_to t("decidim.admin.galdakao.zones_form.cancel"), decidim_admin.galdakao_zones_path, class: "button hollow" %>
 <% end %>

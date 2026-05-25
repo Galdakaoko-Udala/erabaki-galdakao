@@ -1,13 +1,13 @@
 <div class="container">
   <div class="row">
     <div class="columns">
-      <h2>Zonas de verificación</h2>
-      <%= link_to "Nueva zona", decidim_admin.new_galdakao_zone_path, class: "button" %>
+      <h2><%= t("decidim.admin.galdakao.zones_index.title") %></h2>
+      <%= link_to t("decidim.admin.galdakao.zones_index.new_zone"), decidim_admin.new_galdakao_zone_path, class: "button" %>
       <table class="table-list">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Nº calles</th>
+            <th><%= t("decidim.admin.galdakao.zones_index.col_name") %></th>
+            <th><%= t("decidim.admin.galdakao.zones_index.col_streets") %></th>
             <th></th>
           </tr>
         </thead>
@@ -17,12 +17,12 @@
               <td><%= link_to zone.name, decidim_admin.galdakao_zone_path(zone) %></td>
               <td><%= zone.zone_streets.count %></td>
               <td class="table-list__actions">
-                <%= link_to "Editar", decidim_admin.edit_galdakao_zone_path(zone), class: "button small" %>
-                <%= button_to "Eliminar",
+                <%= link_to t("decidim.admin.galdakao.zones_index.edit"), decidim_admin.edit_galdakao_zone_path(zone), class: "button small" %>
+                <%= button_to t("decidim.admin.galdakao.zones_index.destroy"),
                     decidim_admin.galdakao_zone_path(zone),
                     method: :delete,
                     class: "button small alert",
-                    data: { confirm: "¿Seguro que quieres eliminar esta zona?" } %>
+                    data: { confirm: t("decidim.admin.galdakao.zones_index.destroy_confirm") } %>
               </td>
             </tr>
           <% end %>

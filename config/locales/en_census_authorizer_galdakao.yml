@@ -1,0 +1,97 @@
+en:
+  # Root keys called directly by the Ruby handler:
+  #   I18n.t("census_authorization_handler.service_unavailable")
+  #   I18n.t("census_authorization_handler.no_record")
+  #   I18n.t("census_authorization_handler.invalid_document")
+  census_authorization_handler:
+    service_unavailable: "The municipal register service is currently unavailable."
+    no_record: "No record was found with the provided data."
+    invalid_document: "The document format is not valid."
+
+  decidim:
+    admin:
+      galdakao:
+        sync:
+          success: "Streets synchronised successfully."
+        index:
+          title: "Galdakao Panel — Municipal Register Management"
+          last_sync: "Last synchronisation: %{time}"
+          never_synced: "Streets have not been synchronised yet."
+          sync_button: "Synchronise streets from the register"
+          sync_confirm: "Are you sure you want to synchronise the streets? This may take a few seconds."
+          streets_link: "View streets list"
+        streets:
+          title: "Synchronised streets"
+          name: "Street name"
+          updated_at: "Last updated"
+        zones:
+          index:
+            title: "Verification zones"
+          new:
+            title: "New zone"
+          edit:
+            title: "Edit zone"
+          destroy:
+            success: "Zone deleted successfully"
+          create:
+            success: "New zone created successfully"
+            error: "Error creating the zone: %{error}"
+          update:
+            success: "Zone updated successfully"
+            error: "Error updating the zone: %{error}"
+        zone_streets:
+          form:
+            street_label: "Street"
+            street_blank: "Select a street"
+            numbers_constraint_label: "Number constraint"
+            numbers_range_label: "Doorways"
+            numbers_range_help: "Use <strong>1-50</strong> for a range or <strong>2,4,6,8</strong> for individual numbers."
+            submit: "Save"
+            cancel: "Cancel"
+        zones_form:
+          name_label: "Zone name"
+          submit: "Save"
+          cancel: "Cancel"
+        zones_index:
+          title: "Verification zones"
+          new_zone: "New zone"
+          col_name: "Name"
+          col_streets: "No. streets"
+          edit: "Edit"
+          destroy: "Delete"
+          destroy_confirm: "Are you sure you want to delete this zone?"
+        zones_show:
+          edit_zone: "Edit zone"
+          back: "Back"
+          streets_title: "Streets in this zone"
+          add_street: "Add street"
+          col_street: "Street"
+          col_constraint: "Constraint"
+          col_range: "Range"
+          col_actions: "Actions"
+          all: "All"
+          edit: "Edit"
+          destroy: "Delete"
+        authorization_workflows:
+          management: "Management"
+    authorization_handlers:
+      admin:
+        census_authorization_handler:
+          help:
+            - "Citizens must be registered in the Galdakao municipal register to verify their identity."
+            - "Verification is performed against the municipal register using a national ID (DNI/NIE) and date of birth."
+      census_authorization_handler:
+        name: "Galdakao municipal register"
+        explanation: "Verify your identity using the Galdakao municipal register."
+        fields:
+          document_number: "Document number (DNI/NIE)"
+          date_of_birth: "Date of birth"
+        invalid_document: "We could not verify your identity with the data provided."
+        connection_error: "Could not connect to the register service. Please try again later."
+        service_unavailable: "The municipal register service is currently unavailable."
+        no_record: "No record was found with the data provided."
+        unauthorized_zone: "Your address is not included in the zones enabled to participate in this process."
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: "You do not meet the participation requirements for this process."

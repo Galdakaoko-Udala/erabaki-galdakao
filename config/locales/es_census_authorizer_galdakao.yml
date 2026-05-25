@@ -1,0 +1,103 @@
+es:
+  # Claves raíz que llama el handler Ruby directamente:
+  #   I18n.t("census_authorization_handler.service_unavailable")
+  #   I18n.t("census_authorization_handler.no_record")
+  #   I18n.t("census_authorization_handler.invalid_document")
+  census_authorization_handler:
+    service_unavailable: "El servicio del padrón no está disponible en este momento."
+    no_record: "No se ha encontrado ningún registro con los datos proporcionados."
+    invalid_document: "El formato del documento no es válido."
+
+  decidim:
+    admin:
+      galdakao:
+        sync:
+          success: "Calles sincronizadas correctamente."
+        index:
+          title: "Panel de Galdakao — Gestión del Padrón"
+          last_sync: "Última sincronización: %{time}"
+          never_synced: "Las calles todavía no han sido sincronizadas."
+          sync_button: "Sincronizar calles desde el padrón"
+          sync_confirm: "¿Seguro que quieres sincronizar las calles? Esto puede tardar unos segundos."
+          streets_link: "Ver listado de calles"
+        streets:
+          title: "Calles sincronizadas"
+          name: "Nombre de la calle"
+          updated_at: "Última actualización"
+        zones:
+          index:
+            title: "Zonas de verificación"
+          new:
+            title: "Nueva zona"
+          edit:
+            title: "Editar zona"
+          destroy:
+            success: "Zona eliminada correctamente"
+          create:
+            success: "Nueva zona creada correctamente"
+            error: "Error al crear la zona: %{error}"
+          update:
+            success: "Zona actualizada correctamente"
+            error: "Error al actualizar la zona: %{error}"
+        zone_streets:
+          form:
+            street_label: "Calle"
+            street_blank: "Selecciona una calle"
+            numbers_constraint_label: "Restricción de números"
+            numbers_range_label: "Portales"
+            numbers_range_help: "Usa <strong>1-50</strong> para un rango o <strong>2,4,6,8</strong> para portales sueltos."
+            submit: "Guardar"
+            cancel: "Cancelar"
+        zones_form:
+          name_label: "Nombre de la zona"
+          submit: "Guardar"
+          cancel: "Cancelar"
+        zones_index:
+          title: "Zonas de verificación"
+          new_zone: "Nueva zona"
+          col_name: "Nombre"
+          col_streets: "Nº calles"
+          edit: "Editar"
+          destroy: "Eliminar"
+          destroy_confirm: "¿Seguro que quieres eliminar esta zona?"
+        zones_show:
+          edit_zone: "Editar zona"
+          back: "Volver"
+          streets_title: "Calles de esta zona"
+          add_street: "Añadir calle"
+          col_street: "Calle"
+          col_constraint: "Restricción"
+          col_range: "Rango"
+          col_actions: "Acciones"
+          all: "Todos"
+          edit: "Editar"
+          destroy: "Eliminar"
+        authorization_workflows:
+          management: "Gestión"
+    authorization_handlers:
+      admin:
+        census_authorization_handler:
+          help:
+            - "Los ciudadanos deben estar empadronados en Galdakao para verificarse."
+            - "La verificación se realiza contra el padrón municipal mediante DNI/NIE y fecha de nacimiento."
+      census_authorization_handler:
+        # NOTA: name y explanation también están en es.yml (desactualizados).
+        # No se eliminan de es.yml en este commit — se hará en un commit
+        # posterior de forma atómica. Mientras tanto estas claves tienen
+        # precedencia porque Rails carga los archivos de módulo después.
+        name: "Padrón municipal de Galdakao"
+        explanation: "Verifica tu identidad mediante el padrón municipal de Galdakao."
+        fields:
+          document_number: "Número de documento (DNI/NIE)"
+          date_of_birth: "Fecha de nacimiento"
+        invalid_document: "No hemos podido verificar tu identidad con los datos proporcionados."
+        connection_error: "No ha sido posible conectar con el servicio del padrón. Por favor, inténtalo más tarde."
+        service_unavailable: "El servicio del padrón no está disponible en este momento."
+        no_record: "No se ha encontrado ningún registro con los datos proporcionados."
+        unauthorized_zone: "Tu domicilio no está incluido en las zonas habilitadas para participar en este proceso."
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: "No cumples los requisitos de participación para este proceso."
+
+# Claves añadidas para vistas zones y zone_streets

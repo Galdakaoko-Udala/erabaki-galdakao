@@ -1,0 +1,97 @@
+eu:
+  # Claves raíz que llama el handler Ruby directamente:
+  #   I18n.t("census_authorization_handler.service_unavailable")
+  #   I18n.t("census_authorization_handler.no_record")
+  #   I18n.t("census_authorization_handler.invalid_document")
+  census_authorization_handler:
+    service_unavailable: "Erroldaren zerbitzua ez dago erabilgarri une honetan."
+    no_record: "Ez da aurkitu erregistrorik emandako datuekin."
+    invalid_document: "Agiriaren formatua ez da baliozkoa."
+
+  decidim:
+    admin:
+      galdakao:
+        sync:
+          success: "Kaleak ondo sinkronizatu dira."
+        index:
+          title: "Galdakaoko panela — Erroldaren kudeaketa"
+          last_sync: "Azken sinkronizazioa: %{time}"
+          never_synced: "Kaleak oraindik ez dira sinkronizatu."
+          sync_button: "Sinkronizatu kaleak erroldatik"
+          sync_confirm: "Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuk behar izan ditzake."
+          streets_link: "Ikusi kaleen zerrenda"
+        streets:
+          title: "Sinkronizatutako kaleak"
+          name: "Kalearen izena"
+          updated_at: "Azken eguneraketa"
+        zones:
+          index:
+            title: "Egiaztapen-guneak"
+          new:
+            title: "Gune berria"
+          edit:
+            title: "Gunea editatu"
+          destroy:
+            success: "Gunea zuzen ezabatu da"
+          create:
+            success: "Gune berria zuzen sortu da"
+            error: "Errorea gunea sortzean: %{error}"
+          update:
+            success: "Gunea zuzen eguneratu da"
+            error: "Errorea gunea eguneratzean: %{error}"
+        zone_streets:
+          form:
+            street_label: "Kalea"
+            street_blank: "Hautatu kale bat"
+            numbers_constraint_label: "Zenbakien murrizketa"
+            numbers_range_label: "Ateak"
+            numbers_range_help: "Erabili <strong>1-50</strong> tarte baterako edo <strong>2,4,6,8</strong> ate solteentzat."
+            submit: "Gorde"
+            cancel: "Utzi"
+        zones_form:
+          name_label: "Gunearen izena"
+          submit: "Gorde"
+          cancel: "Utzi"
+        zones_index:
+          title: "Egiaztapen-guneak"
+          new_zone: "Gune berria"
+          col_name: "Izena"
+          col_streets: "Kale kop."
+          edit: "Editatu"
+          destroy: "Ezabatu"
+          destroy_confirm: "Ziur zaude gune hau ezabatu nahi duzula?"
+        zones_show:
+          edit_zone: "Gunea editatu"
+          back: "Itzuli"
+          streets_title: "Guneko kaleak"
+          add_street: "Kale bat gehitu"
+          col_street: "Kalea"
+          col_constraint: "Murrizketa"
+          col_range: "Tartea"
+          col_actions: "Ekintzak"
+          all: "Guztiak"
+          edit: "Editatu"
+          destroy: "Ezabatu"
+        authorization_workflows:
+          management: "Kudeaketa"
+    authorization_handlers:
+      admin:
+        census_authorization_handler:
+          help:
+            - "Herritarrak Galdakaon erroldatuta egon behar dira egiaztatzeko."
+            - "Egiaztapena udal-erroldaren aurka egiten da NAN/AIZ eta jaiotze-dataren bidez."
+      census_authorization_handler:
+        name: "Galdakaoko udal erroldea"
+        explanation: "Egiaztatu zure nortasuna Galdakaoko udal erroldearen bidez."
+        fields:
+          document_number: "Agiri-zenbakia (NAN/AIZ)"
+          date_of_birth: "Jaiotze-data"
+        invalid_document: "Ezin izan da zure nortasuna egiaztatu emandako datuekin."
+        connection_error: "Ezin izan da erroldaren zerbitzuarekin konektatu. Mesedez, saiatu beranduago."
+        service_unavailable: "Erroldaren zerbitzua ez dago erabilgarri une honetan."
+        no_record: "Ez da aurkitu erregistrorik emandako datuekin."
+        unauthorized_zone: "Zure helbidea ez dago prozesu honetan parte hartzeko gaitutako guneetan."
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: "Ez dituzu prozesu honetarako parte-hartze baldintzak betetzen."

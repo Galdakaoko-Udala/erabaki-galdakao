@@ -1,14 +1,14 @@
 <%= decidim_form_for @form, url: (@form.id ? decidim_admin.galdakao_zone_zone_street_path(zone, @form.id) : decidim_admin.galdakao_zone_zone_streets_path(zone)) do |f| %>
   <div class="field">
-    <%= f.label :street_id, "Calle" %>
+    <%= f.label :street_id, t("decidim.admin.galdakao.zone_streets.form.street_label") %>
     <%= f.select :street_id,
         GaldakaoStreet.where(organization: current_organization).order(name: :asc).map { |s| [s.name, s.id] },
-        { include_blank: "Selecciona una calle" },
+        { include_blank: t("decidim.admin.galdakao.zone_streets.form.street_blank") },
         class: "form-control" %>
   </div>
 
   <div class="field">
-    <%= f.label :numbers_constraint, "Restricción de números" %>
+    <%= f.label :numbers_constraint, t("decidim.admin.galdakao.zone_streets.form.numbers_constraint_label") %>
     <%= f.select :numbers_constraint,
         @form.numbers_constraint_options.to_a,
         {},
@@ -17,15 +17,15 @@
   </div>
 
   <div class="field" id="numbers_range_field" style="display:none;">
-    <%= f.label :numbers_range, "Portales" %>
+    <%= f.label :numbers_range, t("decidim.admin.galdakao.zone_streets.form.numbers_range_label") %>
     <%= f.text_field :numbers_range,
         class: "form-control",
         placeholder: "Ej: 1-50  o  2,4,6,8" %>
-    <p class="help-text">Usa <strong>1-50</strong> para un rango o <strong>2,4,6,8</strong> para portales sueltos.</p>
+    <p class="help-text"><%= t("decidim.admin.galdakao.zone_streets.form.numbers_range_help").html_safe %></p>
   </div>
 
-  <%= f.submit "Guardar", class: "button" %>
-  <%= link_to "Cancelar", decidim_admin.galdakao_zone_path(zone), class: "button hollow" %>
+  <%= f.submit t("decidim.admin.galdakao.zone_streets.form.submit"), class: "button" %>
+  <%= link_to t("decidim.admin.galdakao.zone_streets.form.cancel"), decidim_admin.galdakao_zone_path(zone), class: "button hollow" %>
 <% end %>
 
 <script>
@@ -39,6 +39,6 @@
     }
 
     select.addEventListener("change", toggle);
-    toggle(); // estado inicial al cargar (edición)
+    toggle();
   })();
 </script>
