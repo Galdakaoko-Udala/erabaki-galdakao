@@ -141,17 +141,6 @@ end
 
 Decidim usa ese atributo para generar el campo del formulario de permisos. Como se llamaba `:streets`, generaba `<div class="streets_container">` con un input `[census_authorization_handler][streets]`.
 
-### Cadena completa de Decidim
-
-```
-register_workflow options
-  → PermissionForm#options_attributes
-    → _options_form.html.erb
-      → settings_attribute_input
-        → genera div con clase {nombre}_container
-        → genera input con name [census_authorization_handler][{nombre}]
-```
-
 ### Solución
 
 Cambiar `:streets` por `:zones` en `config/initializers/decidim.rb`:
@@ -191,13 +180,7 @@ import "../../resource_permissions_multiselect";
 
 Este archivo se hookea automáticamente dentro del pack `decidim_admin`, con acceso al jQuery ya inicializado por Decidim. No hace falta exponer jQuery globalmente.
 
-El header del admin queda igual que el original de Decidim:
-```erb
-<%= stylesheet_pack_tag "decidim_core", "decidim_admin", media: "all" %>
-<%= javascript_pack_tag "decidim_core", "decidim_admin", defer: false %>
-```
-
-El entrypoint `decidim_admin_select2.js` fue eliminado — no tenía referencias en vistas ni config, y el manifest no lo registraba.
+El entrypoint `decidim_admin_select2.js` fue eliminado.
 
 ---
 
@@ -207,7 +190,7 @@ El entrypoint `decidim_admin_select2.js` fue eliminado — no tenía referencias
 
 El componente de permisos de recursos usaba `select2 4.1.0-beta.1` para el multiselect de zonas en `census_authorization_handler`. Esta versión estaba rota con webpack/webpacker y causaba errores en el build.
 
-`tom-select ^2.2.2` ya estaba en `package.json` — no requirió instalar nada nuevo. Es compatible con webpack, no depende de jQuery y tiene paridad funcional con select2 para este caso de uso.
+`tom-select ^2.2.2` ya estaba en `package.json` — no requirió instalar nada nuevo.
 
 ### Archivos modificados
 
@@ -215,144 +198,44 @@ El componente de permisos de recursos usaba `select2 4.1.0-beta.1` para el multi
 - `app/packs/src/decidim/admin/application.js` — cambio de import CSS
 - `package.json` — eliminado select2
 
-### Cambios concretos
-
-**`application.js`:**
-```js
-// Antes:
-import "../../../stylesheets/select2.css";
-// Después:
-import "tom-select/dist/css/tom-select.default.css";
-```
-
-**`package.json`:** eliminada la línea `"select2": "4.1.0-beta.1"` de dependencies.
-
-**`resource_permissions_multiselect.js`:** reescrito sin jQuery. Lógica principal:
-
-- Selector: `input[id*='authorization_handlers_options'][id*='zones']` — Rails genera un `input type="text"`, no un `<select>`
-- El JS crea un `<select multiple>` dinámico, convierte el input original a `hidden` y sincroniza los valores via `onChange`
-- `preload: true` — carga la lista completa de zonas al abrir, igual que hacía select2 con query vacía
-- Endpoint `/admin/galdakao/zones` sin parámetros devuelve todas las zonas; con `?q=` filtra; con `?ids=` carga valores iniciales
-- Guard de doble inicialización via `input.dataset.tsInitialized` **y** `input.closest(".ts-wrapper")` — este segundo guard es crítico (ver bug resuelto abajo)
-- Al marcar el checkbox `census_authorization_handler` se llama `initAllSelects(true)` que abre el dropdown automáticamente tras inicializar
-
 ### Bug resuelto: doble inicialización de tom-select ✅
 
-**Síntoma:** el dropdown aparecía anidado dentro de sí mismo — un `.ts-wrapper` dentro de otro `.ts-wrapper`, con dos instancias activas y el dropdown interior visualmente recortado.
+**Síntoma:** el dropdown aparecía anidado dentro de sí mismo.
 
-**Causa raíz:** tom-select genera internamente un `<input type="hidden">` dentro del `.ts-control`. El selector `input[id*='authorization_handlers_options'][id*='zones']` lo encontraba en la segunda pasada de `initAllSelects` (disparada por el evento `change` del checkbox) e inicializaba tom-select sobre él de nuevo. El guard `input.dataset.tsInitialized` no era suficiente porque ese atributo no estaba presente en el input interno generado por tom-select.
-
-**Estructura DOM errónea (antes del fix):**
-```
-.ts-wrapper                      ← instancia exterior
-  .ts-control
-    input[interno de tom-select]  ← era seleccionado por el SELECTOR
-    .ts-wrapper                   ← instancia interior (segunda init)
-      .ts-control
-        ...items...
-      .ts-dropdown                ← dropdown interior, recortado
-  .ts-dropdown                    ← dropdown exterior (display:none)
-```
-
-**Fix aplicado — dos cambios en `resource_permissions_multiselect.js`:**
-
-1. En `initAllSelects`, añadir como primera guarda:
+**Fix:** añadir como primera guarda en `initAllSelects`:
 ```js
 if (input.closest(".ts-wrapper")) return;
 ```
 
-2. En `initCensusZonesSelect`, eliminar:
+### Bug resuelto: onChange no sincronizaba múltiples valores ✅
+
+**Síntoma:** al guardar con varias zonas seleccionadas, el servidor recibía solo un ID.
+
+**Solución:** usar `this.items` directamente:
 ```js
-// ← línea eliminada:
-select.dataset.tsInitialized = "1";
-```
-
-## Bug resuelto: onChange de tom-select no sincronizaba el input hidden ✅
-
-### Síntoma
-
-Al guardar el formulario de permisos de componente, el campo `zones` llegaba vacío al servidor aunque el multiselect mostrara zonas seleccionadas visualmente. Las zonas seleccionadas no se persistían.
-
-### Diagnóstico
-
-El `onChange` estaba definido así:
-
-```js
-onChange(values) {
-  input.value = this.getValue(true).join(",");
-}
-```
-
-El problema era doble:
-
-**1. `getValue()` ignora el parámetro.** Según el código fuente de tom-select, `getValue()` no acepta argumentos. Cuando el `<select>` subyacente tiene el atributo `multiple`, devuelve `this.items` directamente como array. El `true` se ignoraba silenciosamente.
-
-**2. `this` dentro de `onChange` no apunta a la instancia.** En el contexto del callback, `this` no era la instancia de tom-select sino el contexto de llamada interno, por lo que `this.getValue()` fallaba sin lanzar ningún error visible en consola.
-
-### Solución
-
-Usar `this.items` directamente, que es el array interno que tom-select mantiene actualizado en todo momento. Se sincroniza en dos sitios:
-
-- En `onChange` — al añadir o quitar una zona.
-- Al final de `onInitialize` — para que los valores precargados al editar un permiso existente también queden escritos en el hidden antes del primer cambio.
-
-```js
-onInitialize() {
-  if (existingValues.length === 0) return;
-  fetch(`${URL_ZONES}?ids=${existingValues.join(",")}`, {
-    headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" }
-  })
-    .then((r) => r.json())
-    .then((json) => {
-      const items = json.results || json;
-      items.forEach((item) => {
-        this.addOption({ id: String(item.id), text: item.text });
-        this.addItem(String(item.id), true);
-      });
-      this.refreshItems();
-      input.value = this.items.join(",");  // ← añadido
-    })
-    .catch(() => {});
-},
 onChange() {
-  input.value = this.items.join(",");  // ← simplificado, sin getValue
+  input.value = this.items.join(",");
 }
 ```
 
-### Por qué `this.items` es la fuente correcta
-
-`this.items` es el array interno de tom-select que contiene los valores actualmente seleccionados. Se actualiza en cada `addItem` / `removeItem` y es la misma fuente que usa tom-select internamente para sincronizar el `<select>` subyacente. No depende del DOM ni de `getValue()`.
-
-### Verificación
-
-El formulario de permisos guarda correctamente las zonas seleccionadas (ver captura — multiselects de "Crear una propuesta" y "Retirar" con varias zonas). Al reabrir el formulario, las zonas se recuperan y se precargan en el multiselect via `onInitialize` → `?ids=`.
-
----
+**Commit:** `0dc4b92c Fix OnChange for multiselect`
 
 ### Estado final — `app/packs/src/resource_permissions_multiselect.js`
 
 ```javascript
 import TomSelect from "tom-select";
-
 const URL_ZONES = "/admin/galdakao/zones";
-
 const SELECTOR = "input[id*='authorization_handlers_options'][id*='zones']";
 const CHECKBOX_SELECTOR = "input[type=checkbox][id*='census_authorization_handler']";
-
 const initCensusZonesSelect = (input) => {
   if (input.dataset.tsInitialized) return;
   input.dataset.tsInitialized = "1";
-
   const existingValues = input.value ? input.value.split(",").filter(Boolean) : [];
-
   const select = document.createElement("select");
   select.multiple = true;
-  select.name = input.name;
   select.id = input.id + "_ts";
-
   input.type = "hidden";
   input.parentNode.insertBefore(select, input.nextSibling);
-
   const ts = new TomSelect(select, {
     plugins: ["remove_button", "clear_button"],
     valueField: "id",
@@ -394,116 +277,20 @@ const initCensusZonesSelect = (input) => {
       input.value = this.items.join(",");
     }
   });
-
   return ts;
 };
-
 const initAllSelects = (openAfter = false) => {
   document.querySelectorAll(SELECTOR).forEach((input) => {
     if (input.closest(".ts-wrapper")) return;
     if (input.dataset.tsInitialized) return;
-
     const ts = initCensusZonesSelect(input);
     if (openAfter && ts) {
       setTimeout(() => ts.open(), 100);
     }
   });
 };
-
 document.addEventListener("DOMContentLoaded", () => {
   initAllSelects(false);
-
-  document.addEventListener("change", (e) => {
-    if (e.target.matches(CHECKBOX_SELECTOR) && e.target.checked) {
-      setTimeout(() => initAllSelects(true), 50);
-    }
-  });
-});
-```
-
-### Estado final — `app/packs/src/resource_permissions_multiselect.js`
-
-```javascript
-import TomSelect from "tom-select";
-
-const URL_ZONES = "/admin/galdakao/zones";
-
-const SELECTOR = "input[id*='authorization_handlers_options'][id*='zones']";
-const CHECKBOX_SELECTOR = "input[type=checkbox][id*='census_authorization_handler']";
-
-const initCensusZonesSelect = (input) => {
-  if (input.dataset.tsInitialized) return;
-  input.dataset.tsInitialized = "1";
-
-  const existingValues = input.value ? input.value.split(",").filter(Boolean) : [];
-
-  const select = document.createElement("select");
-  select.multiple = true;
-  select.name = input.name;
-  select.id = input.id + "_ts";
-
-  input.type = "hidden";
-  input.parentNode.insertBefore(select, input.nextSibling);
-
-  const ts = new TomSelect(select, {
-    plugins: ["remove_button", "clear_button"],
-    valueField: "id",
-    labelField: "text",
-    searchField: "text",
-    preload: true,
-    maxOptions: 200,
-    load(query, callback) {
-      fetch(`${URL_ZONES}?q=${encodeURIComponent(query)}`, {
-        headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" }
-      })
-        .then((r) => r.json())
-        .then((json) => callback(json.results || json))
-        .catch(() => callback());
-    },
-    render: {
-      option: (data, escape) => `<div>${escape(data.text)}</div>`,
-      item:   (data, escape) => `<div>${escape(data.text)}</div>`,
-      no_results: () => `<div class="no-results">No se han encontrado resultados</div>`
-    },
-    onInitialize() {
-      if (existingValues.length === 0) return;
-      fetch(`${URL_ZONES}?ids=${existingValues.join(",")}`, {
-        headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" }
-      })
-        .then((r) => r.json())
-        .then((json) => {
-          const items = json.results || json;
-          items.forEach((item) => {
-            this.addOption({ id: String(item.id), text: item.text });
-            this.addItem(String(item.id), true);
-          });
-          this.refreshItems();
-        })
-        .catch(() => {});
-    },
-    onChange(values) {
-      input.value = values.join(",");
-    }
-  });
-
-  return ts;
-};
-
-const initAllSelects = (openAfter = false) => {
-  document.querySelectorAll(SELECTOR).forEach((input) => {
-    if (input.closest(".ts-wrapper")) return;
-    if (input.dataset.tsInitialized) return;
-
-    const ts = initCensusZonesSelect(input);
-    if (openAfter && ts) {
-      setTimeout(() => ts.open(), 100);
-    }
-  });
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  initAllSelects(false);
-
   document.addEventListener("change", (e) => {
     if (e.target.matches(CHECKBOX_SELECTOR) && e.target.checked) {
       setTimeout(() => initAllSelects(true), 50);
@@ -516,10 +303,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 ## Hoja de ruta: rediseño del modelo de zonas
 
-### Contexto
-
-El modelo inicial (`galdakao_zones`) solo soportaba una calle con un rango por zona. Galdakao necesita zonas con múltiples calles, donde una misma calle puede pertenecer a varias zonas con rangos de portales distintos (calles frontera entre zonas).
-
 ### Diseño de datos final
 
 ```
@@ -530,20 +313,8 @@ galdakao_zone_streets
   id, zone_id, street_id, numbers_constraint, numbers_range
 ```
 
-Una zona tiene N entradas calle+rango. La misma calle puede aparecer en varias zonas con rangos distintos.
-
----
-
 ### Paso 1 — Migración de base de datos ✅
 
-**Proceso ejecutado:**
-
-1. Bajar la migración original:
-```bash
-docker compose exec app rails db:migrate:down VERSION=20260428000002
-```
-
-2. Reescribir `db/migrate/20260428000002_create_galdakao_zones.rb`:
 ```ruby
 class CreateGaldakaoZones < ActiveRecord::Migration[7.0]
   def change
@@ -564,407 +335,145 @@ class CreateGaldakaoZones < ActiveRecord::Migration[7.0]
 end
 ```
 
-3. Copiar al contenedor y migrar. El migrate falló en bucle porque el registro quedó marcado como ejecutado tras crear solo la primera tabla. Solución:
-```bash
-docker compose exec app rails runner "ActiveRecord::Base.connection.execute(\"DELETE FROM schema_migrations WHERE version = '20260428000002'\")"
-docker compose exec app rails db:migrate
-```
-
-**Resultado:** Tres tablas activas en BD:
-- `galdakao_streets` — calles del municipio (preexistente)
-- `galdakao_zones` — zonas (id, nombre, organización)
-- `galdakao_zone_streets` — relación zona↔calle con constraint y rango de portales
-
----
-
 ### Paso 2 — Modelos Ruby ✅
 
-**`app/models/galdakao_zone.rb`:**
-```ruby
-class GaldakaoZone < ApplicationRecord
-  belongs_to :organization,
-             foreign_key: "decidim_organization_id",
-             class_name: "Decidim::Organization"
-  has_many :zone_streets,
-           class_name: "GaldakaoZoneStreet",
-           foreign_key: :zone_id,
-           dependent: :destroy
-  has_many :streets, through: :zone_streets, class_name: "GaldakaoStreet"
-
-  validates :name, presence: true
-end
-```
-
-**`app/models/galdakao_zone_street.rb`:**
-```ruby
-# frozen_string_literal: true
-class GaldakaoZoneStreet < ApplicationRecord
-  RANGE_REGEXP = /\A\d+(-\d+)?(,\d+(-\d+)?)*\z/.freeze
-
-  belongs_to :zone, class_name: "GaldakaoZone"
-  belongs_to :street, class_name: "GaldakaoStreet"
-
-  enum numbers_constraint: {
-    all_numbers:  0,
-    odd_numbers:  1,
-    even_numbers: 2,
-    only_range:   3,
-    except_range: 4
-  }
-
-  RANGE_REQUIRED = %w[only_range except_range].freeze
-
-  validates :street, :numbers_constraint, presence: true
-  validates :numbers_range,
-            presence: true,
-            if: ->(zs) { zs.numbers_constraint.in?(RANGE_REQUIRED) }
-  validates :numbers_range,
-            format: { with: GaldakaoZoneStreet::RANGE_REGEXP },
-            if: ->(zs) { zs.numbers_range.present? }
-end
-```
-
----
+`GaldakaoZone` y `GaldakaoZoneStreet` con enum `numbers_constraint` (all_numbers, odd_numbers, even_numbers, only_range, except_range) y validaciones de rango.
 
 ### Paso 3 — Admin: CRUD de zonas y calles ✅
 
-Flujo en dos niveles: primero se crea la zona con nombre, luego desde su detalle se gestionan las calles una a una.
-
-**Archivos creados/modificados:**
-
-- `app/forms/decidim/admin/galdakao_zone_form.rb` — solo atributo `name`
-- `app/forms/decidim/admin/galdakao_zone_street_form.rb` — `street_id`, `numbers_constraint`, `numbers_range`
-- `app/commands/decidim/admin/create_galdakao_zone.rb` — crea zona con nombre
-- `app/commands/decidim/admin/update_galdakao_zone.rb` — actualiza nombre, recibe zona como parámetro
-- `app/commands/decidim/admin/create_galdakao_zone_street.rb` — crea entrada calle+rango en una zona
-- `app/commands/decidim/admin/update_galdakao_zone_street.rb` — actualiza entrada calle+rango
-- `app/controllers/decidim/admin/zones_controller.rb` — CRUD de zonas + acción `show`
-- `app/controllers/decidim/admin/zone_streets_controller.rb` — CRUD de calles de una zona
-- `app/views/decidim/admin/zones/` — index, show, new, edit, _form
-- `app/views/decidim/admin/zone_streets/` — new, edit, _form
-- `config/routes.rb` — `zone_streets` anidado dentro de `zones`
-
-**`app/forms/decidim/admin/galdakao_zone_street_form.rb`:**
-```ruby
-# frozen_string_literal: true
-module Decidim
-  module Admin
-    class GaldakaoZoneStreetForm < Form
-      mimic :galdakao_zone_street
-
-      attribute :street_id,           Integer
-      attribute :numbers_constraint,  String, default: "all_numbers"
-      attribute :numbers_range,       String
-
-      validates :street_id, :numbers_constraint, presence: true
-      validates :numbers_range,
-                presence: true,
-                if: ->(form) { form.numbers_constraint.in?(GaldakaoZoneStreet::RANGE_REQUIRED) }
-      validates :numbers_range,
-                format: { with: GaldakaoZoneStreet::RANGE_REGEXP },
-                if: ->(form) { form.numbers_range.present? }
-
-      def numbers_constraint_options
-        {
-          "Todos los números"          => "all_numbers",
-          "Números pares"              => "even_numbers",
-          "Números impares"            => "odd_numbers",
-          "Solo estos portales"        => "only_range",
-          "Todos menos estos portales" => "except_range"
-        }
-      end
-    end
-  end
-end
-```
-
-**`app/views/decidim/admin/zone_streets/_form.html.erb`:** el campo `numbers_range` se muestra u oculta via JS según el constraint — solo visible cuando es `only_range` o `except_range`, y en esos casos es obligatorio.
+Flujo en dos niveles: zona con nombre → gestión de calles desde su detalle.
 
 **Pendiente menor:**
-- [ ] Traducir valores del enum `numbers_constraint` al castellano en las vistas (actualmente muestra `all_numbers`, `even_numbers`, `odd_numbers`)
-
----
+- [ ] Traducir valores del enum `numbers_constraint` al castellano en las vistas
 
 ### Paso 3b — Refactor constraints de portales ✅
 
-El modelo inicial solo soportaba tres constraints. Se añadieron `only_range` y `except_range` y se amplió el formato de rango para aceptar combinaciones mixtas.
+| Valor | Descripción | ¿Requiere rango? |
+|---|---|---|
+| `all_numbers`  | Todos los portales | No |
+| `odd_numbers`  | Solo impares | No |
+| `even_numbers` | Solo pares | No |
+| `only_range`   | Solo estos portales | Sí |
+| `except_range` | Todos menos estos | Sí |
 
-**Diseño final de constraints:**
-
-| Valor | Integer en BD | Descripción | ¿Requiere rango? |
-|---|---|---|---|
-| `all_numbers`  | 0 | Todos los portales | No |
-| `odd_numbers`  | 1 | Solo impares | No |
-| `even_numbers` | 2 | Solo pares | No |
-| `only_range`   | 3 | Solo estos portales | Sí |
-| `except_range` | 4 | Todos menos estos | Sí |
-
-No requiere migración — el enum es un integer en BD y los nuevos valores (3 y 4) se añaden sin tocar los existentes.
-
-**Formato de rango flexible** — acepta cualquier combinación de números sueltos y rangos:
-```
-1          → portal suelto
-1-50       → rango continuo
-2,4,6,8    → lista de sueltos
-1,5-9,11,13 → mezcla
-3,5-8,12,24 → mezcla
-```
-
-**Caso de uso típico — calle frontera:** una calle cuyos portales `3,5-8,12,24` pertenecen a Zona 1 y el resto a Zona 2:
-- Zona 1 → constraint `only_range`, rango `3,5-8,12,24`
-- Zona 2 → constraint `except_range`, rango `3,5-8,12,24`
-
-La calle queda cubierta al 100% entre las dos zonas sin solapamiento ni huecos.
-
----
+Formato de rango acepta combinaciones: `1`, `1-50`, `2,4,6`, `1,5-9,11`.
 
 ### Paso 4 — Authorizer: lógica de verificación ✅
 
-**`app/services/census_action_authorizer.rb`:**
+`app/services/census_action_authorizer.rb` — verifica que el domicilio del ciudadano pertenece a alguna de las zonas asignadas al permiso del componente.
+
+### Paso 5 — Tests y verificación del flujo completo ✅
+
+- [x] Crear zonas de prueba con el nuevo formulario
+- [x] Asignar zonas a un permiso de componente
+- [x] Autorizar usuario con padrón y verificar que el authorizer resuelve correctamente
+- [x] Probar caso de calle frontera
+- [x] Probar usuario no empadronado en ninguna zona asignada → `:unauthorized`
+
+---
+
+## Bug resuelto: bucle infinito en flujo de onboarding con zona no autorizada ✅
+
+### Síntoma
+
+Cuando un usuario sin sesión intenta una acción restringida por zona, se loguea y se verifica correctamente en el padrón pero su domicilio no pertenece a la zona asignada, Decidim entra en un bucle infinito mostrándole el formulario de verificación indefinidamente.
+
+### Causa raíz
+
+Dos problemas encadenados en Decidim core (sin fix oficial a mayo 2026, confirmado en v0.26.2, v0.28.0.dev y v0.30.4):
+
+**Problema 1 — `AuthorizationStatus#current_path`:** para el código `:unauthorized`, `pending?` es `false`, así que llama a `root_path` del handler — que es el formulario de autorización. Debería devolver `nil`.
+
+**Problema 2 — `onboarding_pending`:** no gestiona explícitamente el caso "autorizado pero sin permiso de zona" antes de evaluar `single_authorization_required?`, causando que el flujo redirija al componente destino que a su vez rechaza al usuario y lo manda de vuelta al formulario.
+
+### Solución — monkey patch en `config/initializers/decidim_patches.rb`
+
 ```ruby
-class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
-  def authorize
-    return [:missing, { action: :authorize }] if authorization.blank?
-    return [:ok, {}] if zones.blank?
-    return [:unauthorized, {}] if authorization_street.blank? || authorization_number.blank?
-    @fields = { street: authorization_street, street_number: authorization_number }
-    return [:ok, {}] if belongs_to_zone?
-    [:unauthorized, { fields: @fields }]
-  end
-
-  private
-
-  def zones
-    options["zones"]
-  end
-
-  def authorization_street
-    authorization.metadata["street"]
-  end
-
-  def authorization_number
-    authorization.metadata["street_number"]
-  end
-
-  def belongs_to_zone?
-    GaldakaoZoneStreet
-      .joins(:street)
-      .where(zone_id: zones.split(","))
-      .find_each do |zone_street|
-        if street_valid?(zone_street)
-          @fields.except!(:street)
-          return true if number_valid?(zone_street)
-        end
-      end
-    false
-  end
-
-  def street_valid?(zone_street)
-    authorization_street == zone_street.street&.name
-  end
-
-  def parse_range(numbers_range)
-    numbers_range.split(",").flat_map do |segment|
-      if segment.include?("-")
-        a, b = segment.split("-")
-        (a.to_i..b.to_i).to_a
+Rails.application.config.after_initialize do
+  Decidim::ActionAuthorizer::AuthorizationStatus.class_eval do
+    def current_path(redirect_url: nil)
+      return nil if unauthorized?
+      return unless @authorization_handler
+      if pending?
+        @authorization_handler.resume_authorization_path(redirect_url:)
       else
-        segment.to_i
+        @authorization_handler.root_path(redirect_url:)
       end
     end
   end
 
-  def number_valid?(zone_street)
-    passes_constraint = case zone_street.numbers_constraint
-                        when "even_numbers" then authorization_number.even?
-                        when "odd_numbers"  then authorization_number.odd?
-                        else true
-                        end
-    return false unless passes_constraint
-    return true if zone_street.numbers_range.blank?
+  Decidim::Verifications::AuthorizationsController.class_eval do
+    def onboarding_pending
+      return redirect_back(fallback_location: decidim_verifications.authorizations_path) unless onboarding_manager.valid?
 
-    portal_list = parse_range(zone_street.numbers_range)
+      authorizations = action_authorized_to(onboarding_manager.action, **onboarding_manager.action_authorized_resources)
+      authorization_status = authorizations.global_code
 
-    case zone_street.numbers_constraint
-    when "except_range" then !portal_list.include?(authorization_number)
-    else                     portal_list.include?(authorization_number)
+      if authorization_status == :unauthorized
+        flash[:alert] = t("census_authorization_handler.unauthorized_zone", scope: "decidim.authorization_handlers")
+        redirect_path = onboarding_manager.component_path || onboarding_manager.finished_redirect_path || decidim.root_path
+        clear_onboarding_data!(current_user)
+        return redirect_to redirect_path
+      end
+
+      if authorizations.single_authorization_required?
+        flash.keep
+        return redirect_to(authorizations.statuses.first.current_path(redirect_url: decidim_verifications.onboarding_pending_authorizations_path))
+      end
+
+      return unless onboarding_manager.finished_verifications?(active_authorization_methods) || authorization_status == :unauthorized
+
+      clear_onboarding_data!(current_user)
+      redirect_to onboarding_manager.finished_redirect_path
     end
-  end
 
-  def manifest
-    Decidim.authorization_handlers.find { |m| m.name == "census_authorization_handler" }
+    private
+
+    def active_authorization_methods
+      Decidim::Verifications::Authorizations.new(organization: current_organization, user: current_user, granted: true).query.pluck(:name)
+    end
   end
 end
 ```
 
----
+### Resultado
 
-### Paso 5 — Tests y verificación del flujo completo
+El usuario es redirigido a la lista del componente con el mensaje "Tu domicilio no está incluido en las zonas habilitadas para participar en este proceso." (texto provisional — pendiente de validar con el técnico de participación).
 
-- [ ] Crear zonas de prueba con el nuevo formulario (varias calles por zona, calles repetidas con rangos distintos)
-- [ ] Asignar zonas a un permiso de componente
-- [ ] Autorizar usuario con padrón y verificar que el authorizer resuelve correctamente
-- [ ] Probar caso de calle frontera: misma calle, portales en zonas distintas
-- [ ] Probar usuario no empadronado en ninguna zona asignada → debe devolver `:unauthorized`
+**Commit:** `8a9af87a Fix onboarding loop unauthorized zone + locale message + decidim patches initializer`
+
+**Issue upstream:** https://github.com/decidim/decidim/issues/9826
 
 ---
 
-## API SOAP y handler de autorización
+## API SOAP y handler de autorización ✅
 
-### API SOAP ✅
+El endpoint `autenticar` devuelve calle y portal del ciudadano. El handler guarda `street` y `street_number` en los metadatos de la autorización.
 
-El endpoint `autenticar` devuelve calle y portal del ciudadano:
+---
 
-```xml
-<autenticarResponse>
-  <autenticarResult>true</autenticarResult>
-  <calle>Calle Mayor</calle>
-  <portal>14</portal>
-</autenticarResponse>
-```
+## Mensajes de autorización ✅
 
-Modelo de respuesta en Spyne (Python):
-```python
-class AutenticarResult(ComplexModel):
-    autenticarResult = Boolean
-    calle = Unicode
-    portal = Unicode  # se convierte a Integer en Ruby con .to_i
-```
+El override del locale `decidim.authorization_modals.content.unauthorized.explanation` en `config/locales/es_zones.yml` personaliza el mensaje del modal para todas las autorizaciones de la instalación (intencionado).
 
-- [x] Actualizar API SOAP para devolver `<portal>`
-- [x] Actualizar handler para leer `street` y `street_number` de la respuesta
-
-## Mensajes de autorización — limpieza ✅
-
-### Problema
-
-El mensaje de no autorizado mostraba los datos del usuario (`street_number: 6`) exponiendo información personal y dando pistas sobre los criterios de verificación.
-
-### Solución
-
-El `CensusActionAuthorizer` dejó de devolver `fields` con valores del usuario. El return de no autorizado queda como:
-
-```ruby
-[:unauthorized, {}]
-```
-
-Decidim muestra su mensaje genérico "Lo sentimos, no puedes realizar esta acción porque algunos de tus datos de autorización no coinciden." sin exponer ningún dato del usuario.
-
-### Intentos fallidos
-
-- `extra_explanation` con string via `I18n.t` → `TypeError: no implicit conversion of Symbol into Integer` en `authorization_modal_cell.rb` — la cell espera un hash, no un string.
-- `extra_explanation` con hash `{ key:, params: }` → muestra la key en crudo (`Not In Zone`) sin resolver el locale.
-
-### Pendiente para fase de traducciones
-
-- [ ] Investigar la estructura exacta que espera `authorization_modal_cell` para `extra_explanation` y añadir mensaje personalizado con locale
-- [ ] El texto genérico de Decidim "algunos de tus datos de autorización no coinciden" viene de core — requiere override de la cell para cambiarlo
-- [ ] Auditar todos los textos hardcodeados en vistas ERB, helpers, commands y authorizers
-- [ ] Mover todos los textos al locale `config/locales/es.yml` bajo la estructura `decidim.admin.galdakao`
-- [ ] Crear `config/locales/eu.yml` (euskera) con las mismas claves
-- [ ] Verificar que los textos del enum `numbers_constraint` en vistas usan I18n y no el valor Ruby en crudo
-- [ ] Revisar mensajes de error de formularios (create/update de zonas y zone_streets)
-
-### CensusAuthorizationHandler — metadata ✅
-
-El método `metadata` pasó del formato antiguo (campo `streets` como array) al nuevo con `street` y `street_number`:
-
-```ruby
-# ANTES
-streets: [response&.xpath("//autenticarResult/calle")&.text&.strip].compact.reject(&:empty?)
-
-# DESPUÉS
-street:        response&.xpath("//autenticarResult/calle")&.text&.strip,
-street_number: response&.xpath("//autenticarResult/portal")&.text&.strip&.to_i
-```
-
-Los registros existentes con formato antiguo no se migran — requieren revocar y volver a pasar el flujo de verificación.
+La clave `census_authorization_handler.unauthorized_zone` en `config/locales/es_zones.yml` personaliza el mensaje del flash específico del flujo de onboarding con zona no autorizada.
 
 ---
 
 ## Notas RGPD
 
 - `street_number` se guarda en `decidim_authorizations.metadata` junto con `street` — dato personal de empadronamiento → misma base legal ya documentada (art. 6.1.e RGPD).
-- La tabla `galdakao_zones` y `galdakao_zone_streets` solo contienen nombres de calles y rangos de números, sin datos personales.
+- Las tablas `galdakao_zones` y `galdakao_zone_streets` no contienen datos personales.
 - Los metadatos de autorización se borran si el usuario revoca su autorización en Decidim.
 
 ---
 
-## Mensajes de autorización — limpieza y locale ✅
+## Pendientes
 
-### Problema
-
-El mensaje de no autorizado mostraba los datos del usuario (`street_number: 6`) exponiendo información personal y dando pistas sobre los criterios de verificación.
-
-### Solución
-
-El `CensusActionAuthorizer` dejó de devolver `fields` con valores del usuario y pasó a usar `extra_explanation` con clave de traducción:
-
-```ruby
-[:unauthorized, { extra_explanation: { key: "not_in_zone", params: { scope: "census_authorization_handler" } } }]
-```
-
-La clave se añadió al locale `config/locales/es.yml`:
-
-```yaml
-es:
-  decidim:
-    authorization_handlers:
-      census_authorization_handler:
-        not_in_zone: "No cumples los requisitos de participación para este proceso."
-```
-
-El usuario ve únicamente el mensaje genérico, sin datos propios ni pistas sobre los criterios.
-
----
-
-## Override mensaje de no autorizado ✅
-
-### Clave de Decidim core
-
-El texto "Lo sentimos, no puedes realizar esta acción porque algunos de tus datos de autorización no coinciden." viene de Decidim core. La clave real se encuentra en `authorization_modal_cell.rb`:
-
-```ruby
-def status_messages(status)
-  [t("#{status.code}.explanation", scope:)]
-end
-
-def scope
-  "decidim.authorization_modals.content"
-end
-```
-
-La clave completa es por tanto `decidim.authorization_modals.content.unauthorized.explanation`.
-
-### Solución
-
-Añadida en `config/locales/es_zones.yml`:
-
-```yaml
-es:
-  decidim:
-    authorization_modals:
-      content:
-        unauthorized:
-          explanation: "No cumples los requisitos de participación para este proceso."
-```
-
-### ⚠️ Aviso importante
-
-Este override afecta a **todas las autorizaciones de la instalación**, no solo a `census_authorization_handler`. Si en el futuro se añaden otros handlers de verificación, todos mostrarán este mismo mensaje. Es intencionado — no queremos exponer criterios específicos de verificación al usuario.
-
-### Pendiente para fase de traducciones
-
-- [ ] Añadir la misma clave en `config/locales/eu.yml` (euskera)
-- [ ] Revisar si hay otras claves de `decidim.authorization_modals.content` que convenga sobreescribir (`pending`, `expired`, etc.)
-
----
-
-## Pendiente: revisión completa de textos y multiidioma
-
-- [ ] Auditar todos los textos hardcodeados en vistas ERB, helpers, commands y authorizers
-- [ ] Mover todos los textos al locale `config/locales/es.yml` bajo la estructura `decidim.admin.galdakao`
-- [ ] Crear `config/locales/eu.yml` (euskera) con las mismas claves
-- [ ] Verificar que los textos del enum `numbers_constraint` en vistas usan I18n y no el valor Ruby en crudo
-- [ ] Revisar mensajes de error de formularios (create/update de zonas y zone_streets)
-- [ ] Revisar mensajes del authorizer y handler para que ningún texto vaya hardcodeado
+- [ ] Traducir valores del enum `numbers_constraint` al castellano en las vistas
+- [ ] Auditar todos los textos hardcodeados — moverlos a locales
+- [ ] Crear `config/locales/eu.yml` (euskera)
+- [ ] Validar texto definitivo del mensaje de zona no autorizada con el técnico de participación
+- [ ] Unificar locales de `street-validation` con `zone-verification`
+- [ ] Revisar si hay otras claves de `decidim.authorization_modals.content` que convenga sobreescribir
+- [ ] Construir PR upstream para Decidim core con el fix del bucle de onboarding
