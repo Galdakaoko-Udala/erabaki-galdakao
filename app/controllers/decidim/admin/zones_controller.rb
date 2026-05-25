@@ -31,11 +31,11 @@ module Decidim
         @form = form(GaldakaoZoneForm).from_params(params)
         CreateGaldakaoZone.call(@form) do
           on(:ok) do
-            flash[:notice] = "Nueva zona creada correctamente"
+            flash[:notice] = t("decidim.admin.galdakao.zones.create.success")
             redirect_to decidim_admin.galdakao_zones_path
           end
           on(:invalid) do |error|
-            flash.now[:alert] = "Error al crear la zona: #{error}"
+            flash.now[:alert] = t("decidim.admin.galdakao.zones.create.error", error: error)
             render :new
           end
         end
@@ -45,11 +45,11 @@ module Decidim
         @form = form(GaldakaoZoneForm).from_params(params)
         UpdateGaldakaoZone.call(@form, zone) do
           on(:ok) do
-            flash[:notice] = "Zona actualizada correctamente"
+            flash[:notice] = t("decidim.admin.galdakao.zones.update.success")
             redirect_to decidim_admin.galdakao_zones_path
           end
           on(:invalid) do |error|
-            flash.now[:alert] = "Error al actualizar la zona: #{error}"
+            flash.now[:alert] = t("decidim.admin.galdakao.zones.update.error", error: error)
             render :edit
           end
         end
@@ -57,7 +57,7 @@ module Decidim
 
       def destroy
         zone.destroy!
-        flash[:notice] = "Zona eliminada correctamente"
+        flash[:notice] = t("decidim.admin.galdakao.zones.destroy.success")
         redirect_to decidim_admin.galdakao_zones_path
       end
 

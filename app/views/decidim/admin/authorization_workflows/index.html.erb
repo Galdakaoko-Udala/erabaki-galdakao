@@ -17,7 +17,7 @@
         <tr>
           <th><%= t("decidim.authorization_handlers.name") %></th>
           <th class="!text-left"><%= t("decidim.authorization_handlers.help") %></th>
-          <th class="!text-left">Gestión</th>
+          <th class="!text-left"><%= t("decidim.admin.galdakao.authorization_workflows.management") %></th>
         </tr>
       </thead>
       <tbody>
@@ -53,8 +53,8 @@
             <td class="!text-left">
               <% if workflow.key == "census_authorization_handler" %>
                 <div class="flex gap-2">
-                  <%= link_to "Calles", decidim_admin.galdakao_index_path, class: "button button__sm button__secondary" %>
-                  <%= link_to "Zonas", decidim_admin.galdakao_zones_path, class: "button button__sm button__secondary" %>
+                  <%= link_to t("decidim.admin.galdakao.streets.title"), decidim_admin.galdakao_index_path, class: "button button__sm button__secondary" %>
+                  <%= link_to t("decidim.admin.galdakao.zones.index.title"), decidim_admin.galdakao_zones_path, class: "button button__sm button__secondary" %>
                 </div>
               <% end %>
             </td>
