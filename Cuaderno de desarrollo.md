@@ -343,9 +343,6 @@ end
 
 Flujo en dos niveles: zona con nombre → gestión de calles desde su detalle.
 
-**Pendiente menor:**
-- [ ] Traducir valores del enum `numbers_constraint` al castellano en las vistas
-
 ### Paso 3b — Refactor constraints de portales ✅
 
 | Valor | Descripción | ¿Requiere rango? |
@@ -454,9 +451,9 @@ El endpoint `autenticar` devuelve calle y portal del ciudadano. El handler guard
 
 ## Mensajes de autorización ✅
 
-El override del locale `decidim.authorization_modals.content.unauthorized.explanation` en `config/locales/es_zones.yml` personaliza el mensaje del modal para todas las autorizaciones de la instalación (intencionado).
+La clave `decidim.authorization_modals.content.unauthorized.explanation` en `es_census_authorizer_galdakao.yml` personaliza el mensaje del modal para todas las autorizaciones de la instalación (intencionado).
 
-La clave `census_authorization_handler.unauthorized_zone` en `config/locales/es_zones.yml` personaliza el mensaje del flash específico del flujo de onboarding con zona no autorizada.
+La clave `decidim.authorization_handlers.census_authorization_handler.unauthorized_zone` personaliza el mensaje del flash específico del flujo de onboarding con zona no autorizada.
 
 ---
 
@@ -472,80 +469,368 @@ La clave `census_authorization_handler.unauthorized_zone` en `config/locales/es_
 
 ### Objetivo
 
-Añadir accesos directos a las secciones de gestión de calles (`/admin/galdakao`) y zonas (`/admin/galdakao/zones`) desde el panel de métodos de verificación (`/admin/authorization_workflows`), evitando que el administrador tenga que conocer las URLs de memoria.
+Añadir accesos directos a las secciones de gestión de **calles** (`/admin/galdakao`) y **zonas** (`/admin/galdakao/zones`) desde el panel de métodos de verificación (`/admin/authorization_workflows`), evitando que el administrador tenga que conocer las URLs de memoria.
+
+### Contexto y discovery
+
+La vista que renderiza la tabla de métodos de verificación **no está en `decidim-verifications`** sino en **`decidim-admin`**:
+
+```
+/usr/local/bundle/bundler/gems/decidim-8b1b21b88b86/decidim-admin/
+  app/views/decidim/admin/authorization_workflows/index.html.erb
+```
+
+Los `view_paths` de Rails en este entorno son:
+
+```
+/app/app/views          ← volumen montado desde /opt/decidim_production/app/views
+/usr/local/bundle/...   ← gems
+```
+
+> **Importante:** Cualquier sobreescritura de vistas debe ir en `/app/app/views`, no en `/app/views`. Las copias a `/app/views` son ignoradas por Rails.
+
+### Helpers de ruta relevantes
+
+| Enlace | Helper | Ruta |
+|--------|--------|------|
+| Calles (sincronización) | `decidim_admin.galdakao_index_path` | `/admin/galdakao` |
+| Zonas (gestión) | `decidim_admin.galdakao_zones_path` | `/admin/galdakao/zones` |
+
+> Las dos secciones son independientes: **Calles** gestiona la sincronización del listado desde la API SOAP; **Zonas** gestiona el modelo de zonas y sus calles asociadas (CRUD completo). No son la misma cosa aunque las zonas tengan calles anidadas.
 
 ### Solución
 
-Sobreescritura de la vista `decidim/admin/authorization_workflows/index.html.erb` del gem `decidim-admin`, añadiendo una tercera columna "Gestión" con los dos enlaces, condicionada al handler `census_authorization_handler`.
-
-**Notas importantes sobre el entorno:**
-- El `view_paths` de Rails tiene `/app/app/views` como primera ruta (volumen montado desde `/opt/decidim_production/app/views`). Las copias a `/app/views` son ignoradas por Rails.
-- `cache_template_loading` está en `true` en producción — cualquier cambio en vistas requiere `docker compose restart app` para invalidar la caché.
-- Antes de cualquier cambio: comprobar siempre dónde busca Rails las vistas (`ActionController::Base.view_paths`) y verificar que el archivo ha llegado al sitio correcto antes de hacer restart.
-
-### Archivo creado
-
-`app/views/decidim/admin/authorization_workflows/index.html.erb`
-
-Idéntico a la vista original del gem (`decidim-admin`), con la columna adicional en `<thead>`:
-
-```erb
-<th class="!text-left">Gestión</th>
-```
-
-Y la celda correspondiente en el `<tbody>`:
-
-```erb
-<td class="!text-left">
-  <% if workflow.key == "census_authorization_handler" %>
-    <div class="flex gap-2">
-      <%= link_to "Calles", decidim_admin.galdakao_index_path, class: "button button__sm button__secondary" %>
-      <%= link_to "Zonas", decidim_admin.galdakao_zones_path, class: "button button__sm button__secondary" %>
-    </div>
-  <% end %>
-</td>
-```
-
-### Helpers de ruta utilizados
-
-| Enlace | Helper | Ruta |
-|---|---|---|
-| Calles | `decidim_admin.galdakao_index_path` | `/admin/galdakao` |
-| Zonas | `decidim_admin.galdakao_zones_path` | `/admin/galdakao/zones` |
-
-Las dos secciones son independientes:
-- **Calles** → sincronización del listado de calles del municipio desde la API (index + sync + check)
-- **Zonas** → gestión del modelo de zonas y sus calles asociadas (CRUD completo)
+Sobreescritura de la vista original del gem, añadiendo una tercera columna **"Gestión"** con los dos enlaces, condicionada al handler `census_authorization_handler`.
 
 ### Procedimiento de despliegue
 
-Las vistas ERB se sirven desde el volumen montado — no requieren rebuild de imagen. Sin embargo, con `cache_template_loading: true` (producción), Rails cachea las vistas en memoria al arrancar. Cualquier cambio en una vista requiere restart para invalidar la caché:
+Las vistas ERB se sirven desde el volumen montado — **no requieren rebuild de imagen**. Sin embargo, con `cache_template_loading: true` (producción), Rails cachea las vistas en memoria al arrancar. Cualquier cambio en una vista requiere restart:
 
 ```bash
 docker compose restart app
 ```
 
-### Cómo verificar antes de hacer cambios
+### Lecciones aprendidas
+
+- **No presuponer, comprobar primero.** Antes de escribir cualquier archivo, verificar `view_paths` y la estructura real del contenedor.
+- **No presuponer las rutas.** Las calles y las zonas son secciones independientes con rutas propias.
+- Confirmar `cache_template_loading` antes de asumir que un cambio de vista se sirve sin restart.
+
+**Commit:** `e30d5875 Add Calles and Zonas management links to authorization workflows admin panel`
+
+---
+
+## Paso 7 — Auditoría i18n y unificación de locales ✅
+
+### Objetivo
+
+- Inventariar todos los textos hardcodeados en controladores, vistas y servicios del módulo Galdakao.
+- Sustituirlos por llamadas `t()` con claves i18n.
+- Unificar todos los archivos de locale dispersos en un único archivo por idioma, específico del módulo.
+
+### Estado inicial — archivos de locale existentes
+
+| Archivo | Acción |
+|---------|--------|
+| `es.yml` | No se toca — ver tarea futura |
+| `eu.yml` | No se toca |
+| `en.yml` | No se toca |
+| `es_streets.yml` | Eliminado — absorbido en el nuevo yml |
+| `es_zones.yml` | Eliminado — absorbido en el nuevo yml |
+| `eu_streets.yml` | Eliminado — absorbido en el nuevo yml |
+| `census-soap-es.yml` | Eliminado — absorbido en el nuevo yml |
+
+#### Por qué `census-soap-es.yml` pertenece aquí
+
+El handler `census_authorization_handler.rb` llama directamente a esas claves con `I18n.t("census_authorization_handler.service_unavailable")` etc. El repo de la API SOAP devuelve XML y no necesita locales. Las claves pertenecen al autorizador de este proyecto.
+
+#### Por qué no se tocan `es.yml`, `eu.yml` ni `en.yml`
+
+Rails fusiona todos los YML del mismo idioma al arrancar. Si la misma clave aparece en dos archivos, el último que carga gana sin dar ningún error — comportamiento silencioso e impredecible. La limpieza de los yml base es una operación atómica separada (ver tarea futura).
+
+### Resultado — archivos de locale tras la unificación
+
+```
+config/locales/
+  es.yml                              ← no tocado
+  eu.yml                              ← no tocado
+  en.yml                              ← no tocado
+  es_census_authorizer_galdakao.yml   ← nuevo, absorbe todo el ES
+  eu_census_authorizer_galdakao.yml   ← nuevo, absorbe todo el EU
+  en_census_authorizer_galdakao.yml   ← nuevo, derivado del ES
+```
+
+### Criterio de nombrado
+
+`<idioma>_census_authorizer_galdakao.yml` — quien trabaja las traducciones del módulo va directo a su archivo, sin interferir con el `es.yml` general de Decidim.
+
+### Inventario completo de textos hardcodeados resueltos
+
+#### Controladores
+
+| Archivo | Texto | Clave |
+|---------|-------|-------|
+| `galdakao_controller.rb` | `"Calles sincronizadas correctamente."` | `decidim.admin.galdakao.sync.success` |
+| `zones_controller.rb` | `"Nueva zona creada correctamente"` | `decidim.admin.galdakao.zones.create.success` |
+| `zones_controller.rb` | `"Error al crear la zona: #{error}"` | `decidim.admin.galdakao.zones.create.error` (con `%{error}`) |
+| `zones_controller.rb` | `"Zona actualizada correctamente"` | `decidim.admin.galdakao.zones.update.success` |
+| `zones_controller.rb` | `"Error al actualizar la zona: #{error}"` | `decidim.admin.galdakao.zones.update.error` (con `%{error}`) |
+| `zones_controller.rb` | `"Zona eliminada correctamente"` | `decidim.admin.galdakao.zones.destroy.success` |
+
+#### Vistas
+
+| Vista | Textos | Claves |
+|-------|--------|--------|
+| `authorization_workflows/index.html.erb` | "Gestión", "Calles", "Zonas" | `authorization_workflows.management`, `streets.title`, `zones.index.title` |
+| `zone_streets/_form.html.erb` | labels, select blank, help, submit, cancel | `decidim.admin.galdakao.zone_streets.form.*` |
+| `zones/_form.html.erb` | label nombre, submit, cancel | `decidim.admin.galdakao.zones_form.*` |
+| `zones/index.html.erb` | título, botones, columnas, confirm | `decidim.admin.galdakao.zones_index.*` |
+| `zones/show.html.erb` | botones, cabeceras tabla, "Todos" | `decidim.admin.galdakao.zones_show.*` |
+
+#### Verificación final
 
 ```bash
-# Confirmar dónde busca Rails las vistas
-docker compose exec app rails runner "puts ActionController::Base.view_paths.map(&:to_s)"
+grep -rn --include="*.erb" /opt/decidim_production/app/views/decidim/admin/ | \
+  grep -v 't("' | grep -v "t('" | \
+  grep -E '(["'"'"'][A-ZÁÉÍÓÚÑ][a-záéíóúñ ]{3,}["'"'"'])' | \
+  grep -v "confirm:" | grep -v "class:" | grep -v "placeholder:" | grep -v "data-"
+# → LIMPIO ✅
+```
 
-# Confirmar que el archivo llegó al sitio correcto
-docker compose exec app ls /app/app/views/decidim/admin/authorization_workflows/
+### Commits
 
-# Confirmar el contenido
-docker compose exec app cat /app/app/views/decidim/admin/authorization_workflows/index.html.erb
+```
+58ac6a95  i18n: sustituir hardcodes por t() en vistas zones y zone_streets
+          (yml es/eu/en nuevos + zones_controller + 7 vistas)
+```
+
+Push confirmado: `83b63e24..58ac6a95 → alabs/feature/zone-verifications`
+
+---
+## Paso 8 — Rediseño visual y coherencia de vistas del módulo Galdakao ✅
+
+### Objetivo
+
+Unificar la estructura visual de todas las vistas del módulo (cabeceras, títulos, botones, labels, selectores, iconos de tabla) siguiendo los patrones nativos de Decidim, y mover a i18n todos los textos hardcodeados restantes en las vistas.
+
+---
+
+### Patrón visual adoptado
+
+#### Cabecera de vista
+
+Todas las vistas siguen el patrón nativo de Decidim descubierto en `decidim-admin/app/views/decidim/admin/users/index.html.erb`:
+
+```erb
+<div class="card">
+  <div class="item_show__header">
+    <h1 class="item_show__header-title">
+      <%= t("...titulo") %>
+      <%= link_to "...", ruta, class: "button button__sm button__secondary" %>
+      <%= link_to ruta_atras, style: "..." do %>
+        <%= icon "arrow-left-line", class: "fill-current" %>
+        <span><%= t("...nav_button") %></span>
+      <% end %>
+    </h1>
+  </div>
+```
+
+#### Antetítulo + título (vistas de formulario)
+
+Las vistas con formulario añaden un antetítulo fijo encima del título dinámico:
+
+```erb
+<div style="display:flex;flex-direction:column;flex:1;">
+  <span style="font-size:0.85rem;color:#666;font-weight:500;margin-bottom:0.25rem;">
+    <%= t("decidim.admin.galdakao.zones_index.title") %>  <%# "Zonas de verificación" %>
+  </span>
+  <h1 class="item_show__header-title" style="margin:0;">
+    <%= título dinámico %>
+  </h1>
+</div>
+```
+
+| Vista | Antetítulo | Título |
+|-------|-----------|--------|
+| `zones/index` | — | "Listado de zonas" |
+| `zones/new` | "Zonas de verificación" | "Crear nueva zona" |
+| `zones/edit` | "Zonas de verificación" | "Editando zona: \<nombre\>" |
+| `zones/show` | — | nombre de la zona |
+| `zone_streets/new` | "Zonas de verificación" | "Añadir calle a la zona: \<nombre\>" |
+| `zone_streets/edit` | "Zonas de verificación" | "Editar calle de la zona: \<nombre\>" |
+
+Los `h2` hardcodeados de `new.html.erb` y `edit.html.erb` (en `zones/` y `zone_streets/`) fueron eliminados — la cabecera se genera íntegramente desde el partial `_form`.
+
+#### Tablas
+
+Todas las tablas usan `class="table-list"` dentro de `<div class="table-scroll">`, con acciones en `<td class="table-list__actions">`.
+
+#### Formularios
+
+`decidim_form_for` con `html: { class: "form form-defaults" }`, botones en `item__edit-sticky > item__edit-sticky-container`.
+
+---
+
+### Botón de navegación jerárquica ("volver / cancelar")
+
+Se investigó el paginador nativo de Decidim (`kaminari/decidim/_prev_page.html.erb`) para encontrar un estilo de botón secundario que se diferenciara visualmente de los botones de acción. Se determinó que Decidim no tiene clase `button__outline` ni similar.
+
+**Solución adoptada:** style inline con `var(--secondary)` para adaptarse automáticamente al tema de la instancia, con hover JavaScript:
+
+```erb
+<%= link_to ruta,
+    style: "display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--secondary);color:var(--secondary);border-radius:4px;font-weight:600;padding:1.375px 10px;font-size:0.875rem;text-decoration:none;background:transparent;",
+    onmouseover: "this.style.background='var(--secondary)';this.style.color='white'",
+    onmouseout: "this.style.background='transparent';this.style.color='var(--secondary)'" do %>
+  <%= icon "arrow-left-line", class: "fill-current" %>
+  <span><%= t("...nav_button") %></span>
+<% end %>
+```
+
+El padding `1.375px 10px` iguala el tamaño visual al de `button__sm` de Decidim (verificado con DevTools).
+
+**Jerarquía de navegación y destino de cada botón:**
+
+```
+/admin/authorization_workflows  (Métodos de verificación)
+    └── /admin/galdakao              → nav_button: "Volver a Métodos de verificación"
+            ├── /admin/galdakao/streets  → nav_button: "Volver a Gestión del catálogo"
+            └── /admin/galdakao/zones    → nav_button: "Volver a Métodos de verificación"
+                    ├── zones/new        → cancel: volver a zones
+                    ├── zones/show       → back: volver a zones
+                    ├── zones/edit       → cancel: volver a zones
+                    └── zone_streets/new|edit → cancel: volver a zones/:id
 ```
 
 ---
 
-## Pendientes
+### Acciones en tabla — iconos sin texto
 
-- [ ] Traducir valores del enum `numbers_constraint` al castellano en las vistas
-- [ ] Auditar todos los textos hardcodeados — moverlos a locales
-- [ ] Crear `config/locales/eu.yml` (euskera)
-- [ ] Validar texto definitivo del mensaje de zona no autorizada con el técnico de participación
-- [ ] Unificar locales de `street-validation` con `zone-verification`
-- [ ] Revisar si hay otras claves de `decidim.authorization_modals.content` que convenga sobreescribir
-- [ ] Construir PR upstream para Decidim core con el fix del bucle de onboarding
+Se sustituyeron los botones de texto "Editar" / "Eliminar" de las tablas por `icon_link_to` siguiendo el patrón de `decidim-admin/app/views/decidim/admin/users/index.html.erb`:
+
+```erb
+<%= icon_link_to "edit-line", ruta_editar, t("...edit"), class: "action-icon" %>
+<%= icon_link_to "delete-bin-line", ruta_borrar, t("...destroy"),
+    class: "action-icon--remove",
+    method: :delete,
+    data: { confirm: t("...destroy_confirm") } %>
+```
+
+El icono lápiz en `zones/index` apunta a `zones/show` (no a `zones/edit`) porque el nombre se puede editar desde dentro de la vista de detalle.
+
+---
+
+### Labels de formulario — problema del doble label
+
+`decidim_form_for` genera su propio `<label>` con el nombre del atributo en inglés (`Name`, `Street`, `Numbers constraint`). Al añadir `f.label` en el ERB se generaban dos labels superpuestos.
+
+**Solución:** sustituir `f.label` por un `<label>` HTML manual con `for` explícito apuntando al mismo `id`, y pasar `label: false` al helper del campo (o simplemente omitir `f.label`).
+
+---
+
+### Selectores — padding y separación
+
+Los `<select>` reciben style inline para separar el texto de la flecha nativa del navegador y del asterisco de campo obligatorio:
+
+```
+padding:3px 35px 3px 3px;margin-left:5px;
+```
+
+El padding derecho de 35px fue ajustado empíricamente hasta que la flecha del selector no tapara el texto en las opciones más largas.
+
+Los `<div class="field">` llevan `margin-bottom:1rem` para separar los campos verticalmente.
+
+---
+
+### Opciones del selector `numbers_constraint` — traducción
+
+Las opciones estaban hardcodeadas en castellano dentro del form object (`GaldakaoZoneStreetForm`). Se movieron a i18n:
+
+```ruby
+def numbers_constraint_options
+  base = "decidim.admin.galdakao.zone_streets.form.numbers_constraint_options"
+  {
+    I18n.t("#{base}.all_numbers")  => "all_numbers",
+    I18n.t("#{base}.even_numbers") => "even_numbers",
+    I18n.t("#{base}.odd_numbers")  => "odd_numbers",
+    I18n.t("#{base}.only_range")   => "only_range",
+    I18n.t("#{base}.except_range") => "except_range"
+  }
+end
+```
+
+---
+
+### Correcciones funcionales asociadas
+
+- `CreateGaldakaoZoneStreet` y `UpdateGaldakaoZoneStreet` limpian `numbers_range` a `nil` cuando el tipo de restricción no lo requiere (`all_numbers`, `even_numbers`, `odd_numbers`), evitando basura en base de datos al cambiar de tipo.
+- La columna "Restricción" en `zones/show` muestra el valor traducido (`t("...numbers_constraint_options.#{zs.numbers_constraint}")`) en lugar del nombre del enum Ruby.
+- El placeholder del campo `numbers_range` se movió a i18n (`numbers_range_placeholder`).
+- Los flash messages de `zone_streets_controller.rb` (create/update/destroy) se movieron a i18n.
+
+---
+
+### Claves i18n añadidas en esta fase
+
+Bajo `decidim.admin.galdakao` en los tres yml (`es`, `eu`, `en`):
+
+- `zones_index.list_title`, `zones_index.nav_button`
+- `zones_form.title_new`, `zones_form.title_edit`, `zones_form.name_label`
+- `zones_show.edit_zone` (→ "Editar nombre"), `zones_show.back`
+- `zone_streets.form.title_new`, `zone_streets.form.title_edit`
+- `zone_streets.form.numbers_constraint_options.*` (5 valores)
+- `zone_streets.form.numbers_range_placeholder`
+- `zone_streets.create.*`, `zone_streets.update.*`, `zone_streets.destroy.*`
+- `index.nav_button`, `streets.nav_button` (en EU y EN, que faltaban)
+- `index.section_sync.subtitle`, `index.section_catalog.subtitle` (en EU y EN)
+
+---
+
+### Archivos modificados
+
+- `app/views/decidim/admin/galdakao/{index,streets}.html.erb`
+- `app/views/decidim/admin/zones/{_form,index,show,new,edit}.html.erb`
+- `app/views/decidim/admin/zone_streets/{_form,new,edit}.html.erb`
+- `app/forms/decidim/admin/galdakao_zone_street_form.rb`
+- `app/controllers/decidim/admin/zone_streets_controller.rb`
+- `app/commands/decidim/admin/create_galdakao_zone_street.rb`
+- `app/commands/decidim/admin/update_galdakao_zone_street.rb`
+- `config/locales/{es,eu,en}_census_authorizer_galdakao.yml`
+
+
+### Commits
+Push confirmado: `8188ce2d..126471d7 → alabs/feature/zone-verifications`
+
+---
+
+## Pendientes técnicos
+
+
+- [ ] Construir PR upstream para Decidim core con el fix del bucle de onboarding (issue #9826)
+
+---
+
+
+### Pendiente externo
+
+- [ ] Validar traducciones al euskera con técnico del ayuntamiento
+
+---
+
+## ~~Tarea futura~~ Tarea completada — limpiar `es.yml`
+
+Cuando se aborde, el commit debe ser atómico: eliminar la clave del yml base y confirmar que ya existe en `es_census_authorizer_galdakao.yml`, todo en el mismo commit. Las claves afectadas son:
+
+```yaml
+# Actualmente en es.yml — a mover en su momento
+decidim:
+  authorization_handlers:
+    census_authorization_handler:
+      name: Censo municipal soap        # desactualizado además
+      explanation: Verifica tu cuenta con el censo municipal   # desactualizado
+census_authorization:
+  form:
+    date_select:                        # residuo, ya no se usa — simplemente eliminar
+```
+
+> **Nota:** `name` y `explanation` ya están actualizados en `es_census_authorizer_galdakao.yml`. Como Rails carga los archivos de módulo después del yml base, las claves del módulo tienen precedencia actualmente. La limpieza del yml base es cosmética hasta que se haga el commit atómico.
