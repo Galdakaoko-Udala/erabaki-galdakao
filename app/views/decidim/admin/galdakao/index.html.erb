@@ -1,17 +1,26 @@
 <%# Vista: /admin/galdakao — Panel de gestión de calles %>
-
-<div class="row column">
-  <div class="process-title">
-    <h1><%= t("decidim.admin.galdakao.index.title") %></h1>
+<% add_decidim_page_title(t("decidim.admin.galdakao.index.title")) %>
+<div class="card">
+  <div class="item_show__header">
+    <h1 class="item_show__header-title">
+      <%= t("decidim.admin.galdakao.index.title") %>
+      <%= link_to "/admin/authorization_workflows",
+          style: "display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--secondary);color:var(--secondary);border-radius:4px;font-weight:600;padding:1.375px 10px;font-size:0.875rem;text-decoration:none;background:transparent;",
+          onmouseover: "this.style.background='var(--secondary)';this.style.color='white'",
+          onmouseout: "this.style.background='transparent';this.style.color='var(--secondary)'" do %>
+        <%= icon "arrow-left-line", class: "fill-current" %>
+        <span><%= t("decidim.admin.galdakao.index.nav_button") %></span>
+      <% end %>
+    </h1>
   </div>
-</div>
-
-<div class="row">
-  <div class="columns medium-8">
-
-    <%# Estado de la última sincronización %>
+  <div class="card-divider">
+    <h2 class="card-title">
+      <%= t("decidim.admin.galdakao.index.section_sync.subtitle") %>
+    </h2>
+  </div>
+  <div class="card__content">
     <% if last_sync %>
-      <div class="callout <%= last_sync_class(last_sync) %>">
+      <div class="callout success">
         <%= t("decidim.admin.galdakao.index.last_sync", time: l(last_sync, format: :long)) %>
       </div>
     <% else %>
@@ -19,17 +28,24 @@
         <%= t("decidim.admin.galdakao.index.never_synced") %>
       </div>
     <% end %>
-
-    <%# Botón de sincronización %>
-    <%= button_to t("decidim.admin.galdakao.index.sync_button"),
-              decidim_admin.sync_galdakao_index_path,
-              method: :post,
-              class: "button",
-              data: { confirm: t("decidim.admin.galdakao.index.sync_confirm") } %>
-
-    <%# Enlace a ver listado de calles %>
-    <%= link_to t("decidim.admin.galdakao.index.streets_link"),
-                streets_galdakao_index_path,
-                class: "button hollow" %>
+    <div class="mt-s" style="margin-bottom: 1rem;">
+      <%= button_to t("decidim.admin.galdakao.index.sync_button"),
+          decidim_admin.sync_galdakao_index_path,
+          method: :post,
+          class: "button button__sm button__secondary",
+          data: { confirm: t("decidim.admin.galdakao.index.sync_confirm") } %>
+    </div>
+    <div class="card-divider">
+      <h2 class="card-title">
+        <%= t("decidim.admin.galdakao.index.section_catalog.subtitle") %>
+      </h2>
+    </div>
+    <div class="card__content">
+      <div class="mt-s">
+        <%= link_to t("decidim.admin.galdakao.index.streets_link"),
+            streets_galdakao_index_path,
+            class: "button button__sm button__secondary" %>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,8 +1,32 @@
-<%= decidim_form_for @form, url: (@form.id ? decidim_admin.galdakao_zone_path(@form.id) : decidim_admin.galdakao_zones_path) do |f| %>
-  <div class="field">
-    <%= f.label :name, t("decidim.admin.galdakao.zones_form.name_label") %>
-    <%= f.text_field :name, class: "form-control" %>
+<div class="item_show__header">
+  <div style="display:flex;flex-direction:column;flex:1;">
+    <span style="font-size:0.85rem;color:#666;font-weight:500;margin-bottom:0.25rem;">
+      <%= t("decidim.admin.galdakao.zones_index.title") %>
+    </span>
+    <h1 class="item_show__header-title" style="margin:0;">
+      <%= @form.id ? "#{t('decidim.admin.galdakao.zones_form.title_edit')}: #{@form.name}" : t("decidim.admin.galdakao.zones_form.title_new") %>
+    </h1>
   </div>
-  <%= f.submit t("decidim.admin.galdakao.zones_form.submit"), class: "button" %>
-  <%= link_to t("decidim.admin.galdakao.zones_form.cancel"), decidim_admin.galdakao_zones_path, class: "button hollow" %>
-<% end %>
+</div>
+<div class="item__edit item__edit-1col">
+  <div class="item__edit-form">
+    <%= decidim_form_for @form, url: (@form.id ? decidim_admin.galdakao_zone_path(@form.id) : decidim_admin.galdakao_zones_path), html: { class: "form form-defaults" } do |f| %>
+      <div class="field">
+        <label for="galdakao_zone_name"><%= t("decidim.admin.galdakao.zones_form.name_label") %></label>
+        <%= f.text_field :name, style: "width:100%;", label: false %>
+      </div>
+      <div class="item__edit-sticky">
+        <div class="item__edit-sticky-container">
+          <%= f.submit t("decidim.admin.galdakao.zones_form.submit"), class: "button button__sm button__secondary" %>
+          <%= link_to decidim_admin.galdakao_zones_path,
+              style: "display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--secondary);color:var(--secondary);border-radius:4px;font-weight:600;padding:1.375px 10px;font-size:0.875rem;text-decoration:none;background:transparent;",
+              onmouseover: "this.style.background='var(--secondary)';this.style.color='white'",
+              onmouseout: "this.style.background='transparent';this.style.color='var(--secondary)'" do %>
+            <%= icon "arrow-left-line", class: "fill-current" %>
+            <span><%= t("decidim.admin.galdakao.zones_form.cancel") %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -14,7 +14,12 @@ es:
         sync:
           success: "Calles sincronizadas correctamente."
         index:
-          title: "Panel de Galdakao — Gestión del Padrón"
+          title: "Panel de Galdakao — Gestión del catalogo de calles"
+          nav_button: "Volver a Métodos de verificación"
+          section_sync:
+            subtitle: "Sincronización del catálogo"
+          section_catalog:
+            subtitle: "Catálogo actual de calles"
           last_sync: "Última sincronización: %{time}"
           never_synced: "Las calles todavía no han sido sincronizadas."
           sync_button: "Sincronizar calles desde el padrón"
@@ -22,6 +27,7 @@ es:
           streets_link: "Ver listado de calles"
         streets:
           title: "Calles sincronizadas"
+          nav_button: "Volver a Gestión del catalogo"
           name: "Nombre de la calle"
           updated_at: "Última actualización"
         zones:
@@ -40,19 +46,40 @@ es:
             success: "Zona actualizada correctamente"
             error: "Error al actualizar la zona: %{error}"
         zone_streets:
+          create:
+            success: "Calle añadida correctamente"
+            error: "Error al añadir la calle: %{error}"
+          update:
+            success: "Calle actualizada correctamente"
+            error: "Error al actualizar la calle: %{error}"
+          destroy:
+            success: "Calle eliminada correctamente"
           form:
+            title_new: "Añadir calle a la zona"
+            title_edit: "Editar calle de la zona"
             street_label: "Calle"
             street_blank: "Selecciona una calle"
             numbers_constraint_label: "Restricción de números"
+            numbers_constraint_options:
+              all_numbers: "Todos los números"
+              even_numbers: "Números pares"
+              odd_numbers: "Números impares"
+              only_range: "Solo estos portales"
+              except_range: "Todos menos estos portales"
             numbers_range_label: "Portales"
+            numbers_range_placeholder: "Ej: 1-50  o  2,4,6,8"
             numbers_range_help: "Usa <strong>1-50</strong> para un rango o <strong>2,4,6,8</strong> para portales sueltos."
             submit: "Guardar"
             cancel: "Cancelar"
         zones_form:
+          title_new: "Crear nueva zona"
+          title_edit: "Editando zona"
           name_label: "Nombre de la zona"
           submit: "Guardar"
           cancel: "Cancelar"
         zones_index:
+          list_title: "Listado de zonas"
+          nav_button: "Volver a Métodos de verificación"
           title: "Zonas de verificación"
           new_zone: "Nueva zona"
           col_name: "Nombre"
@@ -61,7 +88,7 @@ es:
           destroy: "Eliminar"
           destroy_confirm: "¿Seguro que quieres eliminar esta zona?"
         zones_show:
-          edit_zone: "Editar zona"
+          edit_zone: "Editar nombre"
           back: "Volver"
           streets_title: "Calles de esta zona"
           add_street: "Añadir calle"

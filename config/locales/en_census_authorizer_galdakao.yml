@@ -14,13 +14,19 @@ en:
         sync:
           success: "Streets synchronised successfully."
         index:
+          nav_button: "Back to Verification Methods"
           title: "Galdakao Panel — Municipal Register Management"
+          section_sync:
+            subtitle: "Catalogue synchronisation"
+          section_catalog:
+            subtitle: "Current street catalogue"
           last_sync: "Last synchronisation: %{time}"
           never_synced: "Streets have not been synchronised yet."
           sync_button: "Synchronise streets from the register"
           sync_confirm: "Are you sure you want to synchronise the streets? This may take a few seconds."
           streets_link: "View streets list"
         streets:
+          nav_button: "Back to Catalogue Management"
           title: "Synchronised streets"
           name: "Street name"
           updated_at: "Last updated"
@@ -40,19 +46,40 @@ en:
             success: "Zone updated successfully"
             error: "Error updating the zone: %{error}"
         zone_streets:
+          create:
+            success: "Street added successfully"
+            error: "Error adding street: %{error}"
+          update:
+            success: "Street updated successfully"
+            error: "Error updating street: %{error}"
+          destroy:
+            success: "Street removed successfully"
           form:
+            title_new: "Add street to zone"
+            title_edit: "Edit street in zone"
             street_label: "Street"
             street_blank: "Select a street"
             numbers_constraint_label: "Number constraint"
+            numbers_constraint_options:
+              all_numbers: "All numbers"
+              even_numbers: "Even numbers"
+              odd_numbers: "Odd numbers"
+              only_range: "Only these portals"
+              except_range: "All except these portals"
             numbers_range_label: "Doorways"
+            numbers_range_placeholder: "Ex: 1-50  or  2,4,6,8"
             numbers_range_help: "Use <strong>1-50</strong> for a range or <strong>2,4,6,8</strong> for individual numbers."
             submit: "Save"
             cancel: "Cancel"
         zones_form:
+          title_new: "New zone"
+          title_edit: "Editing zone"
           name_label: "Zone name"
           submit: "Save"
           cancel: "Cancel"
         zones_index:
+          list_title: "Zone list"
+          nav_button: "Back to Verification Methods"
           title: "Verification zones"
           new_zone: "New zone"
           col_name: "Name"
@@ -61,7 +88,7 @@ en:
           destroy: "Delete"
           destroy_confirm: "Are you sure you want to delete this zone?"
         zones_show:
-          edit_zone: "Edit zone"
+          edit_zone: "Edit name"
           back: "Back"
           streets_title: "Streets in this zone"
           add_street: "Add street"

@@ -1,33 +1,52 @@
-<div class="container">
-  <div class="row">
-    <div class="columns">
-      <h2><%= t("decidim.admin.galdakao.zones_index.title") %></h2>
-      <%= link_to t("decidim.admin.galdakao.zones_index.new_zone"), decidim_admin.new_galdakao_zone_path, class: "button" %>
-      <table class="table-list">
-        <thead>
-          <tr>
-            <th><%= t("decidim.admin.galdakao.zones_index.col_name") %></th>
-            <th><%= t("decidim.admin.galdakao.zones_index.col_streets") %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% zone_list.each do |zone| %>
-            <tr>
-              <td><%= link_to zone.name, decidim_admin.galdakao_zone_path(zone) %></td>
-              <td><%= zone.zone_streets.count %></td>
-              <td class="table-list__actions">
-                <%= link_to t("decidim.admin.galdakao.zones_index.edit"), decidim_admin.edit_galdakao_zone_path(zone), class: "button small" %>
-                <%= button_to t("decidim.admin.galdakao.zones_index.destroy"),
-                    decidim_admin.galdakao_zone_path(zone),
-                    method: :delete,
-                    class: "button small alert",
-                    data: { confirm: t("decidim.admin.galdakao.zones_index.destroy_confirm") } %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+<% add_decidim_page_title(t("decidim.admin.galdakao.zones_index.title")) %>
+<div class="card">
+  <div class="item_show__header">
+    <div style="display:flex;flex-direction:column;flex:1;">
+      <span style="font-size:0.85rem;color:#666;font-weight:500;margin-bottom:0.25rem;">
+        <%= t("decidim.admin.galdakao.zones_index.title") %>
+      </span>
+      <h1 class="item_show__header-title" style="margin:0;">
+        <%= t("decidim.admin.galdakao.zones_index.list_title") %>
+        <%= link_to t("decidim.admin.galdakao.zones_index.new_zone"),
+            decidim_admin.new_galdakao_zone_path,
+            class: "button button__sm button__secondary" %>
+        <%= link_to "/admin/authorization_workflows",
+            style: "display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--secondary);color:var(--secondary);border-radius:4px;font-weight:600;padding:1.375px 10px;font-size:0.875rem;text-decoration:none;background:transparent;",
+            onmouseover: "this.style.background='var(--secondary)';this.style.color='white'",
+            onmouseout: "this.style.background='transparent';this.style.color='var(--secondary)'" do %>
+          <%= icon "arrow-left-line", class: "fill-current" %>
+          <span><%= t("decidim.admin.galdakao.index.nav_button") %></span>
+        <% end %>
+      </h1>
     </div>
+  </div>
+  <div class="table-scroll">
+    <table class="table-list">
+      <thead>
+        <tr>
+          <th><%= t("decidim.admin.galdakao.zones_index.col_name") %></th>
+          <th><%= t("decidim.admin.galdakao.zones_index.col_streets") %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% zone_list.each do |zone| %>
+          <tr>
+            <td><%= link_to zone.name, decidim_admin.galdakao_zone_path(zone) %></td>
+            <td><%= zone.zone_streets.count %></td>
+            <td class="table-list__actions">
+              <%= icon_link_to "edit-line", decidim_admin.galdakao_zone_path(zone),
+                  t("decidim.admin.galdakao.zones_index.edit"),
+                  class: "action-icon" %>
+              <%= icon_link_to "delete-bin-line", decidim_admin.galdakao_zone_path(zone),
+                  t("decidim.admin.galdakao.zones_index.destroy"),
+                  class: "action-icon--remove",
+                  method: :delete,
+                  data: { confirm: t("decidim.admin.galdakao.zones_index.destroy_confirm") } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>

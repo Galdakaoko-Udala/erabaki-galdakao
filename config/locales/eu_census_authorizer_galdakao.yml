@@ -14,13 +14,19 @@ eu:
         sync:
           success: "Kaleak ondo sinkronizatu dira."
         index:
+          nav_button: "Egiaztapen-metodoak"
           title: "Galdakaoko panela — Erroldaren kudeaketa"
+          section_sync:
+            subtitle: "Katalogoen sinkronizazioa"
+          section_catalog:
+            subtitle: "Uneko kaleen katalogoa"
           last_sync: "Azken sinkronizazioa: %{time}"
           never_synced: "Kaleak oraindik ez dira sinkronizatu."
           sync_button: "Sinkronizatu kaleak erroldatik"
           sync_confirm: "Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuk behar izan ditzake."
           streets_link: "Ikusi kaleen zerrenda"
         streets:
+          nav_button: "Galdakaoko kudeaketara itzuli"
           title: "Sinkronizatutako kaleak"
           name: "Kalearen izena"
           updated_at: "Azken eguneraketa"
@@ -40,19 +46,40 @@ eu:
             success: "Gunea zuzen eguneratu da"
             error: "Errorea gunea eguneratzean: %{error}"
         zone_streets:
+          create:
+            success: "Kalea behar bezala gehitu da"
+            error: "Errorea kalea gehitzean: %{error}"
+          update:
+            success: "Kalea behar bezala eguneratu da"
+            error: "Errorea kalea eguneratzean: %{error}"
+          destroy:
+            success: "Kalea behar bezala ezabatu da"
           form:
+            title_new: "Kale bat gehitu guneari"
+            title_edit: "Guneko kalea editatu"
             street_label: "Kalea"
             street_blank: "Hautatu kale bat"
             numbers_constraint_label: "Zenbakien murrizketa"
+            numbers_constraint_options:
+              all_numbers: "Zenbaki guztiak"
+              even_numbers: "Zenbaki bikoitiak"
+              odd_numbers: "Zenbaki bakoitiak"
+              only_range: "Ate hauek bakarrik"
+              except_range: "Hauek izan ezik"
             numbers_range_label: "Ateak"
+            numbers_range_placeholder: "Adib: 1-50  edo  2,4,6,8"
             numbers_range_help: "Erabili <strong>1-50</strong> tarte baterako edo <strong>2,4,6,8</strong> ate solteentzat."
             submit: "Gorde"
             cancel: "Utzi"
         zones_form:
+          title_new: "Gune berria"
+          title_edit: "Gunea editatzen"
           name_label: "Gunearen izena"
           submit: "Gorde"
           cancel: "Utzi"
         zones_index:
+          list_title: "Guneen zerrenda"
+          nav_button: "Egiaztapen-metodoak"
           title: "Egiaztapen-guneak"
           new_zone: "Gune berria"
           col_name: "Izena"
@@ -61,7 +88,7 @@ eu:
           destroy: "Ezabatu"
           destroy_confirm: "Ziur zaude gune hau ezabatu nahi duzula?"
         zones_show:
-          edit_zone: "Gunea editatu"
+          edit_zone: "Izena aldatu"
           back: "Itzuli"
           streets_title: "Guneko kaleak"
           add_street: "Kale bat gehitu"
