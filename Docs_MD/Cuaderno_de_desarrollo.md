@@ -96,6 +96,38 @@ docker compose exec app cp /tmp/routes.rb /app/config/routes.rb
 
 ---
 
+## Archivo de entorno en directorio padre.
+
+Es necesario la variable de entorno `CENSUS_URL=`, para el correcto funcionamiento de la API en modo desarrollo, se precisaran mas variables para las capas de seguridad.
+```
+DECIDIM_ENV=production
+
+POSTGRES_USER=decidim
+POSTGRES_PASSWORD=d3c1d1m2026-x
+POSTGRES_DB=decidim_production
+DATABASE_URL=postgres://decidim:d3c1d1m2026-x@db/decidim_production
+
+SECRET_KEY_BASE=0a62a366ac78034ab2b6054bb018be1cdb91568c7e727246478ce8be510835ee84acc07d2c56f0ddff5d01cd54a9ea45afdcca0c3d964eaadd020086c5e80f8d
+
+EMAIL=no-reply@galdakaocenso.demo.participa.cloud
+SMTP_USERNAME=servicios@alabs.org
+SMTP_PASSWORD=F2MdWo1LDW2JQNKKEioHydUL8QkYC3
+SMTP_ADDRESS=mail.alabs.org
+SMTP_DOMAIN=participa.cloud
+SMTP_PORT=587
+
+DECIDIM_FORCE_SSL=true
+
+CENSUS_URL=http://10.0.3.103:5000/soap
+
+# MAPS_PROVIDER=here
+# MAPS_API_KEY=
+
+```
+
+---
+
+
 ## Referencia: renombrado Getxo → Galdakao
 
 | Getxo (original 0.23) | Galdakao (este repo) |
