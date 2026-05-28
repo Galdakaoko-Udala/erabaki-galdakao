@@ -11,7 +11,7 @@ class GaldakaoWebservice
   def response
     return @response if defined?(@response)
 
-    census_url = ENV["CENSUS_URL"] || Rails.application.secrets.census_url
+    census_url = ENV["CENSUS_URL"]
 
     if census_url.blank?
       Rails.logger.error ">> DEV aLabs >> CENSUS_URL no configurado"

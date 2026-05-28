@@ -66,6 +66,6 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
   end
 
   def manifest
-    Decidim.authorization_handlers.find { |m| m.name == "census_authorization_handler" }
+    Decidim::Verifications.find_workflow_manifest("census_authorization_handler")
   end
 end

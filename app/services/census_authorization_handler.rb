@@ -21,7 +21,7 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
     )
   end
   def unique_id
-    Digest::MD5.hexdigest("#{document_number&.upcase}-#{Rails.application.secrets.secret_key_base}")
+    Digest::MD5.hexdigest("#{document_number&.upcase}-#{Rails.application.secret_key_base}")
   end
   def slim_response
     response&.search("Body")&.children
@@ -51,7 +51,7 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
   def response
     return @response if defined?(@response)
     Rails.logger.info ">> DEV aLabs >> ENV CENSUS_URL directo: #{ENV['CENSUS_URL'].inspect}"
-    census_url = ENV["CENSUS_URL"] || Rails.application.secrets.census_url
+    census_url = ENV["CENSUS_URL"]
     Rails.logger.info ">> DEV aLabs >> Census URL: #{census_url.inspect}"
     if census_url.blank?
       Rails.logger.error ">> DEV aLabs >> CENSUS_URL no configurado"
