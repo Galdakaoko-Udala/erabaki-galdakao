@@ -5,7 +5,9 @@ Rails.application.config.to_prepare do
   GaldakaoStreet
   GaldakaoWebservice
   CensusActionAuthorizer
+end
 
+Rails.application.initializer "galdakao_census.routes", after: :add_routing_paths do
   Decidim::Admin::Engine.routes.draw do
     resources :galdakao, only: [:index] do
       collection do
