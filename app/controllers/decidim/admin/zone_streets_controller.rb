@@ -16,7 +16,7 @@ module Decidim
         CreateGaldakaoZoneStreet.call(@form, zone) do
           on(:ok) do
             flash[:notice] = t("decidim.admin.galdakao.zone_streets.create.success")
-            redirect_to decidim_admin.galdakao_zone_path(zone)
+            redirect_to decidim_admin_galdakao_census.galdakao_zone_path(zone)
           end
           on(:invalid) do |error|
             flash.now[:alert] = t("decidim.admin.galdakao.zone_streets.create.error", error: error)
@@ -29,7 +29,7 @@ module Decidim
         UpdateGaldakaoZoneStreet.call(@form, zone_street) do
           on(:ok) do
             flash[:notice] = t("decidim.admin.galdakao.zone_streets.update.success")
-            redirect_to decidim_admin.galdakao_zone_path(zone)
+            redirect_to decidim_admin_galdakao_census.galdakao_zone_path(zone)
           end
           on(:invalid) do |error|
             flash.now[:alert] = t("decidim.admin.galdakao.zone_streets.update.error", error: error)
@@ -40,7 +40,7 @@ module Decidim
       def destroy
         zone_street.destroy!
         flash[:notice] = t("decidim.admin.galdakao.zone_streets.destroy.success")
-        redirect_to decidim_admin.galdakao_zone_path(zone)
+        redirect_to decidim_admin_galdakao_census.galdakao_zone_path(zone)
       end
       private
       def zone

@@ -33,7 +33,7 @@ module Decidim
       def sync
         enforce_permission_to :read, :admin_user
         GaldakaoStreet.import_streets!(current_organization)
-        redirect_to decidim_admin.streets_galdakao_index_path,
+        redirect_to decidim_admin_galdakao_census.streets_galdakao_index_path,
                     notice: I18n.t("decidim.admin.galdakao.sync.success")
       end
 

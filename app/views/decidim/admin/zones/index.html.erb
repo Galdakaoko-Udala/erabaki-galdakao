@@ -8,7 +8,7 @@
       <h1 class="item_show__header-title" style="margin:0;">
         <%= t("decidim.admin.galdakao.zones_index.list_title") %>
         <%= link_to t("decidim.admin.galdakao.zones_index.new_zone"),
-            decidim_admin.new_galdakao_zone_path,
+            decidim_admin_galdakao_census.new_galdakao_zone_path,
             class: "button button__sm button__secondary" %>
         <%= link_to "/admin/authorization_workflows",
             style: "display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--secondary);color:var(--secondary);border-radius:4px;font-weight:600;padding:1.375px 10px;font-size:0.875rem;text-decoration:none;background:transparent;",
@@ -32,13 +32,13 @@
       <tbody>
         <% zone_list.each do |zone| %>
           <tr>
-            <td><%= link_to zone.name, decidim_admin.galdakao_zone_path(zone) %></td>
+            <td><%= link_to zone.name, decidim_admin_galdakao_census.galdakao_zone_path(zone) %></td>
             <td><%= zone.zone_streets.count %></td>
             <td class="table-list__actions">
-              <%= icon_link_to "edit-line", decidim_admin.galdakao_zone_path(zone),
+              <%= icon_link_to "edit-line", decidim_admin_galdakao_census.galdakao_zone_path(zone),
                   t("decidim.admin.galdakao.zones_index.edit"),
                   class: "action-icon" %>
-              <%= icon_link_to "delete-bin-line", decidim_admin.galdakao_zone_path(zone),
+              <%= icon_link_to "delete-bin-line", decidim_admin_galdakao_census.galdakao_zone_path(zone),
                   t("decidim.admin.galdakao.zones_index.destroy"),
                   class: "action-icon--remove",
                   method: :delete,

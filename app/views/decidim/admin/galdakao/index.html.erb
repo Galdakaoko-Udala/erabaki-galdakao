@@ -30,7 +30,7 @@
     <% end %>
     <div class="mt-s" style="margin-bottom: 1rem;">
       <%= button_to t("decidim.admin.galdakao.index.sync_button"),
-          decidim_admin.sync_galdakao_index_path,
+          decidim_admin_galdakao_census.sync_galdakao_index_path,
           method: :post,
           class: "button button__sm button__secondary",
           data: { confirm: t("decidim.admin.galdakao.index.sync_confirm") } %>
@@ -43,7 +43,7 @@
     <div class="card__content">
       <div class="mt-s">
         <%= link_to t("decidim.admin.galdakao.index.streets_link"),
-            streets_galdakao_index_path,
+            decidim_admin_galdakao_census.streets_galdakao_index_path,
             class: "button button__sm button__secondary" %>
       </div>
     </div>
