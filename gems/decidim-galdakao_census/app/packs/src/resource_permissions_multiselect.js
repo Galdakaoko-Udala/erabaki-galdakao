@@ -1,5 +1,5 @@
 import TomSelect from "tom-select";
-const URL_ZONES = "/admin/galdakao/zones";
+const URL_ZONES = "/admin/galdakao_census/galdakao/zones";
 const SELECTOR = "input[id*='authorization_handlers_options'][id*='zones']";
 const CHECKBOX_SELECTOR = "input[type=checkbox][id*='census_authorization_handler']";
 const initCensusZonesSelect = (input) => {

@@ -31,3 +31,6 @@ group :development do
   gem "listen"
   gem "web-console"
 end
+
+# Galdakao census gem local
+gem "decidim-galdakao_census", path: "gems/decidim-galdakao_census"

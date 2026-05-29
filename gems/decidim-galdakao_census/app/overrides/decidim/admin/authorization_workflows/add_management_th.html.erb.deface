@@ -1,0 +1,2 @@
+<!-- insert_after "thead tr" -->
+<th class="!text-left"><%= t("decidim.admin.galdakao.authorization_workflows.management") %></th>

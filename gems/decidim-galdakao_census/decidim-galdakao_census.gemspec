@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 Gem::Specification.new do |s|
   s.name        = "decidim-galdakao_census"
   s.version     = "0.1.0"
@@ -12,16 +11,14 @@ Gem::Specification.new do |s|
                   "for Galdakao by Alabs under the Pokecode Decidim distribution."
   s.homepage    = ""
   s.license     = "AGPL-3.0"
-
   s.files = Dir[
     "app/**/*",
     "config/**/*",
     "lib/**/*"
   ]
-
   s.require_paths = ["lib"]
-
   s.add_dependency "decidim-core", "~> 0.31"
   s.add_dependency "decidim-admin", "~> 0.31"
   s.add_dependency "decidim-verifications", "~> 0.31"
+  s.add_dependency "deface", "~> 1.0"
 end

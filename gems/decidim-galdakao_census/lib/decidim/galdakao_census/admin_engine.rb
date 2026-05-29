@@ -1,16 +1,13 @@
 # frozen_string_literal: true
-
 module Decidim
   module GaldakaoCensus
     module Admin
     end
-
     class AdminEngine < ::Rails::Engine
       isolate_namespace Decidim::GaldakaoCensus::Admin
-
       paths["db/migrate"] = nil
       paths["lib/tasks"] = nil
-
+      paths["app/overrides"] ||= ["app/overrides"]
       routes do
         resources :galdakao, only: [:index] do
           collection do
@@ -25,7 +22,6 @@ module Decidim
           end
         end
       end
-
       initializer "galdakao_census.admin_mount_routes" do |_app|
         Decidim::Core::Engine.routes do
           mount Decidim::GaldakaoCensus::AdminEngine, at: "/admin/galdakao_census", as: "decidim_admin_galdakao_census"
