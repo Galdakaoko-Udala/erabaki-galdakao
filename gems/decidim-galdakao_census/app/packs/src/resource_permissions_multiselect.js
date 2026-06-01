@@ -64,7 +64,7 @@ const initAllSelects = (openAfter = false) => {
     }
   });
 };
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("turbo:load", () => {
   initAllSelects(false);
   document.addEventListener("change", (e) => {
     if (e.target.matches(CHECKBOX_SELECTOR) && e.target.checked) {

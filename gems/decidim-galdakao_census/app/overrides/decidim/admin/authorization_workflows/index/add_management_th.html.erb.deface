@@ -1,2 +1,2 @@
-<!-- insert_after "thead tr" -->
+<!-- insert_after "thead tr th:last-child" -->
 <th class="!text-left"><%= t("decidim.admin.galdakao.authorization_workflows.management") %></th>
