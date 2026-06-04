@@ -866,3 +866,27 @@ census_authorization:
 ```
 
 > **Nota:** `name` y `explanation` ya están actualizados en `es_census_authorizer_galdakao.yml`. Como Rails carga los archivos de módulo después del yml base, las claves del módulo tienen precedencia actualmente. La limpieza del yml base es cosmética hasta que se haga el commit atómico.
+
+
+## Resumen de cambios — infraestructura y repositorio
+Contenedores LXC
+
+> Eliminados: soap-galda-decidim029, soap-galda-decidim30-repostreet, soap-galda-decidim30-backup
+> Conservado parado: soap-galda-decidim30 — entorno 0.30.4 funcional para presentación
+> Creado y arrancado: soap-galda-decidim31 — copia de 30, mismo IP, será el entorno de trabajo para la migración a 0.31
+> Intocable: soap-galda-dbexterna — API SOAP y base de datos
+
+## Repositorio alabs/erabaki-galdakao
+Ramas renombradas y etiquetadas con versión:
+
+feature/zone-verifications → feature/zone-verifications-v0.30.4
+feature/street-validation → feature/street-validation-v0.30.4
+feature/censo-soap → feature/censo-soap-v0.30.4
+main actual preservado como main-v0.30.4
+
+Próximo paso: en soap-galda-decidim31 traer el main 0.31 de Galdakao y comenzar el rebase de feature/zone-verifications-v0.30.4 sobre él.
+
+Paso en archivo aparte "Migracion_a_031.md"
+
+
+
