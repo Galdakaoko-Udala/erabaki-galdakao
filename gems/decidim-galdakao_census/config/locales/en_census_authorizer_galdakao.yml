@@ -99,6 +99,22 @@ en:
           all: "All"
           edit: "Edit"
           destroy: "Delete"
+        blocked_users:
+          index:
+            menu_label: "Blocked authorizations"
+            title: "Blocked users"
+            nav_button: "Back to Authorizations"
+            no_blocked: "There are no blocked users at the moment."
+            col_user: "User"
+            col_email: "Email"
+            col_attempts: "Attempts"
+            col_last_attempt: "Last attempt"
+            col_actions: "Actions"
+            unlock: "Unblock"
+            unlock_confirm: "Are you sure you want to unblock this user?"
+          unlock:
+            success: "User successfully unblocked."
+            not_blocked: "This user is not blocked indefinitely."
         authorization_workflows:
           management: "Management"
     authorization_handlers:
@@ -124,9 +140,23 @@ en:
           explanation: "You do not meet the participation requirements for this process."
 
     events:
+      galdakao_census:
+        user_locked:
+          email_intro: "A participant has been blocked indefinitely after exceeding the maximum number of verification attempts."
+          email_outro: "Access the <a href=\"%{blocked_users_path}\">blocked authorizations list</a> to manage the case."
+          email_subject: "Participant blocked due to excessive verification attempts"
+          notification_title: "A participant has been blocked indefinitely after exceeding the maximum number of verification attempts."
       verifications:
         verify_with_managed_user:
           email_intro: A participant has tried to verify themselves with data that is already in use by another participant.
           email_outro: Check the <a href="%{conflicts_url}">Verifications conflicts list</a> to see the details and solve the issue.
           email_subject: Failed verification attempt against another participant
           notification_title: A participant has tried to verify themselves with data that is already in use by another participant.
+
+    galdakao_census:
+      lockout:
+        blocked_indefinitely: "Your access has been blocked indefinitely. Please contact the administration."
+        blocked_indefinitely_contact: "You have exceeded the maximum number of attempts. Please contact the participation department of Galdakao City Hall."
+        attempts_remaining: "Incorrect data, you have %{remaining} attempts left out of 6."
+        three_attempts: "You have entered incorrect data 3 times. Please check your data. You will be able to try again in 5 minutes."
+        wait: "You must wait %{minutes} minutes and %{seconds} seconds before trying again."

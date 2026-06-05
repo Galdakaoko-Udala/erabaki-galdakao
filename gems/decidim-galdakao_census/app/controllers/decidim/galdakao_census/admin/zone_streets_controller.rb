@@ -4,7 +4,7 @@ module Decidim
   module GaldakaoCensus
     module Admin
       class ZoneStreetsController < GaldakaoController
-        layout "decidim/admin/application"
+        layout "decidim/admin/users"
         helper_method :zone, :zone_street
 
         before_action -> { enforce_permission_to :read, :admin_user }

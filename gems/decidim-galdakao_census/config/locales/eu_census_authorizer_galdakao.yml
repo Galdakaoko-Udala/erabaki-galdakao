@@ -99,6 +99,22 @@ eu:
           all: "Guztiak"
           edit: "Editatu"
           destroy: "Ezabatu"
+        blocked_users:
+          index:
+            menu_label: "Blokeatutako baimenak"
+            title: "Blokeatutako erabiltzaileak"
+            nav_button: "Itzuli Baimenera"
+            no_blocked: "Ez dago une honetan blokeatutako erabiltzailerik."
+            col_user: "Erabiltzailea"
+            col_email: "Posta elektronikoa"
+            col_attempts: "Saiakerak"
+            col_last_attempt: "Azken saiakera"
+            col_actions: "Ekintzak"
+            unlock: "Desblokeatu"
+            unlock_confirm: "Ziur zaude erabiltzaile hau desblokeatu nahi duzula?"
+          unlock:
+            success: "Erabiltzailea behar bezala desblokeatu da."
+            not_blocked: "Erabiltzaile hau ez dago mugagabe blokeatuta."
         authorization_workflows:
           management: "Kudeaketa"
     authorization_handlers:
@@ -124,9 +140,23 @@ eu:
           explanation: "Ez dituzu prozesu honetarako parte-hartze baldintzak betetzen."
 
     events:
+      galdakao_census:
+        user_locked:
+          email_intro: "Parte-hartzaile bat mugagabe blokeatu da egiaztapen saiakera kopuru maximoa gainditu ondoren."
+          email_outro: "Sartu <a href=\"%{blocked_users_path}\">blokeatutako baimenen zerrendan</a> kasua kudeatzeko."
+          email_subject: "Parte-hartzailea blokeatu da egiaztapen saiakera gehiegi egin ondoren"
+          notification_title: "Parte-hartzaile bat mugagabe blokeatu da egiaztapen saiakera kopuru maximoa gainditu ondoren."
       verifications:
         verify_with_managed_user:
           email_intro: Parte-hartzaile batek beste parte-hartzaile baten datuak erabiltzen saiatu da egiaztatzen.
           email_outro: Begiratu <a href="%{conflicts_url}">egiaztapenen gatazken zerrenda</a> xehetasunak ikusteko eta arazoa konpontzeko.
           email_subject: Errorea beste parte-hartzaile baten bidez egiaztatzean
           notification_title: Parte-hartzaile batek beste parte-hartzaile baten datuak erabiltzen saiatu da egiaztatzen.
+
+    galdakao_census:
+      lockout:
+        blocked_indefinitely: "Zure sarbidea mugagabe blokeatu da. Jarri harremanetan administrazioarekin."
+        blocked_indefinitely_contact: "Saiakera kopuru maximoa gainditu duzu. Jarri harremanetan Galdakaoko Udaleko partaidetza sailarekin."
+        attempts_remaining: "Datu okerrak, %{remaining} saiakera geratzen zaizkizu 6tik."
+        three_attempts: "Hiru aldiz datu okerrak sartu dituzu. Mesedez egiaztatu zure datuak. 5 minutu barru saia zaitezke berriro."
+        wait: "Berriro saiatu aurretik %{minutes} minutu eta %{seconds} segundo itxaron behar dituzu."

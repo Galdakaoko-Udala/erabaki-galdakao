@@ -1,7 +1,82 @@
-<%# app/views/census_authorization/_form.html.erb %>
-
-<% Rails.logger.info "!!! Renderizando _form.html.erb para CensusAuthorizationHandler" %>
-
-<%= form.text_field :document_number %>
-<%= form.date_field :date_of_birth %>
-<%= form.hidden_field :handler_name %>
+<div class="census-auth-form">
+  <div class="census-auth-form__box">
+    <div class="census-auth-form__field">
+      <label class="census-auth-form__label" for="census_authorization_handler_document_number">
+        <%= t("decidim.authorization_handlers.census_authorization_handler.fields.document_number") %> *
+      </label>
+      <%= form.text_field :document_number,
+          label: false,
+          autocomplete: "off",
+          id: "census_authorization_handler_document_number",
+          class: "census-auth-input" %>
+    </div>
+    <div class="census-auth-form__field census-auth-form__field--date">
+      <label class="census-auth-form__label" for="census_authorization_handler_date_of_birth">
+        <%= t("decidim.authorization_handlers.census_authorization_handler.fields.date_of_birth") %> *
+      </label>
+      <%= form.date_field :date_of_birth,
+          label: false,
+          id: "census_authorization_handler_date_of_birth",
+          class: "census-auth-input" %>
+    </div>
+  </div>
+  <%= form.hidden_field :handler_name %>
+</div>
+<style>
+.census-auth-form {
+  display: flex;
+  justify-content: center;
+}
+.census-auth-form__box {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #2ecc71, #27ae60, #1abc9c) border-box;
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 1.5rem;
+}
+.census-auth-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+.census-auth-form__field--date {
+  position: relative;
+}
+.census-auth-form__label {
+  font-weight: 700;
+}
+.census-auth-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.datepicker__calendar-button {
+  position: absolute !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  top: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  background: linear-gradient(135deg, #2ecc71, #1abc9c) !important;
+  border-radius: 8px !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.datepicker__calendar-button svg {
+  display: inline !important;
+  vertical-align: middle !important;
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+  fill: white !important;
+}
+</style>
