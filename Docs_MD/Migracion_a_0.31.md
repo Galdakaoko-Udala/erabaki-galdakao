@@ -823,3 +823,108 @@ Independientemente de la configuración de email, el conflicto **siempre queda r
 - [x] Comprobar que el admin puede resolver el conflicto desde el panel
 - [x] Verificar comportamiento con frecuencia "Diariamente" — email no inmediato, conflicto registrado
 - [x] Verificar comportamiento con frecuencia "En tiempo real" — email inmediato sin datos personales
+
+
+## 🟡 Paso 17 — Sistema de bloqueo de autorizaciones (LockoutManager)
+
+### Objetivo
+
+Implementar un sistema de bloqueo progresivo para los intentos fallidos de autorización con el padrón municipal, persistiendo el estado en `extended_data` del usuario. Añadir notificación al administrador cuando el bloqueo es indefinido y panel de gestión en el admin.
+
+---
+
+### Modo de funcionamiento
+
+- Tras cada intento fallido: bloqueo de 30 segundos.
+- Al tercer intento fallido: bloqueo de 5 minutos.
+- Al sexto intento fallido: bloqueo indefinido — el usuario debe contactar con la administración.
+- En caso de éxito: se reinicia el registro de intentos.
+
+---
+
+### Arquitectura
+
+La lógica se modulariza en `Decidim::GaldakaoCensus::LockoutManager` bajo `app/services/` de la gema, manteniendo el `CensusAuthorizationHandler` como archivo de flujo. El handler delega en el manager sin contener lógica de bloqueo.
+
+---
+
+### Archivos creados
+
+- `gems/decidim-galdakao_census/app/services/decidim/galdakao_census/lockout_manager.rb`
+- `gems/decidim-galdakao_census/app/events/decidim/galdakao_census/user_locked_event.rb`
+- `gems/decidim-galdakao_census/app/controllers/decidim/galdakao_census/admin/blocked_users_controller.rb`
+- `gems/decidim-galdakao_census/app/views/decidim/galdakao_census/admin/blocked_users/index.html.erb`
+
+### Archivos modificados
+
+- `gems/decidim-galdakao_census/app/services/census_authorization_handler.rb` — integración del lockout mediante `validate :check_lockout` y delegación en `LockoutManager`
+- `gems/decidim-galdakao_census/lib/decidim/galdakao_census/admin_engine.rb` — rutas para `blocked_users` con acción `unlock`
+- `gems/decidim-galdakao_census/config/locales/{es,en,eu}_census_authorizer_galdakao.yml` — textos del lockout y del evento de notificación
+
+---
+
+### Persistencia
+
+El estado de bloqueo se guarda en `Decidim::User#extended_data` bajo la clave `authorizations.census_authorization_handler`:
+
+```json
+{
+  "authorizations": {
+    "census_authorization_handler": {
+      "failed_attempts": 6,
+      "last_attempt_at": "2026-06-05T17:00:00Z",
+      "locked_until": "infinite"
+    }
+  }
+}
+```
+
+---
+
+### Notificación al admin
+
+Cuando el bloqueo es indefinido, se publica el evento `decidim.events.galdakao_census.user_locked` via `Decidim::EventsManager`, que envía un email a todos los admins de la organización con un enlace al panel de autorizaciones bloqueadas. Sin datos personales en el email.
+
+---
+
+### Panel de administración
+
+Accesible desde el submenú de Impersonaciones → Autorizaciones bloqueadas. Lista usuarios bloqueados indefinidamente con nombre, email, número de intentos, fecha del último intento y botón de desbloqueo con confirmación.
+
+**Para desbloquear un usuario manualmente desde consola:**
+```ruby
+user = Decidim::User.find_by(email: "correo@ejemplo.com")
+data = user.extended_data["authorizations"] || {}
+data.delete("census_authorization_handler")
+user.update!(extended_data: user.extended_data.merge("authorizations" => data))
+```
+
+---
+
+### Verificación manual
+
+- [ ] Introducir datos incorrectos y verificar mensaje de espera de 30 segundos
+- [ ] Al tercer intento verificar bloqueo de 5 minutos
+- [ ] Al sexto intento verificar bloqueo indefinido y recepción de email por el admin
+- [ ] Verificar panel de autorizaciones bloqueadas en el admin
+- [ ] Desbloquear usuario desde el panel y verificar que puede volver a intentarlo
+- [ ] Verificar que un intento exitoso limpia el registro de intentos
+
+---
+
+## 🟡 Paso 18 — Mejoras visuales del formulario de autorización
+
+### Objetivo
+
+Mejorar la vista del formulario de autorización del padrón municipal para que sea más clara e informativa para el usuario, especialmente en los casos de error y bloqueo.
+
+### Archivo modificado
+
+- `gems/decidim-galdakao_census/app/views/census_authorization/_form.html.erb`
+
+### Verificación manual
+
+- [ ] Verificar que el formulario carga correctamente
+- [ ] Verificar que los mensajes de error se muestran correctamente
+- [ ] Verificar que el mensaje de bloqueo temporal se muestra correctamente
+- [ ] Verificar que el mensaje de bloqueo indefinido se muestra correctamente
