@@ -99,6 +99,22 @@ es:
           all: "Todos"
           edit: "Editar"
           destroy: "Eliminar"
+        blocked_users:
+          index:
+            menu_label: "Autorizaciones bloqueadas"
+            title: "Usuarias bloqueadas"
+            nav_button: "Volver a Autorizaciones"
+            no_blocked: "No hay usuarias bloqueadas actualmente."
+            col_user: "Usuaria"
+            col_email: "Correo electrónico"
+            col_attempts: "Intentos"
+            col_last_attempt: "Último intento"
+            col_actions: "Acciones"
+            unlock: "Desbloquear"
+            unlock_confirm: "¿Seguro que quieres desbloquear esta usuaria?"
+          unlock:
+            success: "Usuaria desbloqueada correctamente."
+            not_blocked: "Esta usuaria no está bloqueada indefinidamente."
         authorization_workflows:
           management: "Gestión"
     authorization_handlers:
@@ -128,9 +144,23 @@ es:
           explanation: "No cumples los requisitos de participación para este proceso."
 
     events:
+      galdakao_census:
+        user_locked:
+          email_intro: "Una participante ha sido bloqueada indefinidamente al superar el número máximo de intentos de verificación."
+          email_outro: "Accede al <a href=\"%{blocked_users_path}\">listado de autorizaciones bloqueadas</a> para gestionar el caso."
+          email_subject: "Participante bloqueada por exceso de intentos de verificación"
+          notification_title: "Una participante ha sido bloqueada indefinidamente al superar el número máximo de intentos de verificación."
       verifications:
         verify_with_managed_user:
           email_intro: Una participante ha intentado verificarse con datos que ya están en uso por otra participante.
           email_outro: Comprueba la <a href="%{conflicts_url}">lista de conflictos de verificaciones</a> para ver los detalles y resolver el problema.
           email_subject: Error al intentar verificarse contra otra participante
           notification_title: Una participante ha intentado verificarse con datos que ya están en uso por otra participante.
+
+    galdakao_census:
+      lockout:
+        blocked_indefinitely: "Tu acceso ha sido bloqueado indefinidamente. Contacta con la administración."
+        blocked_indefinitely_contact: "Has superado el número máximo de intentos. Por favor, ponte en contacto con el departamento de participación del Ayuntamiento de Galdakao."
+        attempts_remaining: "Datos incorrectos, te quedan %{remaining} intentos de 6."
+        three_attempts: "Has introducido datos erróneos 3 veces. Por favor revisa tus datos. Podrás volver a intentarlo en 5 minutos."
+        wait: "Debes esperar %{minutes} minutos y %{seconds} segundos antes de volver a intentarlo."
