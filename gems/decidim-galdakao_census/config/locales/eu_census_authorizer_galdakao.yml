@@ -6,7 +6,7 @@ eu:
   census_authorization_handler:
     service_unavailable: "Erroldaren zerbitzua ez dago erabilgarri une honetan."
     no_record: "Ez da aurkitu erregistrorik emandako datuekin."
-    invalid_document: "Agiriaren formatua ez da baliozkoa."
+    invalid_document: "Fitxategiaren formatua ez da baliozkoa."
 
   decidim:
     admin:
@@ -14,37 +14,37 @@ eu:
         sync:
           success: "Kaleak ondo sinkronizatu dira."
         index:
-          nav_button: "Egiaztapen-metodoak"
-          title: "Galdakaoko panela — Erroldaren kudeaketa"
+          nav_button: "Egiaztapen metodoetara itzuli"
+          title: "Galdakaoko panela — Kale-izendegiaren kudeaketa"
           section_sync:
             subtitle: "Katalogoen sinkronizazioa"
           section_catalog:
-            subtitle: "Uneko kaleen katalogoa"
+            subtitle: "Egungo kale-izendegia"
           last_sync: "Azken sinkronizazioa: %{time}"
           never_synced: "Kaleak oraindik ez dira sinkronizatu."
           sync_button: "Sinkronizatu kaleak erroldatik"
-          sync_confirm: "Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuk behar izan ditzake."
+          sync_confirm: "Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuetako kontua da."
           streets_link: "Ikusi kaleen zerrenda"
         streets:
-          nav_button: "Galdakaoko kudeaketara itzuli"
+          nav_button: "Kale-izendegiaren kudeaketara itzuli"
           title: "Sinkronizatutako kaleak"
           name: "Kalearen izena"
           updated_at: "Azken eguneraketa"
         zones:
           index:
-            title: "Egiaztapen-guneak"
+            title: "Egiaztapen-eremuak"
           new:
-            title: "Gune berria"
+            title: "Eremu berria"
           edit:
-            title: "Gunea editatu"
+            title: "Eremua editatu"
           destroy:
-            success: "Gunea zuzen ezabatu da"
+            success: "Eremua zuzen ezabatu da"
           create:
-            success: "Gune berria zuzen sortu da"
-            error: "Errorea gunea sortzean: %{error}"
+            success: "Eremu berria zuzen sortu da"
+            error: "Errorea eremua sortzean: %{error}"
           update:
-            success: "Gunea zuzen eguneratu da"
-            error: "Errorea gunea eguneratzean: %{error}"
+            success: "Eremua zuzen eguneratu da"
+            error: "Errorea eremua eguneratzean: %{error}"
         zone_streets:
           create:
             success: "Kalea behar bezala gehitu da"
@@ -55,8 +55,8 @@ eu:
           destroy:
             success: "Kalea behar bezala ezabatu da"
           form:
-            title_new: "Kale bat gehitu guneari"
-            title_edit: "Guneko kalea editatu"
+            title_new: "Kale bat gehitu eremuari"
+            title_edit: "Eremuko kalea editatu"
             street_label: "Kalea"
             street_blank: "Hautatu kale bat"
             numbers_constraint_label: "Zenbakien murrizketa"
@@ -64,33 +64,33 @@ eu:
               all_numbers: "Zenbaki guztiak"
               even_numbers: "Zenbaki bikoitiak"
               odd_numbers: "Zenbaki bakoitiak"
-              only_range: "Ate hauek bakarrik"
+              only_range: "Atari hauek bakarrik"
               except_range: "Hauek izan ezik"
-            numbers_range_label: "Ateak"
+            numbers_range_label: "Atariak"
             numbers_range_placeholder: "Adib: 1-50  edo  2,4,6,8"
-            numbers_range_help: "Erabili <strong>1-50</strong> tarte baterako edo <strong>2,4,6,8</strong> ate solteentzat."
+            numbers_range_help: "Erabili <strong>1-50</strong> tarte baterako edo <strong>2,4,6,8</strong> atari solteetarako."
             submit: "Gorde"
             cancel: "Utzi"
         zones_form:
-          title_new: "Gune berria"
-          title_edit: "Gunea editatzen"
-          name_label: "Gunearen izena"
+          title_new: "Eremu berria"
+          title_edit: "Eremua editatzen"
+          name_label: "Eremuaren izena"
           submit: "Gorde"
           cancel: "Utzi"
         zones_index:
-          list_title: "Guneen zerrenda"
-          nav_button: "Egiaztapen-metodoak"
-          title: "Egiaztapen-guneak"
-          new_zone: "Gune berria"
+          list_title: "Eremuen zerrenda"
+          nav_button: "Egiaztapen metodoetara itzuli"
+          title: "Egiaztapen eremuak"
+          new_zone: "Eremu berria"
           col_name: "Izena"
           col_streets: "Kale kop."
           edit: "Editatu"
           destroy: "Ezabatu"
-          destroy_confirm: "Ziur zaude gune hau ezabatu nahi duzula?"
+          destroy_confirm: "Ziur zaude eremu hau ezabatu nahi duzula?"
         zones_show:
           edit_zone: "Izena aldatu"
           back: "Itzuli"
-          streets_title: "Guneko kaleak"
+          streets_title: "Eremuko kaleak"
           add_street: "Kale bat gehitu"
           col_street: "Kalea"
           col_constraint: "Murrizketa"
@@ -122,22 +122,22 @@ eu:
         census_authorization_handler:
           help:
             - "Herritarrak Galdakaon erroldatuta egon behar dira egiaztatzeko."
-            - "Egiaztapena udal-erroldaren aurka egiten da NAN/AIZ eta jaiotze-dataren bidez."
+            - "Egiaztapena egiteko udal-errolda erabiltzen da NAN/AIZ eta jaiotze-dataren bidez."
       census_authorization_handler:
-        name: "Galdakaoko udal erroldea"
-        explanation: "Egiaztatu zure nortasuna Galdakaoko udal erroldearen bidez."
+        name: "Galdakaoko udal errolda"
+        explanation: "Egiaztatu zure nortasuna Galdakaoko udal erroldaren bidez."
         fields:
           document_number: "Agiri-zenbakia (NAN/AIZ)"
           date_of_birth: "Jaiotze-data"
         invalid_document: "Ezin izan da zure nortasuna egiaztatu emandako datuekin."
-        connection_error: "Ezin izan da erroldaren zerbitzuarekin konektatu. Mesedez, saiatu beranduago."
-        service_unavailable: "Erroldaren zerbitzua ez dago erabilgarri une honetan."
+        connection_error: "Ezin izan da errolda zerbitzuarekin konektatu. Mesedez, saiatu beranduago."
+        service_unavailable: "Errolda zerbitzua ez dago erabilgarri une honetan."
         no_record: "Ez da aurkitu erregistrorik emandako datuekin."
-        unauthorized_zone: "Zure helbidea ez dago prozesu honetan parte hartzeko gaitutako guneetan."
+        unauthorized_zone: "Zure helbidea ez dago prozesu honetan parte hartzeko baimendutako eremuen artean."
     authorization_modals:
       content:
         unauthorized:
-          explanation: "Ez dituzu prozesu honetarako parte-hartze baldintzak betetzen."
+          explanation: "Ez dituzu betetzen prozesu honetan parte hartzeko baldintzak."
 
     events:
       galdakao_census:
@@ -148,10 +148,10 @@ eu:
           notification_title: "Parte-hartzaile bat mugagabe blokeatu da egiaztapen saiakera kopuru maximoa gainditu ondoren."
       verifications:
         verify_with_managed_user:
-          email_intro: Parte-hartzaile batek beste parte-hartzaile baten datuak erabiltzen saiatu da egiaztatzen.
+          email_intro: Parte-hartzaile bat beste parte-hartzaile baten datuak erabiltzen egiaztatzen saiatu da.
           email_outro: Begiratu <a href="%{conflicts_url}">egiaztapenen gatazken zerrenda</a> xehetasunak ikusteko eta arazoa konpontzeko.
           email_subject: Errorea beste parte-hartzaile baten bidez egiaztatzean
-          notification_title: Parte-hartzaile batek beste parte-hartzaile baten datuak erabiltzen saiatu da egiaztatzen.
+          notification_title: Parte-hartzaile bat beste parte-hartzaile baten datuak erabiltzen egiaztatzen saiatu da.
 
     galdakao_census:
       lockout:

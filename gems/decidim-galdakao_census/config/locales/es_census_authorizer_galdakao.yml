@@ -121,7 +121,7 @@ es:
       admin:
         census_authorization_handler:
           help:
-            - "Los ciudadanos deben estar empadronados en Galdakao para verificarse."
+            - "Los y las ciudadanas deben estar empadronadas en Galdakao para verificarse."
             - "La verificación se realiza contra el padrón municipal mediante DNI/NIE y fecha de nacimiento."
       census_authorization_handler:
         # NOTA: name y explanation también están en es.yml (desactualizados).
