@@ -903,12 +903,12 @@ user.update!(extended_data: user.extended_data.merge("authorizations" => data))
 
 ### Verificación manual
 
-- [ ] Introducir datos incorrectos y verificar mensaje de espera de 30 segundos
-- [ ] Al tercer intento verificar bloqueo de 5 minutos
-- [ ] Al sexto intento verificar bloqueo indefinido y recepción de email por el admin
-- [ ] Verificar panel de autorizaciones bloqueadas en el admin
-- [ ] Desbloquear usuario desde el panel y verificar que puede volver a intentarlo
-- [ ] Verificar que un intento exitoso limpia el registro de intentos
+- [x] Introducir datos incorrectos y verificar mensaje de espera de 30 segundos
+- [x] Al tercer intento verificar bloqueo de 5 minutos
+- [x] Al sexto intento verificar bloqueo indefinido y recepción de email por el admin
+- [x] Verificar panel de autorizaciones bloqueadas en el admin
+- [x] Desbloquear usuario desde el panel y verificar que puede volver a intentarlo
+- [x] Verificar que un intento exitoso limpia el registro de intentos
 
 ---
 
@@ -924,7 +924,7 @@ Mejorar la vista del formulario de autorización del padrón municipal para que 
 
 ### Verificación manual
 
-- [ ] Verificar que el formulario carga correctamente
-- [ ] Verificar que los mensajes de error se muestran correctamente
-- [ ] Verificar que el mensaje de bloqueo temporal se muestra correctamente
-- [ ] Verificar que el mensaje de bloqueo indefinido se muestra correctamente
+- [x] Verificar que el formulario carga correctamente
+- [x] Verificar que los mensajes de error se muestran correctamente
+- [x] Verificar que el mensaje de bloqueo temporal se muestra correctamente
+- [x] Verificar que el mensaje de bloqueo indefinido se muestra correctamente
