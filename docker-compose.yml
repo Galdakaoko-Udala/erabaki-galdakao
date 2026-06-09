@@ -101,7 +101,7 @@ services:
       - redis_data:/data
     restart: ${RESTART_POLICY:-always}
   db_backup:
-    image: ghcr.io/nfrastack/container-db-backup:latest
+    image: tiredofit/db-backup
     container_name: db_backup
     volumes:
       - ./backups:/backup
