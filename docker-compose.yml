@@ -101,7 +101,7 @@ services:
       - redis_data:/data
     restart: ${RESTART_POLICY:-always}
   db_backup:
-    image: tiredofit/db-backup
+    image: ghcr.io/nfrastack/container-db-backup:latest
     container_name: db_backup
     volumes:
       - ./backups:/backup
@@ -115,14 +115,34 @@ services:
       - BACKUP_JOB_CONCURRENCY=${BACKUP_JOB_CONCURRENCY:-1}     # Only run one job at a time
       - DEFAULT_CHECKSUM=${DEFAULT_CHECKSUM:-NONE}        # Don't create checksums
       - DEFAULT_COMPRESSION=${DEFAULT_COMPRESSION:-Bzip2}     # Compress all with ZSTD
-      - DEFAULT_BACKUP_INTERVAL=${DEFAULT_BACKUP_INTERVAL:-1440}   # Backup every 1440 minutes
-      - DEFAULT_BACKUP_BEGIN=${DEFAULT_BACKUP_BEGIN:-0100}      # Start backing up at midnight
-      - DEFAULT_CLEANUP_TIME=${DEFAULT_CLEANUP_TIME:-10080}    # Cleanup backups after a week
+      # Smart retention policy per backup job (daily/weekly/monthly)
       - DB01_TYPE=pgsql
       - DB01_HOST=db
       - DB01_USER=${POSTGRES_USER:-postgres}
       - DB01_PASS=${POSTGRES_PASSWORD:-decidim}
       - DB01_NAME=${POSTGRES_DB:-decidim}
+      - DB01_BACKUP_INTERVAL=${DB01_BACKUP_INTERVAL:-1440}        # Daily
+      - DB01_BACKUP_BEGIN=${DB01_BACKUP_BEGIN:-0100}
+      - DB01_CLEANUP_TIME=${DB01_CLEANUP_TIME:-10080}            # 7 days
+      - DB01_FILESYSTEM_PATH=${DB01_FILESYSTEM_PATH:-/backup/daily}
+      - DB02_TYPE=pgsql
+      - DB02_HOST=db
+      - DB02_USER=${POSTGRES_USER:-postgres}
+      - DB02_PASS=${POSTGRES_PASSWORD:-decidim}
+      - DB02_NAME=${POSTGRES_DB:-decidim}
+      - DB02_BACKUP_INTERVAL=${DB02_BACKUP_INTERVAL:-10080}      # Weekly
+      - DB02_BACKUP_BEGIN=${DB02_BACKUP_BEGIN:-0200}
+      - DB02_CLEANUP_TIME=${DB02_CLEANUP_TIME:-43200}            # 30 days
+      - DB02_FILESYSTEM_PATH=${DB02_FILESYSTEM_PATH:-/backup/weekly}
+      - DB03_TYPE=pgsql
+      - DB03_HOST=db
+      - DB03_USER=${POSTGRES_USER:-postgres}
+      - DB03_PASS=${POSTGRES_PASSWORD:-decidim}
+      - DB03_NAME=${POSTGRES_DB:-decidim}
+      - DB03_BACKUP_INTERVAL=${DB03_BACKUP_INTERVAL:-43200}      # Monthly (30d)
+      - DB03_BACKUP_BEGIN=${DB03_BACKUP_BEGIN:-0300}
+      - DB03_CLEANUP_TIME=${DB03_CLEANUP_TIME:-525600}           # 365 days
+      - DB03_FILESYSTEM_PATH=${DB03_FILESYSTEM_PATH:-/backup/monthly}
 volumes:
   pg_data:
   redis_data:
