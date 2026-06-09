@@ -103,8 +103,8 @@ eu:
           index:
             menu_label: "Blokeatutako baimenak"
             title: "Blokeatutako erabiltzaileak"
-            nav_button: "Itzuli Baimenera"
-            no_blocked: "Ez dago une honetan blokeatutako erabiltzailerik."
+            nav_button: "Itzuli Baimenetara"
+            no_blocked: "Une honetan ez dago blokeatutako erabiltzailerik."
             col_user: "Erabiltzailea"
             col_email: "Posta elektronikoa"
             col_attempts: "Saiakerak"
@@ -114,7 +114,7 @@ eu:
             unlock_confirm: "Ziur zaude erabiltzaile hau desblokeatu nahi duzula?"
           unlock:
             success: "Erabiltzailea behar bezala desblokeatu da."
-            not_blocked: "Erabiltzaile hau ez dago mugagabe blokeatuta."
+            not_blocked: "Erabiltzaile hau ez dago mugarik gabe blokeatuta."
         authorization_workflows:
           management: "Kudeaketa"
     authorization_handlers:
@@ -142,10 +142,10 @@ eu:
     events:
       galdakao_census:
         user_locked:
-          email_intro: "Parte-hartzaile bat mugagabe blokeatu da egiaztapen saiakera kopuru maximoa gainditu ondoren."
+          email_intro: "Parte-hartzaile bat mugarik gabe blokeatu da datuak egiaztatzeko gehieneko saiakera kopurua gainditu duelako."
           email_outro: "Sartu <a href=\"%{blocked_users_path}\">blokeatutako baimenen zerrendan</a> kasua kudeatzeko."
-          email_subject: "Parte-hartzailea blokeatu da egiaztapen saiakera gehiegi egin ondoren"
-          notification_title: "Parte-hartzaile bat mugagabe blokeatu da egiaztapen saiakera kopuru maximoa gainditu ondoren."
+          email_subject: "Parte-hartzailea blokeatu da datuak egiaztatzeko gehiegizko saiakerengatik"
+          notification_title: "Parte-hartzaile bat mugarik gabe blokeatu da datuak egiaztatzeko gehieneko saiakera kopurua gainditu duelako."
       verifications:
         verify_with_managed_user:
           email_intro: Parte-hartzaile bat beste parte-hartzaile baten datuak erabiltzen egiaztatzen saiatu da.
@@ -155,8 +155,8 @@ eu:
 
     galdakao_census:
       lockout:
-        blocked_indefinitely: "Zure sarbidea mugagabe blokeatu da. Jarri harremanetan administrazioarekin."
-        blocked_indefinitely_contact: "Saiakera kopuru maximoa gainditu duzu. Jarri harremanetan Galdakaoko Udaleko partaidetza sailarekin."
-        attempts_remaining: "Datu okerrak, %{remaining} saiakera geratzen zaizkizu 6tik."
-        three_attempts: "Hiru aldiz datu okerrak sartu dituzu. Mesedez egiaztatu zure datuak. 5 minutu barru saia zaitezke berriro."
-        wait: "Berriro saiatu aurretik %{minutes} minutu eta %{seconds} segundo itxaron behar dituzu."
+        blocked_indefinitely: "Zure sarbidea mugarik gabe blokeatu da. Jarri harremanetan administrazioarekin."
+        blocked_indefinitely_contact: "Gehieneko saiakera kopurura heldu zara. Jarri harremanetan Galdakaoko Udaleko partaidetza sailarekin."
+        attempts_remaining: "Datu okerrak, 6tik %{remaining} saiakera geratzen zaizkizu."
+        three_attempts: "Hirugarren aldiz, datu okerrak sartu dituzu. Mesedez egiaztatu zure datuak. 5 minutu barru saia zaitezke berriro."
+        wait: "Berriro saiatu aurretik %{minutes} minutu eta %{seconds} segundo itxaron behar duzu."
