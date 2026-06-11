@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 class GaldakaoWebservice
   def initialize(action)
     @action = action
@@ -19,7 +18,7 @@ class GaldakaoWebservice
     end
 
     begin
-      raw_response = Faraday.post(census_url) do |request|
+      raw_response = faraday_client.post(census_url) do |request|
         request.headers["Content-Type"] = "text/xml; charset=UTF-8"
         request.body = request_body
       end
@@ -46,6 +45,30 @@ class GaldakaoWebservice
   end
 
   private
+
+  def faraday_client
+    tls_enabled = ENV["GALDAKAO_CENSUS_TLS"].to_s.downcase == "true"
+    ca_cert     = ENV["GALDAKAO_CENSUS_TLS_CERT"].to_s.strip
+    client_cert = ENV["GALDAKAO_CENSUS_TLS_CLIENT_CERT"].to_s.strip
+    client_key  = ENV["GALDAKAO_CENSUS_TLS_CLIENT_KEY"].to_s.strip
+
+    Rails.logger.info "[Galdakao-Census] TLS: #{tls_enabled ? 'activo' : 'desactivado'}"
+
+    unless tls_enabled
+      return Faraday.new
+    end
+
+    Rails.logger.error "[Galdakao-Census] TLS activo pero GALDAKAO_CENSUS_TLS_CERT no definido" if ca_cert.blank?
+    Rails.logger.error "[Galdakao-Census] TLS activo pero GALDAKAO_CENSUS_TLS_CLIENT_CERT no definido" if client_cert.blank?
+    Rails.logger.error "[Galdakao-Census] TLS activo pero GALDAKAO_CENSUS_TLS_CLIENT_KEY no definido" if client_key.blank?
+
+    Faraday.new do |f|
+      f.ssl[:verify]      = true
+      f.ssl[:ca_file]     = ca_cert                                                                    if ca_cert.present?
+      f.ssl[:client_cert] = OpenSSL::X509::Certificate.new(File.read(client_cert)) if client_cert.present?
+      f.ssl[:client_key]  = OpenSSL::PKey::RSA.new(File.read(client_key))          if client_key.present?
+    end
+  end
 
   def request_body
     element = body.strip.empty? ? "<tns:#{action}/>" : "<tns:#{action}>#{body.strip}</tns:#{action}>"
