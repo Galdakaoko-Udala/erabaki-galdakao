@@ -14,7 +14,7 @@ class GaldakaoWebservice
     census_url = ENV["CENSUS_URL"]
 
     if census_url.blank?
-      Rails.logger.error ">> DEV aLabs >> CENSUS_URL no configurado"
+      Rails.logger.error "[Galdakao-Census] CENSUS_URL no configurado"
       return @response = nil
     end
 
@@ -24,11 +24,11 @@ class GaldakaoWebservice
         request.body = request_body
       end
 
-      Rails.logger.info ">> DEV aLabs >> [#{action}] SOAP status: #{raw_response.status}"
-      Rails.logger.info ">> DEV aLabs >> [#{action}] SOAP body: #{raw_response.body}"
+      Rails.logger.info "[Galdakao-Census] [#{action}] SOAP status: #{raw_response.status}"
+      Rails.logger.info "[Galdakao-Census] [#{action}] SOAP body: #{raw_response.body}"
 
       unless raw_response.status.to_i == 200
-        Rails.logger.error ">> DEV aLabs >> [#{action}] SOAP error HTTP #{raw_response.status}"
+        Rails.logger.error "[Galdakao-Census] [#{action}] SOAP error HTTP #{raw_response.status}"
         return @response = nil
       end
 
@@ -36,7 +36,7 @@ class GaldakaoWebservice
       xml.remove_namespaces!
       @response = xml
     rescue Faraday::Error => e
-      Rails.logger.error ">> DEV aLabs >> [#{action}] SOAP connection error: #{e.message}"
+      Rails.logger.error "[Galdakao-Census] [#{action}] SOAP connection error: #{e.message}"
       @response = nil
     end
   end

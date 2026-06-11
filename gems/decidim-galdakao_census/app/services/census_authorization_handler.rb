@@ -77,11 +77,11 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
 
   def response
     return @response if defined?(@response)
-    Rails.logger.info ">> DEV aLabs >> ENV CENSUS_URL directo: #{ENV['CENSUS_URL'].inspect}"
+    Rails.logger.info "[Galdakao-Census] ENV CENSUS_URL directo: #{ENV['CENSUS_URL'].inspect}"
     census_url = ENV["CENSUS_URL"]
-    Rails.logger.info ">> DEV aLabs >> Census URL: #{census_url.inspect}"
+    Rails.logger.info "[Galdakao-Census] Census URL: #{census_url.inspect}"
     if census_url.blank?
-      Rails.logger.error ">> DEV aLabs >> CENSUS_URL no configurado"
+      Rails.logger.error "[Galdakao-Census] CENSUS_URL no configurado"
       return @response = nil
     end
     begin
@@ -89,17 +89,17 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
         request.headers["Content-Type"] = "text/xml; charset=UTF-8"
         request.body = request_body
       end
-      Rails.logger.info ">> DEV aLabs >> SOAP status: #{faraday_response.status}"
-      Rails.logger.info ">> DEV aLabs >> SOAP body: #{faraday_response.body}"
+      Rails.logger.info "[Galdakao-Census] SOAP status: #{faraday_response.status}"
+      Rails.logger.info "[Galdakao-Census] SOAP body: #{faraday_response.body}"
       if faraday_response.status.to_i != 200
-        Rails.logger.error ">> DEV aLabs >> SOAP error HTTP #{faraday_response.status}"
+        Rails.logger.error "[Galdakao-Census] SOAP error HTTP #{faraday_response.status}"
         return @response = nil
       end
       xml = Nokogiri::XML(faraday_response.body)
       xml.remove_namespaces!
       @response = xml
     rescue Faraday::Error => e
-      Rails.logger.error ">> DEV aLabs >> SOAP connection error: #{e.message}"
+      Rails.logger.error "[Galdakao-Census] SOAP connection error: #{e.message}"
       @response = nil
     end
   end
