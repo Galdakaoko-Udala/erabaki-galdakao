@@ -22,9 +22,9 @@ El código de Decidim incluye un `IF` que permite operar **sin TLS** cuando las 
 
 Antes de tocar nada, confirmar que la conexión actual funciona correctamente en todos los entornos.
 
-- [ ] Decidim conecta con la API sin TLS en desarrollo
-- [ ] Decidim conecta con la API sin TLS en producción
-- [ ] Las variables `GALDAKAO_CENSUS_TLS*` **no están definidas** en `.env` (punto de partida limpio)
+- [x] Decidim conecta con la API sin TLS en desarrollo
+- [x] Decidim conecta con la API sin TLS en producción
+- [x] Las variables `GALDAKAO_CENSUS_TLS*` **no están definidas** en `.env` (punto de partida limpio)
 
 ---
 
@@ -68,9 +68,9 @@ GALDAKAO_CENSUS_TLS_CLIENT_CERT=  # ruta a decidim-client.crt
 GALDAKAO_CENSUS_TLS_CLIENT_KEY=   # ruta a decidim-client.key
 ```
 
-- [ ] Código modificado y desplegado
-- [ ] Verificar que con `GALDAKAO_CENSUS_TLS=false` la conexión sigue funcionando igual que antes
-- [ ] Commitear
+- [x] Código modificado y desplegado
+- [x] Verificar que con `GALDAKAO_CENSUS_TLS=false` la conexión sigue funcionando igual que antes
+- [x] Commitear
 
 ---
 
@@ -103,7 +103,7 @@ openssl x509 -req -days 3650 -in decidim-client.csr -CA ca.crt -CAkey ca.key -CA
 | `api-server.crt` + `api-server.key` | Servidor API — Nginx |
 | `decidim-client.crt` + `decidim-client.key` | Servidor Decidim |
 
-- [ ] Certificados generados
+- [x] Certificados generados
 - [ ] `ca.key` custodiada en la máquina del mantenedor
 
 ---
@@ -138,13 +138,65 @@ rsync -av --chmod=600 \
   <MAQUINA_DECIDIM>:/etc/ssl/galdakao/
 ```
 
-- [ ] Certificados en `/etc/ssl/galdakao/` en MAQUINA API
-- [ ] Certificados en `/etc/ssl/galdakao/` en MAQUINA DECIDIM
-- [ ] Permisos 600 verificados en ambos servidores
+**⚠️ Ajuste de permisos en MAQUINA DECIDIM tras el rsync**
+
+El rsync deja los archivos como `root:root`. El proceso Ruby dentro del contenedor Decidim corre como `uid=1000 (app)`, por lo que hay que ceder la propiedad:
+
+```bash
+# En MAQUINA DECIDIM — ejecutar tras el rsync
+chown 1000:1000 /etc/ssl/galdakao/ca.crt \
+                /etc/ssl/galdakao/decidim-client.crt \
+                /etc/ssl/galdakao/decidim-client.key
+chmod 640 /etc/ssl/galdakao/ca.crt \
+          /etc/ssl/galdakao/decidim-client.crt \
+          /etc/ssl/galdakao/decidim-client.key
+```
+
+Para verificar:
+```bash
+ls -la /etc/ssl/galdakao/
+# Esperado: -rw-r----- 1 ubuntu ubuntu (uid 1000 en el host = usuario 'app' en el contenedor)
+```
+
+- [x] Certificados en `/etc/ssl/galdakao/` en MAQUINA API
+- [x] Certificados en `/etc/ssl/galdakao/` en MAQUINA DECIDIM
+- [x] Propietario `1000:1000` y permisos `640` en MAQUINA DECIDIM
 
 ---
 
-## Fase 4 — Configuración Nginx (lado API)
+## Fase 4 — Configuración de Docker Compose (Decidim)
+
+El contenedor `app` necesita resolver el hostname `api.galdakao.eus` (CN del certificado del servidor) hacia la IP interna de MAQUINA API. Sin esto, Ruby valida que el hostname de la URL coincida con el CN del certificado y falla con `hostname does not match the server certificate`.
+
+**`docker-compose.yml` — añadir `extra_hosts` al servicio `app`:**
+
+```yaml
+services:
+  app:
+    extra_hosts:
+      - "api.galdakao.eus:<IP_MAQUINA_API>"
+```
+
+**`.env` de MAQUINA DECIDIM — usar el hostname del CN, no la IP:**
+
+```bash
+CENSUS_URL=https://api.galdakao.eus/soap
+```
+
+Verificar que resuelve correctamente dentro del contenedor:
+
+```bash
+docker compose exec app getent hosts api.galdakao.eus
+# Esperado: <IP_MAQUINA_API>   api.galdakao.eus
+```
+
+- [x] `extra_hosts` añadido en `docker-compose.yml`
+- [x] `CENSUS_URL` actualizada con el hostname en `.env`
+- [x] Resolución verificada dentro del contenedor
+
+---
+
+## Fase 5 — Configuración Nginx (lado API)
 
 Gunicorn no cambia — sigue escuchando en `127.0.0.1:8000` sin tocar TLS.
 
@@ -178,14 +230,15 @@ server {
 }
 ```
 
-- [ ] Nginx configurado
-- [ ] `nginx -t` sin errores
-- [ ] Nginx recargado (`nginx -s reload`)
+- [x] Nginx configurado
+- [x] `nginx -t` sin errores
+- [x] Nginx recargado (`nginx -s reload`)
 
 ---
 
-## Fase 5 — Verificación de la conexión mTLS
-La verificación se realiza mediante una autorización real desde el formulario de Decidim con un usuario de prueba, revisando los logs de ambos servidores:
+## Fase 6 — Verificación de la conexión mTLS
+
+La verificación se realiza mediante una sincronización real desde el panel de administración de Decidim, revisando los logs de ambos servidores:
 
 ```bash
 # En MAQUINA API — confirmar que Nginx acepta el handshake y el certificado cliente
@@ -193,23 +246,24 @@ tail -f /var/log/nginx/galdakao_api_access.log
 tail -f /var/log/nginx/error.log
 
 # En MAQUINA DECIDIM — confirmar que Faraday usa TLS y no hay errores de certificado
-tail -f /ruta/logs/production.log | grep "Galdakao-Census"
-Qué buscar en los logs tras intentar una autorización:
+docker compose logs --tail=50 app | grep "Galdakao-Census"
 ```
 
-[Galdakao-Census] TLS: activo → el IF de Decidim está leyendo las variables correctamente
-Nginx access log muestra el CN del certificado cliente (decidim.galdakao.eus) y status 200
-Ausencia de errores [Galdakao-Census] TLS activo pero ... no definido
-- [ ] Log de Decidim confirma TLS activo
-- [ ] Log de Nginx confirma certificado cliente aceptado y status 200
-- [ ] Autorización completada correctamente desde el formulario
+Qué buscar en los logs tras intentar una sincronización:
 
+- `[Galdakao-Census] TLS: activo` → el IF de Decidim está leyendo las variables correctamente
+- `[Galdakao-Census] [ListadoCalles] SOAP status: 200` → conexión mTLS establecida y respuesta recibida
+- Nginx access log muestra el CN del certificado cliente (`decidim.galdakao.eus`) y status 200
+- Ausencia de errores `hostname does not match`, `Permission denied` o `EACCES`
+
+- [x] Log de Decidim confirma TLS activo y SOAP status 200
+- [x] Sincronización completada correctamente desde el panel de administración
 
 ---
 
-## Fase 6 — Activación en Decidim
+## Fase 7 — Activación en Decidim
 
-Una vez verificado con curl, activar en `.env` de producción de MAQUINA DECIDIM y reiniciar:
+Una vez verificado, activar en `.env` de producción de MAQUINA DECIDIM y reiniciar:
 
 ```bash
 GALDAKAO_CENSUS_TLS=true
@@ -218,13 +272,13 @@ GALDAKAO_CENSUS_TLS_CLIENT_CERT=/etc/ssl/galdakao/decidim-client.crt
 GALDAKAO_CENSUS_TLS_CLIENT_KEY=/etc/ssl/galdakao/decidim-client.key
 ```
 
-- [ ] Variables activadas en `.env`
-- [ ] Decidim reiniciado
-- [ ] Autorización con padrón funciona correctamente con mTLS activo
+- [x] Variables activadas en `.env`
+- [x] Decidim reiniciado
+- [x] Sincronización con padrón funciona correctamente con mTLS activo
 
 ---
 
-## Fase 7 — Whitelist de IPs en Nginx (defensa en profundidad)
+## Fase 8 — Whitelist de IPs en Nginx (defensa en profundidad)
 
 Capa adicional sobre mTLS. Solo la IP de MAQUINA DECIDIM puede llamar a la API, independientemente de que presente o no certificado válido:
 
@@ -239,5 +293,3 @@ location / {
 - [ ] IP de MAQUINA DECIDIM identificada y añadida
 - [ ] `nginx -t` sin errores y Nginx recargado
 - [ ] Verificar que desde otra IP la conexión es rechazada (403)
-
----
