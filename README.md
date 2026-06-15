@@ -48,6 +48,47 @@ This application uses Traefik to handle the certificates, ensure that the follow
 - `certs/cert.crt`
 - `certs/cert.key`
 
+### mTLS configuration (census API)
+
+The census authorization module connects to the municipal register API via mTLS. This is optional — when the variables below are not defined or `GALDAKAO_CENSUS_TLS=false`, the connection falls back to plain HTTP.
+
+**Certificates**
+
+Place the following files on the host with owner `1000:1000` and permissions `640`:
+
+```
+/etc/ssl/galdakao/ca.crt
+/etc/ssl/galdakao/decidim-client.crt
+/etc/ssl/galdakao/decidim-client.key
+```
+
+These files are mounted into the container as a volume (see `docker-compose.yml`).
+
+**Environment variables**
+
+Add to `.env`:
+
+```bash
+GALDAKAO_CENSUS_TLS=true
+GALDAKAO_CENSUS_TLS_CERT=/etc/ssl/galdakao/ca.crt
+GALDAKAO_CENSUS_TLS_CLIENT_CERT=/etc/ssl/galdakao/decidim-client.crt
+GALDAKAO_CENSUS_TLS_CLIENT_KEY=/etc/ssl/galdakao/decidim-client.key
+CENSUS_URL=https://api.galdakao.eus/soap
+```
+
+**DNS resolution (internal API servers)**
+
+If the API server is on an internal network without public DNS, the container needs to resolve the certificate CN to the internal IP. Add to `docker-compose.yml` under the `app` service:
+
+```yaml
+extra_hosts:
+  - "api.galdakao.eus:<INTERNAL_IP>"
+```
+
+The actual IP is not stored in this repository. Contact the maintainer team for the correct value.
+
+For the full mTLS setup procedure including certificate generation, see `Docs_MD/Hoja de ruta__mTLS.md`.
+
 ## Deploy
 
 ### Pull from Github Repository
