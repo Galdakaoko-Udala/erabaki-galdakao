@@ -89,6 +89,9 @@ The actual IP is not stored in this repository. Contact the maintainer team for 
 
 For the full mTLS setup procedure including certificate generation, see `Docs_MD/Hoja de ruta__mTLS.md`.
 
+## Patch: infinite loop in onboarding with unauthorized zone
+This installation includes a patch in `config/initializers/decidim_patches.rb` that fixes a **Decidim core bug (#9826)** which causes an infinite redirect loop when a user successfully verifies against the municipal register but their address does not belong to any of the zones required by the permission. For details on the bug, root cause and applied fix, see `\gems\decidim-galdakao_census\Docs_MD\Bug_onboarding_loop_PR.md`.
+
 ## Deploy
 
 ### Pull from Github Repository

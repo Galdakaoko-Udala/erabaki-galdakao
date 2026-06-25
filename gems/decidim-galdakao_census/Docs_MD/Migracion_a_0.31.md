@@ -390,7 +390,7 @@ docker compose restart app
 
 ---
 
-## 🟡 Paso 10 — Ejecutar migraciones y tareas de upgrade
+## ✅ Paso 10 — Ejecutar migraciones y tareas de upgrade
 
 ```bash
 docker exec decidim_production bundle exec rails db:migrate
@@ -415,7 +415,7 @@ bin/rails data:migrate
 
 ---
 
-## 🟡 Paso 11 — Smoke test del flujo completo
+## ✅ Paso 11 — Smoke test del flujo completo
 
 Verificar manualmente en el entorno de staging:
 
@@ -426,14 +426,16 @@ Verificar manualmente en el entorno de staging:
 - [x] Las vistas de calles (index, streets) funcionan
 - [x] Las vistas de zone_streets (new, edit) funcionan
 - [x] El multiselect de zonas en los permisos de componente funciona (TomSelect)
-- [ ] El formulario de verificación (`CensusAuthorizationHandler`) funciona y llama al SOAP
-- [ ] La autorización se graba correctamente en `decidim_authorizations`
-- [ ] El `CensusActionAuthorizer` restringe correctamente por zona/calle
-- [ ] `CENSUS_URL` está definida en el entorno y el handler la lee correctamente
+- [x] El formulario de verificación (`CensusAuthorizationHandler`) funciona y llama al SOAP
+- [x] La autorización se graba correctamente en `decidim_authorizations`
+- [x] El `CensusActionAuthorizer` restringe correctamente por zona/calle
+- [x] `CENSUS_URL` está definida en el entorno y el handler la lee correctamente
 
 ---
 
-## 🟡 Paso 12 — Commit limpio y build definitivo
+## ✅ Paso 12 — Validacion tras refactorizacion
+
+> Commit limpio y build.
 
 ```bash
 git add -A
@@ -443,12 +445,19 @@ docker build . -t erabaki-galdakao:local && docker compose up -d
 
 ---
 
-## 🟡 Paso 13 — Mejoras de UI y seguridad (post smoke test)
+## ✅ Paso 13 — Deteccion de Carencias.
 
-- [ ] Revisar y mejorar la UI del formulario de autorización de usuario
-- [ ] Implementar límite de intentos de login — actualmente sin límite, vulnerable a fuerza bruta
+>  Mejoras de UI y seguridad (post smoke test)
+
+
+- [x] Implementar límite de intentos de login — actualmente sin límite, vulnerable a fuerza bruta. (Paso 14)
+- [x] Revisar y mejorar la UI del formulario de autorización de usuario (Paso 18)
 
 ---
+
+# Revisión de estado
+
+> Situación: Estado Funcional.
 
 ## Resumen de ficheros
 
@@ -502,7 +511,7 @@ docker build . -t erabaki-galdakao:local && docker compose up -d
 - [Decidim docs — Customizing logic](https://docs.decidim.org/en/develop/customize/logic.html)
 
 
-## 🟡 Paso 14 — Mover el registro del workflow a la gema local y desactivar renovación
+## ✅ Paso 14 — Mover el registro del workflow a la gema local y desactivar renovación
 
 ### Objetivo
 
@@ -655,7 +664,7 @@ Comprobar en staging:
 
 ----
 
-## Punto 15 — Migración de Webpacker a Shakapacker en assets.rb
+## ✅ Punto 15 — Migración de Webpacker a Shakapacker en assets.rb
 
 **Problema detectado:** Al arrancar la consola de Rails aparecían dos DEPRECATION WARNING:
 - `Decidim::Webpacker.register_path is deprecated. Please use Decidim::Shakapacker.register_path instead.`
@@ -685,7 +694,7 @@ Este cambio requiere un `assets:precompile` para que surta efecto en los assets 
 
 ---
 
-## 🟡 Paso 16 — Override de ManagedUserErrorEvent: eliminar datos personales del email de conflicto de verificación
+## ✅ Paso 16 — Override de ManagedUserErrorEvent: eliminar datos personales del email de conflicto de verificación
 
 ### Objetivo
 
@@ -825,7 +834,7 @@ Independientemente de la configuración de email, el conflicto **siempre queda r
 - [x] Verificar comportamiento con frecuencia "En tiempo real" — email inmediato sin datos personales
 
 
-## 🟡 Paso 17 — Sistema de bloqueo de autorizaciones (LockoutManager)
+## ✅ Paso 17 — Sistema de bloqueo de autorizaciones (LockoutManager)
 
 ### Objetivo
 
@@ -912,7 +921,7 @@ user.update!(extended_data: user.extended_data.merge("authorizations" => data))
 
 ---
 
-## 🟡 Paso 18 — Mejoras visuales del formulario de autorización
+## ✅ Paso 18 — Mejoras visuales del formulario de autorización
 
 ### Objetivo
 
@@ -928,3 +937,12 @@ Mejorar la vista del formulario de autorización del padrón municipal para que 
 - [x] Verificar que los mensajes de error se muestran correctamente
 - [x] Verificar que el mensaje de bloqueo temporal se muestra correctamente
 - [x] Verificar que el mensaje de bloqueo indefinido se muestra correctamente
+
+---
+
+## ✅ Paso 19 — Securización mTLS
+
+Tiene su propio documento `Hoja de ruta__mTLS.md`, al ser un cambio bastante extenso.
+
+---
+Fin del documento
