@@ -12,6 +12,12 @@ checksums = [
       "/app/views/layouts/decidim/header/_main.html.erb" => "a090eeca739613446d2eab8f4de513b1",
       "/app/views/decidim/devise/shared/_omniauth_buttons.html.erb" => "688a13e36af349a91e37b04c6caaa3a9"
     }
+  },
+  {
+    package: "decidim-proposals",
+    files: {
+      "/lib/decidim/proposals/proposal_serializer.rb" => "eadfc45fe2e1388d579a7ffa2f87c478"
+    }
   }
 ]
 
