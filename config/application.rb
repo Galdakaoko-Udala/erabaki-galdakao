@@ -26,5 +26,10 @@ module DecidimApp
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+    config.autoload_lib(ignore: %w(assets))
+
+    config.to_prepare do
+      Decidim::Proposals::ProposalSerializer.prepend(Decidim::Erabaki::ProposalSerializerOverride)
+    end
   end
 end
