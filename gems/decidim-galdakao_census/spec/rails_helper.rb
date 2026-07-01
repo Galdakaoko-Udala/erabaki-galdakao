@@ -5,20 +5,19 @@ require "simplecov"
 SimpleCov.start "rails"
 ENV["RAILS_ENV"] ||= "test"
 
-# La gema no tiene su propia app: el entorno de Rails es la app principal,
-# dos niveles por encima de esta carpeta spec/.
 require File.expand_path("../../../config/environment", __dir__)
-
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 require "rspec/rails"
-
 require "decidim/dev"
 
-# La dummy app es la app principal (mismo patrón que spec/rails_helper.rb de la raíz)
+# The dummy app is the main application itself
 Decidim::Dev.dummy_app_path = File.expand_path(File.join(__dir__, "../../.."))
 
 require "decidim/dev/test/base_spec_helper"
+
+# Load gem-specific factories
+Dir[File.join(__dir__, "factories", "**", "*.rb")].each { |f| require f }
 
 begin
   ActiveRecord::Migration.maintain_test_schema!

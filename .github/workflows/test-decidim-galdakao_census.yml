@@ -71,33 +71,15 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./package-lock.json
 
+      # Load the base Decidim schema, then apply pending migrations
+      # (including the gem's own: galdakao_zones, galdakao_streets, galdakao_zone_streets)
       - name: Setup & create Database
         run: |
-          bundle exec rails db:create db:schema:load
+          bundle exec rails db:create db:schema:load db:migrate
         env:
           RAILS_ENV: test
           DATABASE_USERNAME: postgres
           DATABASE_PASSWORD: postgres
-
-      # TEMPORARY: Run pending migrations so the test database includes the
-      # galdakao_census tables (galdakao_zones, galdakao_streets, galdakao_zone_streets).
-      # Once the resulting schema.rb is downloaded from the artifact, committed to the
-      # repo, and db:schema:load covers all tables, this step must be removed.
-      - name: Run pending migrations
-        run: bundle exec rails db:migrate
-        env:
-          RAILS_ENV: test
-          DATABASE_USERNAME: postgres
-          DATABASE_PASSWORD: postgres
-
-      # TEMPORARY: Upload the updated schema.rb as an artifact so it can be downloaded,
-      # committed to the repo, and used from that point on by db:schema:load.
-      # Remove this step once the schema.rb is committed.
-      - name: Upload schema.rb artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: schema
-          path: db/schema.rb
 
       - name: Precompile assets
         run: |
