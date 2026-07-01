@@ -2280,6 +2280,34 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_19_094741) do
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
+  create_table "galdakao_streets", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "decidim_organization_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["decidim_organization_id"], name: "index_galdakao_streets_on_decidim_organization_id"
+    t.index ["name", "decidim_organization_id"], name: "index_galdakao_streets_on_name_and_decidim_organization_id", unique: true
+  end
+
+  create_table "galdakao_zone_streets", force: :cascade do |t|
+    t.bigint "zone_id", null: false
+    t.bigint "street_id", null: false
+    t.integer "numbers_constraint", default: 0, null: false
+    t.string "numbers_range"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["street_id"], name: "index_galdakao_zone_streets_on_street_id"
+    t.index ["zone_id"], name: "index_galdakao_zone_streets_on_zone_id"
+  end
+
+  create_table "galdakao_zones", force: :cascade do |t|
+    t.bigint "decidim_organization_id", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["decidim_organization_id"], name: "index_galdakao_zones_on_decidim_organization_id"
+  end
+
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer "resource_owner_id", null: false
     t.bigint "application_id", null: false
@@ -2408,6 +2436,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_19_094741) do
   add_foreign_key "decidim_verifications_conflicts", "decidim_users", column: "current_user_id"
   add_foreign_key "decidim_verifications_conflicts", "decidim_users", column: "managed_user_id"
   add_foreign_key "decidim_verifications_csv_data", "decidim_organizations"
+  add_foreign_key "galdakao_streets", "decidim_organizations"
+  add_foreign_key "galdakao_zone_streets", "galdakao_zones", column: "zone_id"
   add_foreign_key "oauth_access_grants", "decidim_users", column: "resource_owner_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "decidim_users", column: "resource_owner_id"
