@@ -1,8 +1,19 @@
 # frozen_string_literal: true
+
+begin
+  require "factory_bot_rails"
+rescue LoadError
+end
+
 module Decidim
   module GaldakaoCensus
     class Engine < ::Rails::Engine
       isolate_namespace Decidim::GaldakaoCensus
+
+      # Register this gem's factories so they are picked up by FactoryBot's
+      # own load process instead of being required manually in rails_helper.rb,
+      # where they could be overwritten by factory_bot_rails' auto-reload.
+      config.factory_bot.definition_file_paths += [File.expand_path("../../../spec/factories", __dir__)] if defined?(FactoryBotRails)
 
       initializer "galdakao_census.verification_workflow" do
         Decidim::Verifications.register_workflow(:census_authorization_handler) do |workflow|
