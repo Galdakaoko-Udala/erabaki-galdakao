@@ -52,6 +52,11 @@ describe CensusAuthorizationHandler do
       context "when it is a valid DNI (8 digits and a letter)" do
         let(:document_number) { "12345678Z" }
 
+        before do
+          allow(lockout_manager).to receive(:register_success)
+          stub_webservice(result: "true")
+        end
+
         it "passes the format validation" do
           handler.valid?
 
@@ -61,6 +66,11 @@ describe CensusAuthorizationHandler do
 
       context "when it is a valid NIE (leading letter, digits, trailing letter)" do
         let(:document_number) { "X1234567L" }
+
+        before do
+          allow(lockout_manager).to receive(:register_success)
+          stub_webservice(result: "true")
+        end
 
         it "passes the format validation" do
           handler.valid?
@@ -117,10 +127,15 @@ describe CensusAuthorizationHandler do
     context "when there is no user" do
       let(:user) { nil }
 
-      it "does not instantiate the lockout manager" do
-        expect(Decidim::GaldakaoCensus::LockoutManager).not_to receive(:new)
+      before do
+        allow(lockout_manager).to receive(:register_success)
+        stub_webservice(result: "true")
+      end
 
+      it "does not call check_lockout, but document_number_valid still runs and instantiates the lockout manager" do
         handler.valid?
+
+        expect(Decidim::GaldakaoCensus::LockoutManager).to have_received(:new).with(nil)
       end
     end
   end

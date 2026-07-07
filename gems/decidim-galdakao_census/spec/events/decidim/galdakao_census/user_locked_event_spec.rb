@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe Decidim::GaldakaoCensus::UserLockedEvent do
-  subject(:event) { described_class.new(resource: user, event_name: "decidim.events.galdakao_census.user_locked") }
+  subject(:event) { described_class.new(resource: user, event_name: "decidim.events.galdakao_census.user_locked", user:) }
 
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization:) }
