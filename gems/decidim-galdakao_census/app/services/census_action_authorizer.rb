@@ -65,6 +65,7 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
     end
   end
 
+  # unused?
   def manifest
     Decidim::Verifications.find_workflow_manifest("census_authorization_handler")
   end
