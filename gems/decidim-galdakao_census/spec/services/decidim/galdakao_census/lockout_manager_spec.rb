@@ -68,7 +68,7 @@ describe Decidim::GaldakaoCensus::LockoutManager do
       end
 
       it "stores a soft lock of 30 seconds" do
-        travel_to(Time.current) do
+        freeze_time do
           manager.register_failed_attempt
 
           data = user.reload.extended_data.dig("authorizations", handler_key)
@@ -200,7 +200,7 @@ describe Decidim::GaldakaoCensus::LockoutManager do
     let!(:unlocked_user) { create(:user, organization:) }
     let!(:locked_user_in_other_organization) do
       create(:user, organization: other_organization,
-        extended_data: { "authorizations" => { handler_key => { "locked_until" => "infinite" } } })
+                    extended_data: { "authorizations" => { handler_key => { "locked_until" => "infinite" } } })
     end
 
     it "returns only the users of the given organization locked indefinitely" do

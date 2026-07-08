@@ -68,7 +68,7 @@ module Decidim
           return unless datetime
           return "alert" if datetime < 1.week.ago
           return "warning" if datetime < 1.day.ago
-          
+
           "success"
         end
 

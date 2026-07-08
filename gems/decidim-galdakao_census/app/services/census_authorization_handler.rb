@@ -17,7 +17,7 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
   def metadata
     super.merge(
       date_of_birth: date_of_birth&.strftime("%Y-%m-%d"),
-      street:        xpath_text("//autenticarResult/calle"),
+      street: xpath_text("//autenticarResult/calle"),
       street_number: xpath_text("//autenticarResult/portal")&.to_i
     )
   end
@@ -27,9 +27,11 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
   end
 
   private
-  
+
   def xpath_text(node)
-    response&.xpath(node)&.text&.strip
+    return unless response
+
+    response.xpath(node)&.text&.strip
   end
 
   def lockout_manager

@@ -4,7 +4,7 @@ module Decidim
   module GaldakaoCensus
     module Admin
     end
-    
+
     class AdminEngine < ::Rails::Engine
       isolate_namespace Decidim::GaldakaoCensus::Admin
       paths["db/migrate"] = nil
@@ -45,4 +45,3 @@ module Decidim
     end
   end
 end
-
