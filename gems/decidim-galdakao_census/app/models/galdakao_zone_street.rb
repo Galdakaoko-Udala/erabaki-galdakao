@@ -16,7 +16,7 @@ class GaldakaoZoneStreet < ApplicationRecord
 
   RANGE_REQUIRED = %w(only_range except_range).freeze
 
-  validates :street, :numbers_constraint
+  validates :numbers_constraint, presence: true
   validates :numbers_range,
             presence: true,
             if: ->(zs) { zs.numbers_constraint.in?(RANGE_REQUIRED) }
