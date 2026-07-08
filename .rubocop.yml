@@ -5,3 +5,7 @@ AllCops:
   Exclude:
     - "db/**/*.rb"
     - "vendor/**/*"
+
+Naming/FileName:
+  Exclude:
+    - 'gems/decidim-galdakao_census/lib/decidim-galdakao_census.rb'

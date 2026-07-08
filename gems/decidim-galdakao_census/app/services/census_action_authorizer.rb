@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
   def authorize
     return [:missing, { action: :authorize }] if authorization.blank?
     return [:ok, {}] if zones.blank?
     return [:unauthorized, {}] if authorization_street.blank? || authorization_number.blank?
     return [:ok, {}] if belongs_to_zone?
+
     [:unauthorized, {}]
   end
 
@@ -26,9 +29,7 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
       .joins(:street)
       .where(zone_id: zones.split(","))
       .find_each do |zone_street|
-        if street_valid?(zone_street)
-          return true if number_valid?(zone_street)
-        end
+        return true if street_valid?(zone_street) && number_valid?(zone_street)
       end
     false
   end
@@ -51,7 +52,7 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
   def number_valid?(zone_street)
     passes_constraint = case zone_street.numbers_constraint
                         when "even_numbers" then authorization_number.even?
-                        when "odd_numbers"  then authorization_number.odd?
+                        when "odd_numbers" then authorization_number.odd?
                         else true
                         end
     return false unless passes_constraint
@@ -60,8 +61,8 @@ class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
     portal_list = parse_range(zone_street.numbers_range)
 
     case zone_street.numbers_constraint
-    when "except_range" then !portal_list.include?(authorization_number)
-    else                     portal_list.include?(authorization_number)
+    when "except_range" then portal_list.exclude?(authorization_number)
+    else portal_list.include?(authorization_number)
     end
   end
 

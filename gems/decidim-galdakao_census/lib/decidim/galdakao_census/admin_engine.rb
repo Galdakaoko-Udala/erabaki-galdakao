@@ -1,8 +1,10 @@
 # frozen_string_literal: true
+
 module Decidim
   module GaldakaoCensus
     module Admin
     end
+    
     class AdminEngine < ::Rails::Engine
       isolate_namespace Decidim::GaldakaoCensus::Admin
       paths["db/migrate"] = nil
@@ -11,7 +13,7 @@ module Decidim
       routes do
         resources :galdakao, only: [:index] do
           collection do
-            get  :streets
+            get :streets
             post :sync
             post :check
           end
@@ -43,3 +45,4 @@ module Decidim
     end
   end
 end
+

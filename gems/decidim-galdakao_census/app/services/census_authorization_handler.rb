@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require "digest/md5"
 
+require "digest/md5"
 
 class CensusAuthorizationHandler < Decidim::AuthorizationHandler
   attribute :document_number, String
@@ -17,8 +17,8 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
   def metadata
     super.merge(
       date_of_birth: date_of_birth&.strftime("%Y-%m-%d"),
-      street:        response&.xpath("//autenticarResult/calle")&.text&.strip,
-      street_number: response&.xpath("//autenticarResult/portal")&.text&.strip&.to_i
+      street:        xpath_text("//autenticarResult/calle"),
+      street_number: xpath_text("//autenticarResult/portal")&.to_i
     )
   end
 
@@ -27,13 +27,18 @@ class CensusAuthorizationHandler < Decidim::AuthorizationHandler
   end
 
   private
+  
+  def xpath_text(node)
+    response&.xpath(node)&.text&.strip
+  end
 
   def lockout_manager
     @lockout_manager ||= Decidim::GaldakaoCensus::LockoutManager.new(user)
   end
 
   def check_lockout
-    return unless user.present?
+    return if user.blank?
+
     message = lockout_manager.check_lockout
     errors.add(:base, message) if message.present?
   end

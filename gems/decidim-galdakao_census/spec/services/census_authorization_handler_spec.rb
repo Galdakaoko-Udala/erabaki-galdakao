@@ -238,7 +238,10 @@ describe CensusAuthorizationHandler do
 
   describe "#unique_id" do
     it "is deterministic for the same document number" do
-      expect(handler.unique_id).to eq(handler.unique_id)
+      handler_a = described_class.new(document_number: "12345678Z", date_of_birth:, user:)
+      handler_b = described_class.new(document_number: "12345678Z", date_of_birth:, user:)
+
+      expect(handler_a.unique_id).to eq(handler_b.unique_id)
     end
 
     it "is the same regardless of the document number's case" do

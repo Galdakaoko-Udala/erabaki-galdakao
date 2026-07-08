@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module GaldakaoCensus
     module Admin
@@ -26,7 +27,7 @@ module Decidim
         def create_zone!
           @zone = GaldakaoZone.create!(
             organization: form.current_organization,
-            name:         form.name
+            name: form.name
           )
         end
       end

@@ -58,7 +58,7 @@ describe Decidim::GaldakaoCensus::Admin::GaldakaoZoneStreetForm do
       end
     end
 
-    context "numbers_range format" do
+    context "with a numbers_range format" do
       let(:numbers_constraint) { "only_range" }
 
       it "is valid with a single number" do

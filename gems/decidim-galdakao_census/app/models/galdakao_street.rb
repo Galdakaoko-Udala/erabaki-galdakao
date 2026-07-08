@@ -23,6 +23,6 @@ class GaldakaoStreet < ApplicationRecord
     service = GaldakaoWebservice.new("ListadoCalles")
     service.response
 
-    service.response.search("calles").children.map { |node| node.text.strip }.reject(&:blank?)
+    service.response.search("calles").children.map { |node| node.text.strip }.compact_blank
   end
 end

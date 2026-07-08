@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module GaldakaoCensus
     module Admin
@@ -27,9 +28,9 @@ module Decidim
         def update_zone_street!
           range_needed = GaldakaoZoneStreet::RANGE_REQUIRED.include?(form.numbers_constraint)
           zone_street.update!(
-            street_id:          form.street_id,
+            street_id: form.street_id,
             numbers_constraint: form.numbers_constraint,
-            numbers_range:      range_needed ? form.numbers_range : nil
+            numbers_range: range_needed ? form.numbers_range : nil
           )
         end
       end

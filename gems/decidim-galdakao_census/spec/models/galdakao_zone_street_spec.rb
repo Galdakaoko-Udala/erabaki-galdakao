@@ -78,7 +78,7 @@ describe GaldakaoZoneStreet do
       end
     end
 
-    context "numbers_range format" do
+    context "with a numbers_range format" do
       it "is valid with a single number" do
         zone_street = build(:galdakao_zone_street, numbers_constraint: :only_range, numbers_range: "4")
 

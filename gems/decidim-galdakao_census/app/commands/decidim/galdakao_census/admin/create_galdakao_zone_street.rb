@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module GaldakaoCensus
     module Admin
@@ -27,10 +28,10 @@ module Decidim
         def create_zone_street!
           range_needed = GaldakaoZoneStreet::RANGE_REQUIRED.include?(form.numbers_constraint)
           @zone_street = GaldakaoZoneStreet.create!(
-            zone:               @zone,
-            street_id:          form.street_id,
+            zone: @zone,
+            street_id: form.street_id,
             numbers_constraint: form.numbers_constraint,
-            numbers_range:      range_needed ? form.numbers_range : nil
+            numbers_range: range_needed ? form.numbers_range : nil
           )
         end
       end

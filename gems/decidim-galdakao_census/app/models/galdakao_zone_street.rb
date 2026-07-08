@@ -1,21 +1,22 @@
 # frozen_string_literal: true
+
 class GaldakaoZoneStreet < ApplicationRecord
-  RANGE_REGEXP = /\A\d+(-\d+)?(,\d+(-\d+)?)*\z/.freeze
+  RANGE_REGEXP = /\A\d+(-\d+)?(,\d+(-\d+)?)*\z/
 
   belongs_to :zone, class_name: "GaldakaoZone"
   belongs_to :street, class_name: "GaldakaoStreet"
 
-  enum numbers_constraint: {
-    all_numbers:  0,
-    odd_numbers:  1,
+  enum :numbers_constraint, {
+    all_numbers: 0,
+    odd_numbers: 1,
     even_numbers: 2,
-    only_range:   3,
+    only_range: 3,
     except_range: 4
   }
 
-  RANGE_REQUIRED = %w[only_range except_range].freeze
+  RANGE_REQUIRED = %w(only_range except_range).freeze
 
-  validates :street, :numbers_constraint, presence: true
+  validates :street, :numbers_constraint
   validates :numbers_range,
             presence: true,
             if: ->(zs) { zs.numbers_constraint.in?(RANGE_REQUIRED) }

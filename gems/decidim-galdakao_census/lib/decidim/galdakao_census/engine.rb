@@ -3,6 +3,7 @@
 begin
   require "factory_bot_rails"
 rescue LoadError
+  # No disponible en producción; solo se usa en test/dev para autoload de factories.
 end
 
 module Decidim

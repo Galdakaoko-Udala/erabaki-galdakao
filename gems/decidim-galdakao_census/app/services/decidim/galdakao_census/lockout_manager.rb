@@ -3,11 +3,11 @@
 module Decidim
   module GaldakaoCensus
     class LockoutManager
-      HANDLER_KEY     = "census_authorization_handler"
-      MAX_ATTEMPTS    = 6
-      SOFT_LOCK_TIME  = 30.seconds
-      HARD_LOCK_TIME  = 5.minutes
-      INFINITE        = "infinite"
+      HANDLER_KEY = "census_authorization_handler"
+      MAX_ATTEMPTS = 6
+      SOFT_LOCK_TIME = 30.seconds
+      HARD_LOCK_TIME = 5.minutes
+      INFINITE = "infinite"
 
       def initialize(user)
         @user = user
@@ -22,8 +22,8 @@ module Decidim
 
         if locked_until == INFINITE
           I18n.t("decidim.galdakao_census.lockout.blocked_indefinitely")
-        elsif Time.parse(locked_until.to_s) > Time.current
-          remaining = (Time.parse(locked_until.to_s) - Time.current).to_i
+        elsif Time.zone.parse(locked_until.to_s) > Time.current
+          remaining = (Time.zone.parse(locked_until.to_s) - Time.current).to_i
           minutes = remaining / 60
           seconds = remaining % 60
           I18n.t("decidim.galdakao_census.lockout.wait",
@@ -39,7 +39,7 @@ module Decidim
         update_auth_data(
           "failed_attempts" => failed_attempts,
           "last_attempt_at" => Time.current,
-          "locked_until"    => locked_until
+          "locked_until" => locked_until
         )
 
         notify_admin if locked_until == INFINITE
@@ -61,6 +61,7 @@ module Decidim
         Decidim::User.where(decidim_organization_id: organization.id).select do |u|
           data = u.extended_data.dig("authorizations", HANDLER_KEY)
           next false unless data
+
           data["locked_until"] == INFINITE
         end
       end
@@ -84,11 +85,11 @@ module Decidim
         case failed_attempts
         when 1..2, 4..5
           wait_msg = wait_message(SOFT_LOCK_TIME)
-          message  = "#{wait_msg}#{I18n.t("decidim.galdakao_census.lockout.attempts_remaining", remaining: MAX_ATTEMPTS - failed_attempts)}"
+          message = "#{wait_msg}#{I18n.t("decidim.galdakao_census.lockout.attempts_remaining", remaining: MAX_ATTEMPTS - failed_attempts)}"
           [Time.current + SOFT_LOCK_TIME, message]
         when 3
           wait_msg = wait_message(HARD_LOCK_TIME)
-          message  = "#{wait_msg}#{I18n.t("decidim.galdakao_census.lockout.three_attempts")}"
+          message = "#{wait_msg}#{I18n.t("decidim.galdakao_census.lockout.three_attempts")}"
           [Time.current + HARD_LOCK_TIME, message]
         else
           [INFINITE, I18n.t("decidim.galdakao_census.lockout.blocked_indefinitely_contact")]
@@ -98,7 +99,7 @@ module Decidim
       def wait_message(lock_time)
         minutes = lock_time.to_i / 60
         seconds = lock_time.to_i % 60
-        I18n.t("decidim.galdakao_census.lockout.wait", minutes: minutes, seconds: seconds) + "\n"
+        "#{I18n.t("decidim.galdakao_census.lockout.wait", minutes: minutes, seconds: seconds)}\n"
       end
 
       def notify_admin

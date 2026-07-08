@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class GaldakaoZone < ApplicationRecord
   belongs_to :organization,
              foreign_key: "decidim_organization_id",

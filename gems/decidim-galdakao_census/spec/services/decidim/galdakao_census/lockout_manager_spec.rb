@@ -58,7 +58,7 @@ describe Decidim::GaldakaoCensus::LockoutManager do
   end
 
   describe "#register_failed_attempt" do
-    context "on the first failed attempt" do
+    context "when on the first failed attempt" do
       it "locks the user softly and reports the remaining attempts" do
         message = manager.register_failed_attempt
 
@@ -73,12 +73,12 @@ describe Decidim::GaldakaoCensus::LockoutManager do
 
           data = user.reload.extended_data.dig("authorizations", handler_key)
           expect(data["failed_attempts"]).to eq(1)
-          expect(Time.parse(data["locked_until"].to_s)).to be_within(1.second).of(30.seconds.from_now)
+          expect(Time.zone.parse(data["locked_until"].to_s)).to be_within(1.second).of(30.seconds.from_now)
         end
       end
     end
 
-    context "on the third failed attempt" do
+    context "when on the third failed attempt" do
       before do
         2.times { manager.register_failed_attempt }
       end
@@ -92,7 +92,7 @@ describe Decidim::GaldakaoCensus::LockoutManager do
       end
     end
 
-    context "on the sixth failed attempt" do
+    context "when on the sixth failed attempt" do
       before do
         5.times { manager.register_failed_attempt }
       end
@@ -122,7 +122,7 @@ describe Decidim::GaldakaoCensus::LockoutManager do
       end
     end
 
-    context "before the sixth failed attempt" do
+    context "when before the sixth failed attempt" do
       it "does not notify the organization admins" do
         expect(Decidim::EventsManager).not_to receive(:publish)
 
@@ -200,7 +200,7 @@ describe Decidim::GaldakaoCensus::LockoutManager do
     let!(:unlocked_user) { create(:user, organization:) }
     let!(:locked_user_in_other_organization) do
       create(:user, organization: other_organization,
-                     extended_data: { "authorizations" => { handler_key => { "locked_until" => "infinite" } } })
+        extended_data: { "authorizations" => { handler_key => { "locked_until" => "infinite" } } })
     end
 
     it "returns only the users of the given organization locked indefinitely" do

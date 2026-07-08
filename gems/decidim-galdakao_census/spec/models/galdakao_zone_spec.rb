@@ -12,10 +12,10 @@ describe GaldakaoZone do
 
     it "has many zone_streets" do
       zone = create(:galdakao_zone)
-      zone_street_1 = create(:galdakao_zone_street, zone:)
-      zone_street_2 = create(:galdakao_zone_street, zone:)
+      first_zone_street = create(:galdakao_zone_street, zone:)
+      second_zone_street = create(:galdakao_zone_street, zone:)
 
-      expect(zone.zone_streets).to contain_exactly(zone_street_1, zone_street_2)
+      expect(zone.zone_streets).to contain_exactly(first_zone_street, second_zone_street)
     end
 
     it "destroys associated zone_streets when destroyed" do
