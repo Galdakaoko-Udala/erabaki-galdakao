@@ -12,21 +12,18 @@
   <div class="item__edit-form">
     <%= decidim_form_for @form, url: (@form.id ? decidim_admin_galdakao_census.galdakao_zone_zone_street_path(zone, @form.id) : decidim_admin_galdakao_census.galdakao_zone_zone_streets_path(zone)), html: { class: "form form-defaults" } do |f| %>
       <div class="field" style="margin-bottom:1rem;">
-        <label for="galdakao_zone_street_street_id"><%= t("decidim.admin.galdakao.zone_streets.form.street_label") %></label>
         <%= f.select :street_id,
             GaldakaoStreet.where(organization: current_organization).order(name: :asc).map { |s| [s.name, s.id] },
-            { include_blank: t("decidim.admin.galdakao.zone_streets.form.street_blank") },
+            { include_blank: t("decidim.admin.galdakao.zone_streets.form.street_blank"),
+              label: t("decidim.admin.galdakao.zone_streets.form.street_label") },
             id: "galdakao_zone_street_street_id",
-            label: false,
             style: "padding:3px 35px 3px 3px;margin-left:5px;" %>
       </div>
       <div class="field" style="margin-bottom:1rem;">
-        <label for="zone_street_numbers_constraint"><%= t("decidim.admin.galdakao.zone_streets.form.numbers_constraint_label") %></label>
         <%= f.select :numbers_constraint,
             @form.numbers_constraint_options.to_a,
-            {},
+            { label: t("decidim.admin.galdakao.zone_streets.form.numbers_constraint_label") },
             id: "zone_street_numbers_constraint",
-            label: false,
             style: "padding:3px 35px 3px 3px;margin-left:5px;" %>
       </div>
       <div class="field" id="numbers_range_field" style="display:none;margin-bottom:1rem;">
