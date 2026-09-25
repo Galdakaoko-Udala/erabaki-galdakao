@@ -1,0 +1,52 @@
+<div class="card">
+  <div class="item_show__header">
+    <h1 class="item_show__header-title">
+      <%= t("decidim.admin.galdakao.blocked_users.index.title") %>
+      <%= link_to decidim_admin.authorization_workflows_path,
+          style: "display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--secondary);color:var(--secondary);border-radius:4px;font-weight:600;padding:1.375px 10px;font-size:0.875rem;text-decoration:none;background:transparent;",
+          onmouseover: "this.style.background='var(--secondary)';this.style.color='white'",
+          onmouseout: "this.style.background='transparent';this.style.color='var(--secondary)'" do %>
+        <%= icon "arrow-left-line", class: "fill-current" %>
+        <span><%= t("decidim.admin.galdakao.blocked_users.index.nav_button") %></span>
+      <% end %>
+    </h1>
+  </div>
+
+  <div class="card__content">
+    <% if @blocked_users.empty? %>
+      <p><%= t("decidim.admin.galdakao.blocked_users.index.no_blocked") %></p>
+    <% else %>
+      <div class="table-scroll">
+        <table class="table-list">
+          <thead>
+            <tr>
+              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_user") %></th>
+              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_email") %></th>
+              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_attempts") %></th>
+              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_last_attempt") %></th>
+              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_actions") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @blocked_users.each do |user| %>
+              <% auth_data = user.extended_data.dig("authorizations", "census_authorization_handler") %>
+              <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><%= auth_data["failed_attempts"] %></td>
+                <td><%= l(Time.parse(auth_data["last_attempt_at"].to_s), format: :short) rescue "-" %></td>
+                <td class="table-list__actions">
+                  <%= button_to t("decidim.admin.galdakao.blocked_users.index.unlock"),
+                      decidim_admin_galdakao_census.unlock_galdakao_blocked_user_path(user),
+                      method: :delete,
+                      class: "button button__sm button__danger",
+                      data: { confirm: t("decidim.admin.galdakao.blocked_users.index.unlock_confirm") } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+</div>

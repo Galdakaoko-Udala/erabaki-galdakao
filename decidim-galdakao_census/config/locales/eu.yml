@@ -1,0 +1,162 @@
+eu:
+  # Claves raíz que llama el handler Ruby directamente:
+  #   I18n.t("census_authorization_handler.service_unavailable")
+  #   I18n.t("census_authorization_handler.no_record")
+  #   I18n.t("census_authorization_handler.invalid_document")
+  census_authorization_handler:
+    service_unavailable: "Erroldaren zerbitzua ez dago erabilgarri une honetan."
+    no_record: "Ez da aurkitu erregistrorik emandako datuekin."
+    invalid_document: "Fitxategiaren formatua ez da baliozkoa."
+
+  decidim:
+    admin:
+      galdakao:
+        sync:
+          success: "Kaleak ondo sinkronizatu dira."
+        index:
+          nav_button: "Egiaztapen metodoetara itzuli"
+          title: "Galdakaoko panela — Kale-izendegiaren kudeaketa"
+          section_sync:
+            subtitle: "Katalogoen sinkronizazioa"
+          section_catalog:
+            subtitle: "Egungo kale-izendegia"
+          last_sync: "Azken sinkronizazioa: %{time}"
+          never_synced: "Kaleak oraindik ez dira sinkronizatu."
+          sync_button: "Sinkronizatu kaleak erroldatik"
+          sync_confirm: "Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuetako kontua da."
+          streets_link: "Ikusi kaleen zerrenda"
+        streets:
+          nav_button: "Kale-izendegiaren kudeaketara itzuli"
+          title: "Sinkronizatutako kaleak"
+          name: "Kalearen izena"
+          updated_at: "Azken eguneraketa"
+        zones:
+          index:
+            title: "Egiaztapen-eremuak"
+          new:
+            title: "Eremu berria"
+          edit:
+            title: "Eremua editatu"
+          destroy:
+            success: "Eremua zuzen ezabatu da"
+          create:
+            success: "Eremu berria zuzen sortu da"
+            error: "Errorea eremua sortzean: %{error}"
+          update:
+            success: "Eremua zuzen eguneratu da"
+            error: "Errorea eremua eguneratzean: %{error}"
+        zone_streets:
+          create:
+            success: "Kalea behar bezala gehitu da"
+            error: "Errorea kalea gehitzean: %{error}"
+          update:
+            success: "Kalea behar bezala eguneratu da"
+            error: "Errorea kalea eguneratzean: %{error}"
+          destroy:
+            success: "Kalea behar bezala ezabatu da"
+          form:
+            title_new: "Kale bat gehitu eremuari"
+            title_edit: "Eremuko kalea editatu"
+            street_label: "Kalea"
+            street_blank: "Hautatu kale bat"
+            numbers_constraint_label: "Zenbakien murrizketa"
+            numbers_constraint_options:
+              all_numbers: "Zenbaki guztiak"
+              even_numbers: "Zenbaki bikoitiak"
+              odd_numbers: "Zenbaki bakoitiak"
+              only_range: "Atari hauek bakarrik"
+              except_range: "Hauek izan ezik"
+            numbers_range_label: "Atariak"
+            numbers_range_placeholder: "Adib: 1-50  edo  2,4,6,8"
+            numbers_range_help: "Erabili <strong>1-50</strong> tarte baterako edo <strong>2,4,6,8</strong> atari solteetarako."
+            submit: "Gorde"
+            cancel: "Utzi"
+        zones_form:
+          title_new: "Eremu berria"
+          title_edit: "Eremua editatzen"
+          name_label: "Eremuaren izena"
+          submit: "Gorde"
+          cancel: "Utzi"
+        zones_index:
+          list_title: "Eremuen zerrenda"
+          nav_button: "Egiaztapen metodoetara itzuli"
+          title: "Egiaztapen eremuak"
+          new_zone: "Eremu berria"
+          col_name: "Izena"
+          col_streets: "Kale kop."
+          edit: "Editatu"
+          destroy: "Ezabatu"
+          destroy_confirm: "Ziur zaude eremu hau ezabatu nahi duzula?"
+        zones_show:
+          edit_zone: "Izena aldatu"
+          back: "Itzuli"
+          streets_title: "Eremuko kaleak"
+          add_street: "Kale bat gehitu"
+          col_street: "Kalea"
+          col_constraint: "Murrizketa"
+          col_range: "Tartea"
+          col_actions: "Ekintzak"
+          all: "Guztiak"
+          edit: "Editatu"
+          destroy: "Ezabatu"
+        blocked_users:
+          index:
+            menu_label: "Blokeatutako baimenak"
+            title: "Blokeatutako erabiltzaileak"
+            nav_button: "Itzuli Baimenetara"
+            no_blocked: "Une honetan ez dago blokeatutako erabiltzailerik."
+            col_user: "Erabiltzailea"
+            col_email: "Posta elektronikoa"
+            col_attempts: "Saiakerak"
+            col_last_attempt: "Azken saiakera"
+            col_actions: "Ekintzak"
+            unlock: "Desblokeatu"
+            unlock_confirm: "Ziur zaude erabiltzaile hau desblokeatu nahi duzula?"
+          unlock:
+            success: "Erabiltzailea behar bezala desblokeatu da."
+            not_blocked: "Erabiltzaile hau ez dago mugarik gabe blokeatuta."
+        authorization_workflows:
+          management: "Kudeaketa"
+    authorization_handlers:
+      admin:
+        census_authorization_handler:
+          help:
+            - "Herritarrak Galdakaon erroldatuta egon behar dira egiaztatzeko."
+            - "Egiaztapena egiteko udal-errolda erabiltzen da NAN/AIZ eta jaiotze-dataren bidez."
+      census_authorization_handler:
+        name: "Galdakaoko udal errolda"
+        explanation: "Egiaztatu zure nortasuna Galdakaoko udal erroldaren bidez."
+        fields:
+          document_number: "Agiri-zenbakia (NAN/AIZ)"
+          date_of_birth: "Jaiotze-data"
+        invalid_document: "Ezin izan da zure nortasuna egiaztatu emandako datuekin."
+        connection_error: "Ezin izan da errolda zerbitzuarekin konektatu. Mesedez, saiatu beranduago."
+        service_unavailable: "Errolda zerbitzua ez dago erabilgarri une honetan."
+        no_record: "Ez da aurkitu erregistrorik emandako datuekin."
+        unauthorized_zone: "Zure helbidea ez dago prozesu honetan parte hartzeko baimendutako eremuen artean."
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: "Ez dituzu betetzen prozesu honetan parte hartzeko baldintzak."
+
+    events:
+      galdakao_census:
+        user_locked:
+          email_intro: "Parte-hartzaile bat mugarik gabe blokeatu da datuak egiaztatzeko gehieneko saiakera kopurua gainditu duelako."
+          email_outro: "Sartu <a href=\"%{blocked_users_path}\">blokeatutako baimenen zerrendan</a> kasua kudeatzeko."
+          email_subject: "Parte-hartzailea blokeatu da datuak egiaztatzeko gehiegizko saiakerengatik"
+          notification_title: "Parte-hartzaile bat mugarik gabe blokeatu da datuak egiaztatzeko gehieneko saiakera kopurua gainditu duelako."
+      verifications:
+        verify_with_managed_user:
+          email_intro: Parte-hartzaile bat beste parte-hartzaile baten datuak erabiltzen egiaztatzen saiatu da.
+          email_outro: Begiratu <a href="%{conflicts_url}">egiaztapenen gatazken zerrenda</a> xehetasunak ikusteko eta arazoa konpontzeko.
+          email_subject: Errorea beste parte-hartzaile baten bidez egiaztatzean
+          notification_title: Parte-hartzaile bat beste parte-hartzaile baten datuak erabiltzen egiaztatzen saiatu da.
+
+    galdakao_census:
+      lockout:
+        blocked_indefinitely: "Zure sarbidea mugarik gabe blokeatu da. Jarri harremanetan administrazioarekin."
+        blocked_indefinitely_contact: "Gehieneko saiakera kopurura heldu zara. Jarri harremanetan Galdakaoko Udaleko partaidetza sailarekin."
+        attempts_remaining: "Datu okerrak, 6tik %{remaining} saiakera geratzen zaizkizu."
+        three_attempts: "Hirugarren aldiz, datu okerrak sartu dituzu. Mesedez egiaztatu zure datuak. 5 minutu barru saia zaitezke berriro."
+        wait: "Berriro saiatu aurretik %{minutes} minutu eta %{seconds} segundo itxaron behar duzu."

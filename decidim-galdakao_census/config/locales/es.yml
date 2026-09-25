@@ -1,0 +1,166 @@
+es:
+  # Claves raíz que llama el handler Ruby directamente:
+  #   I18n.t("census_authorization_handler.service_unavailable")
+  #   I18n.t("census_authorization_handler.no_record")
+  #   I18n.t("census_authorization_handler.invalid_document")
+  census_authorization_handler:
+    service_unavailable: "El servicio del padrón no está disponible en este momento."
+    no_record: "No se ha encontrado ningún registro con los datos proporcionados."
+    invalid_document: "El formato del documento no es válido."
+
+  decidim:
+    admin:
+      galdakao:
+        sync:
+          success: "Calles sincronizadas correctamente."
+        index:
+          title: "Panel de Galdakao — Gestión del catalogo de calles"
+          nav_button: "Volver a Métodos de verificación"
+          section_sync:
+            subtitle: "Sincronización del catálogo"
+          section_catalog:
+            subtitle: "Catálogo actual de calles"
+          last_sync: "Última sincronización: %{time}"
+          never_synced: "Las calles todavía no han sido sincronizadas."
+          sync_button: "Sincronizar calles desde el padrón"
+          sync_confirm: "¿Seguro que quieres sincronizar las calles? Esto puede tardar unos segundos."
+          streets_link: "Ver listado de calles"
+        streets:
+          title: "Calles sincronizadas"
+          nav_button: "Volver a Gestión del catalogo"
+          name: "Nombre de la calle"
+          updated_at: "Última actualización"
+        zones:
+          index:
+            title: "Zonas de verificación"
+          new:
+            title: "Nueva zona"
+          edit:
+            title: "Editar zona"
+          destroy:
+            success: "Zona eliminada correctamente"
+          create:
+            success: "Nueva zona creada correctamente"
+            error: "Error al crear la zona: %{error}"
+          update:
+            success: "Zona actualizada correctamente"
+            error: "Error al actualizar la zona: %{error}"
+        zone_streets:
+          create:
+            success: "Calle añadida correctamente"
+            error: "Error al añadir la calle: %{error}"
+          update:
+            success: "Calle actualizada correctamente"
+            error: "Error al actualizar la calle: %{error}"
+          destroy:
+            success: "Calle eliminada correctamente"
+          form:
+            title_new: "Añadir calle a la zona"
+            title_edit: "Editar calle de la zona"
+            street_label: "Calle"
+            street_blank: "Selecciona una calle"
+            numbers_constraint_label: "Restricción de números"
+            numbers_constraint_options:
+              all_numbers: "Todos los números"
+              even_numbers: "Números pares"
+              odd_numbers: "Números impares"
+              only_range: "Solo estos portales"
+              except_range: "Todos menos estos portales"
+            numbers_range_label: "Portales"
+            numbers_range_placeholder: "Ej: 1-50  o  2,4,6,8"
+            numbers_range_help: "Usa <strong>1-50</strong> para un rango o <strong>2,4,6,8</strong> para portales sueltos."
+            submit: "Guardar"
+            cancel: "Cancelar"
+        zones_form:
+          title_new: "Crear nueva zona"
+          title_edit: "Editando zona"
+          name_label: "Nombre de la zona"
+          submit: "Guardar"
+          cancel: "Cancelar"
+        zones_index:
+          list_title: "Listado de zonas"
+          nav_button: "Volver a Métodos de verificación"
+          title: "Zonas de verificación"
+          new_zone: "Nueva zona"
+          col_name: "Nombre"
+          col_streets: "Nº calles"
+          edit: "Editar"
+          destroy: "Eliminar"
+          destroy_confirm: "¿Seguro que quieres eliminar esta zona?"
+        zones_show:
+          edit_zone: "Editar nombre"
+          back: "Volver"
+          streets_title: "Calles de esta zona"
+          add_street: "Añadir calle"
+          col_street: "Calle"
+          col_constraint: "Restricción"
+          col_range: "Rango"
+          col_actions: "Acciones"
+          all: "Todos"
+          edit: "Editar"
+          destroy: "Eliminar"
+        blocked_users:
+          index:
+            menu_label: "Autorizaciones bloqueadas"
+            title: "Usuarias bloqueadas"
+            nav_button: "Volver a Autorizaciones"
+            no_blocked: "No hay usuarias bloqueadas actualmente."
+            col_user: "Usuaria"
+            col_email: "Correo electrónico"
+            col_attempts: "Intentos"
+            col_last_attempt: "Último intento"
+            col_actions: "Acciones"
+            unlock: "Desbloquear"
+            unlock_confirm: "¿Seguro que quieres desbloquear esta usuaria?"
+          unlock:
+            success: "Usuaria desbloqueada correctamente."
+            not_blocked: "Esta usuaria no está bloqueada indefinidamente."
+        authorization_workflows:
+          management: "Gestión"
+    authorization_handlers:
+      admin:
+        census_authorization_handler:
+          help:
+            - "Los y las ciudadanas deben estar empadronadas en Galdakao para verificarse."
+            - "La verificación se realiza contra el padrón municipal mediante DNI/NIE y fecha de nacimiento."
+      census_authorization_handler:
+        # NOTA: name y explanation también están en es.yml (desactualizados).
+        # No se eliminan de es.yml en este commit — se hará en un commit
+        # posterior de forma atómica. Mientras tanto estas claves tienen
+        # precedencia porque Rails carga los archivos de módulo después.
+        name: "Padrón municipal de Galdakao"
+        explanation: "Verifica tu identidad mediante el padrón municipal de Galdakao."
+        fields:
+          document_number: "Número de documento (DNI/NIE)"
+          date_of_birth: "Fecha de nacimiento"
+        invalid_document: "No hemos podido verificar tu identidad con los datos proporcionados."
+        connection_error: "No ha sido posible conectar con el servicio del padrón. Por favor, inténtalo más tarde."
+        service_unavailable: "El servicio del padrón no está disponible en este momento."
+        no_record: "No se ha encontrado ningún registro con los datos proporcionados."
+        unauthorized_zone: "Tu domicilio no está incluido en las zonas habilitadas para participar en este proceso."
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: "No cumples los requisitos de participación para este proceso."
+
+    events:
+      galdakao_census:
+        user_locked:
+          email_intro: "Una participante ha sido bloqueada indefinidamente al superar el número máximo de intentos de verificación."
+          email_outro: "Accede al <a href=\"%{blocked_users_path}\">listado de autorizaciones bloqueadas</a> para gestionar el caso."
+          email_subject: "Participante bloqueada por exceso de intentos de verificación"
+          notification_title: "Una participante ha sido bloqueada indefinidamente al superar el número máximo de intentos de verificación."
+      verifications:
+        verify_with_managed_user:
+          email_intro: Una participante ha intentado verificarse con datos que ya están en uso por otra participante.
+          email_outro: Comprueba la <a href="%{conflicts_url}">lista de conflictos de verificaciones</a> para ver los detalles y resolver el problema.
+          email_subject: Error al intentar verificarse contra otra participante
+          notification_title: Una participante ha intentado verificarse con datos que ya están en uso por otra participante.
+
+    galdakao_census:
+      lockout:
+        blocked_indefinitely: "Tu acceso ha sido bloqueado indefinidamente. Contacta con la administración."
+        blocked_indefinitely_contact: "Has superado el número máximo de intentos. Por favor, ponte en contacto con el departamento de participación del Ayuntamiento de Galdakao."
+        attempts_remaining: "Datos incorrectos, te quedan %{remaining} intentos de 6."
+        three_attempts: "Has introducido datos erróneos 3 veces. Por favor revisa tus datos. Podrás volver a intentarlo en 5 minutos."
+        wait: "Debes esperar %{minutes} minutos y %{seconds} segundos antes de volver a intentarlo."
