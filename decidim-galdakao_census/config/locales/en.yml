@@ -1,0 +1,162 @@
+en:
+  # Root keys called directly by the Ruby handler:
+  #   I18n.t("census_authorization_handler.service_unavailable")
+  #   I18n.t("census_authorization_handler.no_record")
+  #   I18n.t("census_authorization_handler.invalid_document")
+  census_authorization_handler:
+    service_unavailable: "The municipal register service is currently unavailable."
+    no_record: "No record was found with the provided data."
+    invalid_document: "The document format is not valid."
+
+  decidim:
+    admin:
+      galdakao:
+        sync:
+          success: "Streets synchronised successfully."
+        index:
+          nav_button: "Back to Verification Methods"
+          title: "Galdakao Panel — Municipal Register Management"
+          section_sync:
+            subtitle: "Catalogue synchronisation"
+          section_catalog:
+            subtitle: "Current street catalogue"
+          last_sync: "Last synchronisation: %{time}"
+          never_synced: "Streets have not been synchronised yet."
+          sync_button: "Synchronise streets from the register"
+          sync_confirm: "Are you sure you want to synchronise the streets? This may take a few seconds."
+          streets_link: "View streets list"
+        streets:
+          nav_button: "Back to Catalogue Management"
+          title: "Synchronised streets"
+          name: "Street name"
+          updated_at: "Last updated"
+        zones:
+          index:
+            title: "Verification zones"
+          new:
+            title: "New zone"
+          edit:
+            title: "Edit zone"
+          destroy:
+            success: "Zone deleted successfully"
+          create:
+            success: "New zone created successfully"
+            error: "Error creating the zone: %{error}"
+          update:
+            success: "Zone updated successfully"
+            error: "Error updating the zone: %{error}"
+        zone_streets:
+          create:
+            success: "Street added successfully"
+            error: "Error adding street: %{error}"
+          update:
+            success: "Street updated successfully"
+            error: "Error updating street: %{error}"
+          destroy:
+            success: "Street removed successfully"
+          form:
+            title_new: "Add street to zone"
+            title_edit: "Edit street in zone"
+            street_label: "Street"
+            street_blank: "Select a street"
+            numbers_constraint_label: "Number constraint"
+            numbers_constraint_options:
+              all_numbers: "All numbers"
+              even_numbers: "Even numbers"
+              odd_numbers: "Odd numbers"
+              only_range: "Only these portals"
+              except_range: "All except these portals"
+            numbers_range_label: "Doorways"
+            numbers_range_placeholder: "Ex: 1-50  or  2,4,6,8"
+            numbers_range_help: "Use <strong>1-50</strong> for a range or <strong>2,4,6,8</strong> for individual numbers."
+            submit: "Save"
+            cancel: "Cancel"
+        zones_form:
+          title_new: "New zone"
+          title_edit: "Editing zone"
+          name_label: "Zone name"
+          submit: "Save"
+          cancel: "Cancel"
+        zones_index:
+          list_title: "Zone list"
+          nav_button: "Back to Verification Methods"
+          title: "Verification zones"
+          new_zone: "New zone"
+          col_name: "Name"
+          col_streets: "No. streets"
+          edit: "Edit"
+          destroy: "Delete"
+          destroy_confirm: "Are you sure you want to delete this zone?"
+        zones_show:
+          edit_zone: "Edit name"
+          back: "Back"
+          streets_title: "Streets in this zone"
+          add_street: "Add street"
+          col_street: "Street"
+          col_constraint: "Constraint"
+          col_range: "Range"
+          col_actions: "Actions"
+          all: "All"
+          edit: "Edit"
+          destroy: "Delete"
+        blocked_users:
+          index:
+            menu_label: "Blocked authorizations"
+            title: "Blocked users"
+            nav_button: "Back to Authorizations"
+            no_blocked: "There are no blocked users at the moment."
+            col_user: "User"
+            col_email: "Email"
+            col_attempts: "Attempts"
+            col_last_attempt: "Last attempt"
+            col_actions: "Actions"
+            unlock: "Unblock"
+            unlock_confirm: "Are you sure you want to unblock this user?"
+          unlock:
+            success: "User successfully unblocked."
+            not_blocked: "This user is not blocked indefinitely."
+        authorization_workflows:
+          management: "Management"
+    authorization_handlers:
+      admin:
+        census_authorization_handler:
+          help:
+            - "Citizens must be registered in the Galdakao municipal register to verify their identity."
+            - "Verification is performed against the municipal register using a national ID (DNI/NIE) and date of birth."
+      census_authorization_handler:
+        name: "Galdakao municipal register"
+        explanation: "Verify your identity using the Galdakao municipal register."
+        fields:
+          document_number: "Document number (DNI/NIE)"
+          date_of_birth: "Date of birth"
+        invalid_document: "We could not verify your identity with the data provided."
+        connection_error: "Could not connect to the register service. Please try again later."
+        service_unavailable: "The municipal register service is currently unavailable."
+        no_record: "No record was found with the data provided."
+        unauthorized_zone: "Your address is not included in the zones enabled to participate in this process."
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: "You do not meet the participation requirements for this process."
+
+    events:
+      galdakao_census:
+        user_locked:
+          email_intro: "A participant has been blocked indefinitely after exceeding the maximum number of verification attempts."
+          email_outro: "Access the <a href=\"%{blocked_users_path}\">blocked authorizations list</a> to manage the case."
+          email_subject: "Participant blocked due to excessive verification attempts"
+          notification_title: "A participant has been blocked indefinitely after exceeding the maximum number of verification attempts."
+      verifications:
+        verify_with_managed_user:
+          email_intro: A participant has tried to verify themselves with data that is already in use by another participant.
+          email_outro: Check the <a href="%{conflicts_url}">Verifications conflicts list</a> to see the details and solve the issue.
+          email_subject: Failed verification attempt against another participant
+          notification_title: A participant has tried to verify themselves with data that is already in use by another participant.
+
+    galdakao_census:
+      lockout:
+        blocked_indefinitely: "Your access has been blocked indefinitely. Please contact the administration."
+        blocked_indefinitely_contact: "You have exceeded the maximum number of attempts. Please contact the participation department of Galdakao City Hall."
+        attempts_remaining: "Incorrect data, you have %{remaining} attempts left out of 6."
+        three_attempts: "You have entered incorrect data 3 times. Please check your data. You will be able to try again in 5 minutes."
+        wait: "You must wait %{minutes} minutes and %{seconds} seconds before trying again."

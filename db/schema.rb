@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_02_150138) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_25_095635) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "ltree"
   enable_extension "pg_trgm"
@@ -1073,6 +1073,34 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_150138) do
     t.index ["decidim_user_id"], name: "index_decidim_forms_responses_on_decidim_user_id"
     t.index ["ip_hash"], name: "index_decidim_forms_responses_on_ip_hash"
     t.index ["session_token"], name: "index_decidim_forms_responses_on_session_token"
+  end
+
+  create_table "decidim_galdakao_census_galdakao_streets", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "decidim_organization_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["decidim_organization_id"], name: "index_galdakao_census_streets_on_organization_id"
+    t.index ["name", "decidim_organization_id"], name: "index_galdakao_census_streets_on_name_and_organization", unique: true
+  end
+
+  create_table "decidim_galdakao_census_galdakao_zone_streets", force: :cascade do |t|
+    t.bigint "zone_id", null: false
+    t.bigint "street_id", null: false
+    t.integer "numbers_constraint", default: 0, null: false
+    t.string "numbers_range"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["street_id"], name: "index_galdakao_census_zone_streets_on_street_id"
+    t.index ["zone_id"], name: "index_galdakao_census_zone_streets_on_zone_id"
+  end
+
+  create_table "decidim_galdakao_census_galdakao_zones", force: :cascade do |t|
+    t.bigint "decidim_organization_id", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["decidim_organization_id"], name: "index_galdakao_census_zones_on_organization_id"
   end
 
   create_table "decidim_gamification_badge_scores", force: :cascade do |t|
@@ -2396,6 +2424,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_150138) do
   add_foreign_key "decidim_elections_voters", "decidim_elections_elections", column: "election_id"
   add_foreign_key "decidim_elections_votes", "decidim_elections_questions", column: "question_id"
   add_foreign_key "decidim_elections_votes", "decidim_elections_response_options", column: "response_option_id"
+  add_foreign_key "decidim_galdakao_census_galdakao_streets", "decidim_organizations"
+  add_foreign_key "decidim_galdakao_census_galdakao_zone_streets", "decidim_galdakao_census_galdakao_zones", column: "zone_id"
   add_foreign_key "decidim_identities", "decidim_organizations"
   add_foreign_key "decidim_initiatives_settings", "decidim_organizations"
   add_foreign_key "decidim_newsletters", "decidim_users", column: "author_id"
