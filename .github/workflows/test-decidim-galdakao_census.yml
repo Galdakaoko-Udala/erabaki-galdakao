@@ -1,11 +1,8 @@
 name: Test decidim-galdakao_census [localgem]
 
 # This workflow is designed exclusively to run the specs for the local gem
-# decidim-galdakao_census. To do so, it swaps the repository's Gemfile and
-# Gemfile.lock with the gem-specific versions (which include test dependencies:
-# webmock, rspec-rails, decidim-dev, etc.), so that the main repository Gemfile
-# is not modified and the production environment is not affected.
-# The swap is safe because the GitHub Actions runner is ephemeral.
+# decidim-galdakao_census. It uses the repository's Gemfile, where the gem is
+# loaded by path and its test dependencies come from decidim-dev.
 
 on:
   push:
@@ -49,14 +46,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      # Replace the repository's Gemfile and Gemfile.lock with the gem-specific
-      # versions that include test dependencies (webmock, rspec-rails, decidim-dev).
-      # Safe to do here because the runner is ephemeral and nothing persists after the run.
-      - name: Swap Gemfile and Gemfile.lock for gem-specific versions
-        run: |
-          cp decidim-galdakao_census/Gemfile Gemfile
-          cp decidim-galdakao_census/Gemfile.lock Gemfile.lock
-
       - run: |
           sudo apt-get update; sudo apt-get -f install wkhtmltopdf imagemagick
 
@@ -72,7 +61,7 @@ jobs:
           cache-dependency-path: ./package-lock.json
 
       # Load the base Decidim schema, then apply pending migrations
-      # (including the gem's own: galdakao_zones, galdakao_streets, galdakao_zone_streets)
+      # (including the gem's own decidim_galdakao_census_* tables)
       - name: Setup & create Database
         run: |
           bundle exec rails db:create db:schema:load db:migrate
