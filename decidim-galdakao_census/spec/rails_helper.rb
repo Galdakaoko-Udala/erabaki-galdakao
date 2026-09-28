@@ -5,14 +5,14 @@ require "simplecov"
 SimpleCov.start "rails"
 
 ENV["RAILS_ENV"] ||= "test"
-require File.expand_path("../../../config/environment", __dir__)
+require File.expand_path("../../config/environment", __dir__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 require "rspec/rails"
 require "decidim/dev"
 
 # The dummy app is the main application itself
-Decidim::Dev.dummy_app_path = File.expand_path(File.join(__dir__, "../../.."))
+Decidim::Dev.dummy_app_path = File.expand_path(File.join(__dir__, "../.."))
 
 require "decidim/dev/test/base_spec_helper"
 
