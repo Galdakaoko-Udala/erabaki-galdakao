@@ -2,8 +2,9 @@
 
 module Decidim
   module GaldakaoCensus
+    # Notifies the organization admins that a participant has been blocked indefinitely
+    # after too many failed verification attempts.
     class UserLockedEvent < Decidim::Events::SimpleEvent
-      include Rails.application.routes.mounted_helpers
       def i18n_scope
         "decidim.events.galdakao_census.user_locked"
       end
@@ -20,10 +21,9 @@ module Decidim
         nil
       end
 
+      # A full URL, as the link is also sent by email
       def default_i18n_options
-        super.merge({
-                      blocked_users_path: decidim_admin_galdakao_census.galdakao_blocked_users_path
-                    })
+        super.merge(blocked_users_url: decidim_admin_galdakao_census.blocked_users_url)
       end
 
       private

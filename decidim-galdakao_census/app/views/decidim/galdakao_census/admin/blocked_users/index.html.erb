@@ -1,52 +1,42 @@
-<div class="card">
+<% add_decidim_page_title(t(".title")) %>
+<div class="card" id="census-blocked-users">
   <div class="item_show__header">
     <h1 class="item_show__header-title">
-      <%= t("decidim.admin.galdakao.blocked_users.index.title") %>
-      <%= link_to decidim_admin.authorization_workflows_path,
-          style: "display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--secondary);color:var(--secondary);border-radius:4px;font-weight:600;padding:1.375px 10px;font-size:0.875rem;text-decoration:none;background:transparent;",
-          onmouseover: "this.style.background='var(--secondary)';this.style.color='white'",
-          onmouseout: "this.style.background='transparent';this.style.color='var(--secondary)'" do %>
-        <%= icon "arrow-left-line", class: "fill-current" %>
-        <span><%= t("decidim.admin.galdakao.blocked_users.index.nav_button") %></span>
-      <% end %>
+      <%= t(".title") %>
+      <%= link_to t(".back"), decidim_admin.authorization_workflows_path, class: "button button__sm button__transparent-secondary" %>
     </h1>
   </div>
 
-  <div class="card__content">
-    <% if @blocked_users.empty? %>
-      <p><%= t("decidim.admin.galdakao.blocked_users.index.no_blocked") %></p>
-    <% else %>
-      <div class="table-scroll">
-        <table class="table-list">
-          <thead>
+  <% if blocked_users.any? %>
+    <div class="table-stacked">
+      <table class="table-list">
+        <thead>
+          <tr>
+            <th><%= t(".name") %></th>
+            <th><%= t(".email") %></th>
+            <th><%= t(".attempts") %></th>
+            <th><%= t(".last_attempt") %></th>
+            <th><%= t("decidim.admin.actions.actions") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% blocked_users.each do |user| %>
             <tr>
-              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_user") %></th>
-              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_email") %></th>
-              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_attempts") %></th>
-              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_last_attempt") %></th>
-              <th><%= t("decidim.admin.galdakao.blocked_users.index.col_actions") %></th>
+              <td data-label="<%= t(".name") %>"><%= user.name %></td>
+              <td data-label="<%= t(".email") %>"><%= user.email %></td>
+              <td data-label="<%= t(".attempts") %>"><%= lockout_data(user)["failed_attempts"] %></td>
+              <td data-label="<%= t(".last_attempt") %>"><%= last_attempt_at(user) ? l(last_attempt_at(user), format: :short) : "-" %></td>
+              <td class="table-list__actions" data-label="<%= t("decidim.admin.actions.actions") %>">
+                <% if allowed_to? :unlock, :census_blocked_user %>
+                  <%= link_to t(".unlock"), unlock_blocked_user_path(user), method: :patch, data: { confirm: t(".unlock_confirm") }, class: "button button__sm button__secondary" %>
+                <% end %>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            <% @blocked_users.each do |user| %>
-              <% auth_data = user.extended_data.dig("authorizations", "census_authorization_handler") %>
-              <tr>
-                <td><%= user.name %></td>
-                <td><%= user.email %></td>
-                <td><%= auth_data["failed_attempts"] %></td>
-                <td><%= l(Time.parse(auth_data["last_attempt_at"].to_s), format: :short) rescue "-" %></td>
-                <td class="table-list__actions">
-                  <%= button_to t("decidim.admin.galdakao.blocked_users.index.unlock"),
-                      decidim_admin_galdakao_census.unlock_galdakao_blocked_user_path(user),
-                      method: :delete,
-                      class: "button button__sm button__danger",
-                      data: { confirm: t("decidim.admin.galdakao.blocked_users.index.unlock_confirm") } %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% end %>
-  </div>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p><%= t(".no_blocked") %></p>
+  <% end %>
 </div>

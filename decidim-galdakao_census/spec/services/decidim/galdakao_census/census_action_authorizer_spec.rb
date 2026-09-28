@@ -6,8 +6,8 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
   subject(:authorizer) { described_class.new(authorization, options, nil, nil) }
 
   let(:organization) { create(:organization) }
-  let(:zone) { create(:galdakao_zone, organization:) }
-  let(:street) { create(:galdakao_street, organization:, name: "Calle Mayor") }
+  let(:zone) { create(:census_zone, organization:) }
+  let(:street) { create(:census_street, organization:, name: "Calle Mayor") }
   let(:options) { { "zones" => zone.id.to_s } }
 
   let(:authorization) do
@@ -16,6 +16,12 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
   end
   let(:authorization_street) { "Calle Mayor" }
   let(:authorization_number) { 4 }
+
+  let(:explanation_scope) { "decidim.galdakao_census.action_authorizer" }
+  let(:not_in_zone) { [:unauthorized, { extra_explanation: { key: "not_in_zone", params: { scope: explanation_scope } } }] }
+  let(:address_not_found) do
+    [:unauthorized, { extra_explanation: { key: "address_not_found", params: { scope: explanation_scope } } }]
+  end
 
   describe "#authorize" do
     context "when there is no authorization" do
@@ -34,26 +40,47 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
       end
     end
 
+    context "when the authorization is pending" do
+      let(:authorization) do
+        create(:authorization, :pending, user: create(:user, organization:),
+                                         metadata: { "street" => authorization_street, "street_number" => authorization_number })
+      end
+
+      it "returns pending, as the base authorizer does" do
+        expect(authorizer.authorize).to eq([:pending, { action: :resume }])
+      end
+    end
+
+    context "when checking several actions with the same options" do
+      before { create(:census_zone_street, zone:, street:, numbers_constraint: "all_numbers") }
+
+      it "does not modify the options, which belong to the component permissions" do
+        authorizer.authorize
+
+        expect(options).to eq("zones" => zone.id.to_s)
+      end
+    end
+
     context "when the configured zone belongs to another organization" do
-      let(:other_zone) { create(:galdakao_zone) }
-      let(:other_street) { create(:galdakao_street, organization: other_zone.organization, name: "Calle Mayor") }
+      let(:other_zone) { create(:census_zone) }
+      let(:other_street) { create(:census_street, organization: other_zone.organization, name: "Calle Mayor") }
       let(:options) { { "zones" => other_zone.id.to_s } }
 
-      before { create(:galdakao_zone_street, zone: other_zone, street: other_street, numbers_constraint: "all_numbers") }
+      before { create(:census_zone_street, zone: other_zone, street: other_street, numbers_constraint: "all_numbers") }
 
       it "returns unauthorized" do
-        expect(authorizer.authorize).to eq([:unauthorized, {}])
+        expect(authorizer.authorize).to eq(not_in_zone)
       end
     end
 
     context "when zones are configured" do
-      before { create(:galdakao_zone_street, zone:, street:, numbers_constraint: "all_numbers") }
+      before { create(:census_zone_street, zone:, street:, numbers_constraint: "all_numbers") }
 
       context "when the authorization has no street" do
         let(:authorization_street) { nil }
 
         it "returns unauthorized" do
-          expect(authorizer.authorize).to eq([:unauthorized, {}])
+          expect(authorizer.authorize).to eq(address_not_found)
         end
       end
 
@@ -61,7 +88,15 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
         let(:authorization_number) { nil }
 
         it "returns unauthorized" do
-          expect(authorizer.authorize).to eq([:unauthorized, {}])
+          expect(authorizer.authorize).to eq(address_not_found)
+        end
+      end
+
+      context "when the authorization has street_number 0 (stored before missing portals were saved as nil)" do
+        let(:authorization_number) { 0 }
+
+        it "returns unauthorized" do
+          expect(authorizer.authorize).to eq(address_not_found)
         end
       end
 
@@ -69,7 +104,7 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
         let(:authorization_street) { "Calle Otra" }
 
         it "returns unauthorized" do
-          expect(authorizer.authorize).to eq([:unauthorized, {}])
+          expect(authorizer.authorize).to eq(not_in_zone)
         end
       end
 
@@ -80,7 +115,7 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
       end
 
       context "when the matching street is in the second of several configured zones" do
-        let(:other_zone) { create(:galdakao_zone, organization:) }
+        let(:other_zone) { create(:census_zone, organization:) }
         let(:options) { { "zones" => "#{other_zone.id},#{zone.id}" } }
 
         it "returns ok" do
@@ -92,7 +127,7 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
 
   describe "number constraints" do
     context "when the constraint is all_numbers" do
-      before { create(:galdakao_zone_street, zone:, street:, numbers_constraint: "all_numbers") }
+      before { create(:census_zone_street, zone:, street:, numbers_constraint: "all_numbers") }
 
       context "with an odd number" do
         let(:authorization_number) { 7 }
@@ -112,7 +147,7 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
     end
 
     context "when the constraint is even_numbers" do
-      before { create(:galdakao_zone_street, zone:, street:, numbers_constraint: "even_numbers") }
+      before { create(:census_zone_street, zone:, street:, numbers_constraint: "even_numbers") }
 
       context "with an even number" do
         let(:authorization_number) { 4 }
@@ -126,13 +161,13 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
         let(:authorization_number) { 5 }
 
         it "returns unauthorized" do
-          expect(authorizer.authorize).to eq([:unauthorized, {}])
+          expect(authorizer.authorize).to eq(not_in_zone)
         end
       end
     end
 
     context "when the constraint is odd_numbers" do
-      before { create(:galdakao_zone_street, zone:, street:, numbers_constraint: "odd_numbers") }
+      before { create(:census_zone_street, zone:, street:, numbers_constraint: "odd_numbers") }
 
       context "with an odd number" do
         let(:authorization_number) { 5 }
@@ -146,14 +181,14 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
         let(:authorization_number) { 4 }
 
         it "returns unauthorized" do
-          expect(authorizer.authorize).to eq([:unauthorized, {}])
+          expect(authorizer.authorize).to eq(not_in_zone)
         end
       end
     end
 
     context "when the constraint is only_range" do
       before do
-        create(:galdakao_zone_street, zone:, street:, numbers_constraint: "only_range", numbers_range: "1-10")
+        create(:census_zone_street, zone:, street:, numbers_constraint: "only_range", numbers_range: "1-10")
       end
 
       context "with a number inside the range" do
@@ -168,21 +203,21 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
         let(:authorization_number) { 20 }
 
         it "returns unauthorized" do
-          expect(authorizer.authorize).to eq([:unauthorized, {}])
+          expect(authorizer.authorize).to eq(not_in_zone)
         end
       end
     end
 
     context "when the constraint is except_range" do
       before do
-        create(:galdakao_zone_street, zone:, street:, numbers_constraint: "except_range", numbers_range: "1-10")
+        create(:census_zone_street, zone:, street:, numbers_constraint: "except_range", numbers_range: "1-10")
       end
 
       context "with a number inside the excluded range" do
         let(:authorization_number) { 5 }
 
         it "returns unauthorized" do
-          expect(authorizer.authorize).to eq([:unauthorized, {}])
+          expect(authorizer.authorize).to eq(not_in_zone)
         end
       end
 
@@ -197,7 +232,7 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
 
     context "when numbers_range combines individual numbers and ranges" do
       before do
-        create(:galdakao_zone_street, zone:, street:, numbers_constraint: "only_range", numbers_range: "1-4,7,10-12")
+        create(:census_zone_street, zone:, street:, numbers_constraint: "only_range", numbers_range: "1-4,7,10-12")
       end
 
       context "with a number inside one of the individual values" do
@@ -220,7 +255,7 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
         let(:authorization_number) { 8 }
 
         it "returns unauthorized" do
-          expect(authorizer.authorize).to eq([:unauthorized, {}])
+          expect(authorizer.authorize).to eq(not_in_zone)
         end
       end
     end

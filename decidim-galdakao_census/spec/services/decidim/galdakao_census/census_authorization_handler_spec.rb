@@ -79,6 +79,45 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
         end
       end
 
+      %w(12345678Z 12345678z Y1234567X 1234567L).each do |valid_document|
+        context "when it is #{valid_document}, with a correct control letter" do
+          let(:document_number) { valid_document }
+
+          before do
+            allow(lockout_manager).to receive(:register_success)
+            stub_webservice(result: "true")
+          end
+
+          it "passes the validation" do
+            handler.valid?
+
+            expect(handler.errors[:document_number]).to be_empty
+          end
+        end
+      end
+
+      context "when the control letter is wrong" do
+        let(:document_number) { "12345678A" }
+
+        it "fails without calling the register nor counting a failed attempt" do
+          expect(Decidim::GaldakaoCensus::Webservice).not_to receive(:new)
+          expect(lockout_manager).not_to receive(:register_failed_attempt)
+
+          expect(handler).not_to be_valid
+          expect(handler.errors[:document_number]).not_to be_empty
+        end
+      end
+
+      context "when it has a prefix that is not a NIE or K/L/M document" do
+        let(:document_number) { "A1234567L" }
+
+        it "fails the format validation" do
+          handler.valid?
+
+          expect(handler.errors[:document_number]).not_to be_empty
+        end
+      end
+
       context "when it has no trailing letter" do
         let(:document_number) { "12345678" }
 
@@ -118,7 +157,7 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
       end
 
       it "does not call the webservice" do
-        expect(GaldakaoWebservice).not_to receive(:new)
+        expect(Decidim::GaldakaoCensus::Webservice).not_to receive(:new)
 
         handler.valid?
       end
@@ -177,9 +216,9 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
 
     context "when the webservice is unavailable" do
       before do
-        unavailable_double = instance_double(GaldakaoWebservice, response: nil)
+        unavailable_double = instance_double(Decidim::GaldakaoCensus::Webservice, response: nil)
         allow(unavailable_double).to receive(:body=)
-        allow(GaldakaoWebservice).to receive(:new).and_return(unavailable_double)
+        allow(Decidim::GaldakaoCensus::Webservice).to receive(:new).and_return(unavailable_double)
       end
 
       it "is not valid" do
@@ -189,7 +228,7 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
       it "adds a service unavailable base error" do
         handler.valid?
 
-        expect(handler.errors[:base]).to include(I18n.t("census_authorization_handler.service_unavailable"))
+        expect(handler.errors[:base]).to include(I18n.t("decidim.authorization_handlers.census_authorization_handler.service_unavailable"))
       end
     end
 
@@ -197,7 +236,7 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
       let(:date_of_birth) { nil }
 
       it "does not call the webservice" do
-        expect(GaldakaoWebservice).not_to receive(:new)
+        expect(Decidim::GaldakaoCensus::Webservice).not_to receive(:new)
 
         handler.valid?
       end
@@ -210,7 +249,7 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
       end
 
       it "only calls the webservice once" do
-        expect(GaldakaoWebservice).to receive(:new).once.and_return(webservice_double)
+        expect(Decidim::GaldakaoCensus::Webservice).to receive(:new).once.and_return(webservice_double)
 
         handler.valid?
         handler.metadata
@@ -233,6 +272,38 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
 
     it "includes the street number as an integer" do
       expect(handler.metadata[:street_number]).to eq(14)
+    end
+
+    context "when the webservice returns no portal" do
+      before { stub_webservice(result: "true", street: "Calle Mayor", portal: "") }
+
+      it "stores a nil street number instead of 0" do
+        expect(handler.metadata[:street_number]).to be_nil
+      end
+    end
+
+    context "when the portal has no digits" do
+      before { stub_webservice(result: "true", street: "Calle Mayor", portal: "s/n") }
+
+      it "stores a nil street number" do
+        expect(handler.metadata[:street_number]).to be_nil
+      end
+    end
+
+    context "when the portal includes a letter" do
+      before { stub_webservice(result: "true", street: "Calle Mayor", portal: "14B") }
+
+      it "stores the numeric part" do
+        expect(handler.metadata[:street_number]).to eq(14)
+      end
+    end
+
+    context "when the webservice returns no street" do
+      before { stub_webservice(result: "true", street: "", portal: "14") }
+
+      it "stores a nil street" do
+        expect(handler.metadata[:street]).to be_nil
+      end
     end
   end
 
@@ -260,7 +331,7 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
 
   def webservice_double(result: "true", street: "Calle Mayor", portal: "4")
     double = instance_double(
-      GaldakaoWebservice,
+      Decidim::GaldakaoCensus::Webservice,
       response: Nokogiri::XML(<<~XML)
         <autenticarResult>
           <autenticarResult>#{result}</autenticarResult>
@@ -274,7 +345,7 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
   end
 
   def stub_webservice(result: "true", street: "Calle Mayor", portal: "4")
-    allow(GaldakaoWebservice).to receive(:new).and_return(
+    allow(Decidim::GaldakaoCensus::Webservice).to receive(:new).and_return(
       webservice_double(result:, street:, portal:)
     )
   end

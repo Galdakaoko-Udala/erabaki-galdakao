@@ -3,13 +3,15 @@
 module Decidim
   module GaldakaoCensus
     module Admin
-      class ZonesController < GaldakaoController
-        include Paginable
-        layout "decidim/admin/users"
-        helper_method :zone_list, :zone
-        before_action -> { enforce_permission_to :read, :admin_user }
+      # Manages the zones used to restrict permissions by address.
+      class ZonesController < Admin::ApplicationController
+        include Decidim::Paginable
+
+        helper_method :zones, :zone
 
         def index
+          enforce_permission_to :read, :census_zone
+
           respond_to do |format|
             format.html
             format.json { render json: json_zones }
@@ -17,69 +19,91 @@ module Decidim
         end
 
         def show
-          @zone = zone
+          enforce_permission_to :read, :census_zone
         end
 
         def new
-          @form = form(GaldakaoZoneForm).instance
-        end
-
-        def edit
-          @form = form(GaldakaoZoneForm).from_model(zone)
+          enforce_permission_to :create, :census_zone
+          @form = form(ZoneForm).instance
         end
 
         def create
-          @form = form(GaldakaoZoneForm).from_params(params)
-          CreateGaldakaoZone.call(@form) do
+          enforce_permission_to :create, :census_zone
+          @form = form(ZoneForm).from_params(params)
+
+          CreateZone.call(@form) do
             on(:ok) do
-              flash[:notice] = t("decidim.admin.galdakao.zones.create.success")
-              redirect_to decidim_admin_galdakao_census.galdakao_zones_path
+              flash[:notice] = I18n.t("zones.create.success", scope: "decidim.galdakao_census.admin")
+              redirect_to zones_path
             end
-            on(:invalid) do |error|
-              flash.now[:alert] = t("decidim.admin.galdakao.zones.create.error", error: error)
-              render :new
+
+            on(:invalid) do
+              flash.now[:alert] = I18n.t("zones.create.invalid", scope: "decidim.galdakao_census.admin")
+              render :new, status: :unprocessable_entity
             end
           end
         end
 
+        def edit
+          enforce_permission_to :update, :census_zone
+          @form = form(ZoneForm).from_model(zone)
+        end
+
         def update
-          @form = form(GaldakaoZoneForm).from_params(params)
-          UpdateGaldakaoZone.call(@form, zone) do
+          enforce_permission_to :update, :census_zone
+          @form = form(ZoneForm).from_params(params)
+
+          UpdateZone.call(@form, zone) do
             on(:ok) do
-              flash[:notice] = t("decidim.admin.galdakao.zones.update.success")
-              redirect_to decidim_admin_galdakao_census.galdakao_zones_path
+              flash[:notice] = I18n.t("zones.update.success", scope: "decidim.galdakao_census.admin")
+              redirect_to zones_path
             end
-            on(:invalid) do |error|
-              flash.now[:alert] = t("decidim.admin.galdakao.zones.update.error", error: error)
-              render :edit
+
+            on(:invalid) do
+              flash.now[:alert] = I18n.t("zones.update.invalid", scope: "decidim.galdakao_census.admin")
+              render :edit, status: :unprocessable_entity
             end
           end
         end
 
         def destroy
-          zone.destroy!
-          flash[:notice] = t("decidim.admin.galdakao.zones.destroy.success")
-          redirect_to decidim_admin_galdakao_census.galdakao_zones_path
+          enforce_permission_to :destroy, :census_zone
+
+          DestroyZone.call(zone, current_user) do
+            on(:ok) do
+              flash[:notice] = I18n.t("zones.destroy.success", scope: "decidim.galdakao_census.admin")
+            end
+
+            on(:invalid) do
+              flash[:alert] = I18n.t("zones.destroy.invalid", scope: "decidim.galdakao_census.admin")
+            end
+          end
+
+          redirect_to zones_path
         end
 
         private
 
+        def organization_zones
+          Zone.where(organization: current_organization).order(:name)
+        end
+
         def zone
-          @zone ||= GaldakaoZone.where(organization: current_organization).find(params[:id])
+          @zone ||= organization_zones.find(params[:id])
         end
 
+        def zones
+          @zones ||= paginate(organization_zones.includes(:zone_streets))
+        end
+
+        # Not paginated: the permissions zone selector needs to search every zone
         def json_zones
-          query = zone_list
           query = if params[:ids]
-                    query.where(id: params[:ids].split(","))
+                    organization_zones.where(id: params[:ids].split(","))
                   else
-                    query.where("name ILIKE ?", "%#{params[:q]}%")
+                    organization_zones.where("name ILIKE ?", "%#{Zone.sanitize_sql_like(params[:q].to_s)}%")
                   end
-          query.map { |z| { id: z.id, text: z.name } }
-        end
-
-        def zone_list
-          paginate(GaldakaoZone.where(organization: current_organization).order(name: :asc))
+          query.map { |zone| { id: zone.id, text: zone.name } }
         end
 
         def per_page

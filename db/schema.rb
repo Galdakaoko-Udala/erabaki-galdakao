@@ -1075,7 +1075,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_25_095635) do
     t.index ["session_token"], name: "index_decidim_forms_responses_on_session_token"
   end
 
-  create_table "decidim_galdakao_census_galdakao_streets", force: :cascade do |t|
+  create_table "decidim_galdakao_census_streets", force: :cascade do |t|
     t.string "name", null: false
     t.bigint "decidim_organization_id", null: false
     t.datetime "created_at", null: false
@@ -1084,7 +1084,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_25_095635) do
     t.index ["name", "decidim_organization_id"], name: "index_galdakao_census_streets_on_name_and_organization", unique: true
   end
 
-  create_table "decidim_galdakao_census_galdakao_zone_streets", force: :cascade do |t|
+  create_table "decidim_galdakao_census_zone_streets", force: :cascade do |t|
     t.bigint "zone_id", null: false
     t.bigint "street_id", null: false
     t.integer "numbers_constraint", default: 0, null: false
@@ -1095,7 +1095,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_25_095635) do
     t.index ["zone_id"], name: "index_galdakao_census_zone_streets_on_zone_id"
   end
 
-  create_table "decidim_galdakao_census_galdakao_zones", force: :cascade do |t|
+  create_table "decidim_galdakao_census_zones", force: :cascade do |t|
     t.bigint "decidim_organization_id", null: false
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -2424,8 +2424,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_25_095635) do
   add_foreign_key "decidim_elections_voters", "decidim_elections_elections", column: "election_id"
   add_foreign_key "decidim_elections_votes", "decidim_elections_questions", column: "question_id"
   add_foreign_key "decidim_elections_votes", "decidim_elections_response_options", column: "response_option_id"
-  add_foreign_key "decidim_galdakao_census_galdakao_streets", "decidim_organizations"
-  add_foreign_key "decidim_galdakao_census_galdakao_zone_streets", "decidim_galdakao_census_galdakao_zones", column: "zone_id"
+  add_foreign_key "decidim_galdakao_census_streets", "decidim_organizations"
+  add_foreign_key "decidim_galdakao_census_zone_streets", "decidim_galdakao_census_streets", column: "street_id"
+  add_foreign_key "decidim_galdakao_census_zone_streets", "decidim_galdakao_census_zones", column: "zone_id"
+  add_foreign_key "decidim_galdakao_census_zones", "decidim_organizations"
   add_foreign_key "decidim_identities", "decidim_organizations"
   add_foreign_key "decidim_initiatives_settings", "decidim_organizations"
   add_foreign_key "decidim_newsletters", "decidim_users", column: "author_id"

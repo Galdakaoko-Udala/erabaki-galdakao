@@ -16,7 +16,7 @@ module Decidim
       # where they could be overwritten by factory_bot_rails' auto-reload.
       config.factory_bot.definition_file_paths += [File.expand_path("../../../spec/factories", __dir__)] if defined?(FactoryBotRails)
 
-      initializer "galdakao_census.verification_workflow" do
+      initializer "decidim_galdakao_census.verification_workflow" do
         Decidim::Verifications.register_workflow(:census_authorization_handler) do |workflow|
           workflow.form = "Decidim::GaldakaoCensus::CensusAuthorizationHandler"
           workflow.action_authorizer = "Decidim::GaldakaoCensus::CensusActionAuthorizer"
@@ -28,36 +28,9 @@ module Decidim
       end
 
       config.to_prepare do
-        Decidim::Verifications::ManagedUserErrorEvent.class_eval do
-          include Rails.application.routes.mounted_helpers
+        require "decidim/galdakao_census/overrides/managed_user_error_event"
 
-          def resource_path
-            nil
-          end
-
-          def resource_url
-            nil
-          end
-
-          def resource_title
-            nil
-          end
-
-          def default_i18n_options
-            super.merge({ conflicts_path: decidim_admin.conflicts_path,
-                          conflicts_url: decidim_admin.conflicts_url })
-          end
-
-          private
-
-          def decidim_admin
-            @decidim_admin ||= Decidim::EngineRouter.new("decidim_admin", { host: organization.host })
-          end
-
-          def organization
-            resource.current_user.organization
-          end
-        end
+        Decidim::Verifications::ManagedUserErrorEvent.include(Decidim::GaldakaoCensus::Overrides::ManagedUserErrorEvent)
       end
     end
   end

@@ -10,39 +10,35 @@ module Decidim
       paths["app/overrides"] ||= ["app/overrides"]
 
       routes do
-        resources :galdakao, only: [:index] do
+        resources :streets, only: [:index] do
           collection do
-            get :streets
             post :sync
-            post :check
           end
         end
 
-        scope "/galdakao", as: :galdakao do
-          resources :zones do
-            resources :zone_streets
-          end
+        resources :zones do
+          resources :zone_streets, except: [:index, :show]
+        end
 
-          resources :blocked_users, only: [:index] do
-            member do
-              delete :unlock
-            end
+        resources :blocked_users, only: [:index] do
+          member do
+            patch :unlock
           end
         end
       end
 
-      initializer "galdakao_census.admin_mount_routes" do |_app|
+      initializer "decidim_galdakao_census_admin.mount_routes" do |_app|
         Decidim::Core::Engine.routes do
           mount Decidim::GaldakaoCensus::AdminEngine, at: "/admin/galdakao_census", as: "decidim_admin_galdakao_census"
         end
       end
 
-      initializer "galdakao_census.admin_blocked_users_menu" do
+      initializer "decidim_galdakao_census_admin.menu" do
         Decidim.menu :workflows_menu do |menu|
-          menu.add_item :blocked_users,
-                        I18n.t("decidim.admin.galdakao.blocked_users.index.menu_label"),
-                        decidim_admin_galdakao_census.galdakao_blocked_users_path,
-                        active: is_active_link?(decidim_admin_galdakao_census.galdakao_blocked_users_path)
+          menu.add_item :galdakao_census_blocked_users,
+                        I18n.t("menu.blocked_users", scope: "decidim.galdakao_census.admin"),
+                        decidim_admin_galdakao_census.blocked_users_path,
+                        active: is_active_link?(decidim_admin_galdakao_census.blocked_users_path)
         end
       end
     end

@@ -13,6 +13,13 @@ checksums = [
       "/app/views/layouts/decidim/admin/_header.html.erb" => "6e5893f735d2097f0e55e8b6666cb201",
       "/app/views/decidim/admin/authorization_workflows/index.html.erb" => "77e626199390e59d7e214517c60cecee"
     }
+  },
+  {
+    package: "decidim-verifications",
+    files: {
+      # lib/decidim/galdakao_census/overrides/managed_user_error_event.rb
+      "/app/events/decidim/verifications/managed_user_error_event.rb" => "ef08dfd436d2296f9102c63a8ebb9af5"
+    }
   }
 ]
 

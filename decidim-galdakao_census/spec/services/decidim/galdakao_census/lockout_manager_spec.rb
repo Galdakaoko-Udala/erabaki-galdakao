@@ -131,6 +131,29 @@ describe Decidim::GaldakaoCensus::LockoutManager do
     end
   end
 
+  context "when the user does not pass the model validations" do
+    before do
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_column(:nickname, "")
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    it "still records the failed attempt" do
+      expect(user).not_to be_valid
+
+      manager.register_failed_attempt
+
+      expect(user.reload.extended_data.dig("authorizations", handler_key, "failed_attempts")).to eq(1)
+    end
+
+    it "still clears the lock on success" do
+      manager.register_failed_attempt
+      described_class.new(user.reload).register_success
+
+      expect(user.reload.extended_data.dig("authorizations", handler_key)).to be_nil
+    end
+  end
+
   describe "#register_success" do
     before do
       user.update(

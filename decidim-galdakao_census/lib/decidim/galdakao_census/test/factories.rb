@@ -3,23 +3,23 @@
 require "decidim/core/test/factories"
 
 FactoryBot.define do
-  factory :galdakao_street, class: "Decidim::GaldakaoCensus::GaldakaoStreet" do
+  factory :census_street, class: "Decidim::GaldakaoCensus::Street" do
     organization
     sequence(:name) { |n| "Street #{n}" }
   end
 
-  factory :galdakao_zone, class: "Decidim::GaldakaoCensus::GaldakaoZone" do
+  factory :census_zone, class: "Decidim::GaldakaoCensus::Zone" do
     organization
     sequence(:name) { |n| "Zone #{n}" }
   end
 
-  factory :galdakao_zone_street, class: "Decidim::GaldakaoCensus::GaldakaoZoneStreet" do
+  factory :census_zone_street, class: "Decidim::GaldakaoCensus::ZoneStreet" do
     transient do
       organization { create(:organization) }
     end
 
-    zone { create(:galdakao_zone, organization:) }
-    street { create(:galdakao_street, organization:) }
+    zone { create(:census_zone, organization:) }
+    street { create(:census_street, organization:) }
     numbers_constraint { :all_numbers }
     numbers_range { nil }
 

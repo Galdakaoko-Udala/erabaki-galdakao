@@ -2,22 +2,16 @@
   <div class="card pt-4">
     <div class="card-section">
       <div class="row column">
-        <%= form.select :street_id,
-                        Decidim::GaldakaoCensus::GaldakaoStreet.where(organization: current_organization).order(name: :asc).pluck(:name, :id),
-                        { include_blank: t("decidim.admin.galdakao.zone_streets.form.street_blank"),
-                          label: t("decidim.admin.galdakao.zone_streets.form.street_label") } %>
+        <%= form.select :street_id, form.object.street_options, include_blank: t(".street_blank") %>
       </div>
       <div class="row column">
-        <%= form.select :numbers_constraint,
-                        form.object.numbers_constraint_options.to_a,
-                        { label: t("decidim.admin.galdakao.zone_streets.form.numbers_constraint_label") } %>
+        <%= form.select :numbers_constraint, form.object.numbers_constraint_options %>
       </div>
       <div id="numbers_range_field" class="hidden">
         <div class="row column">
           <%= form.text_field :numbers_range,
-                              label: t("decidim.admin.galdakao.zone_streets.form.numbers_range_label"),
-                              placeholder: t("decidim.admin.galdakao.zone_streets.form.numbers_range_placeholder"),
-                              help_text: t("decidim.admin.galdakao.zone_streets.form.numbers_range_help").html_safe %>
+                              placeholder: t(".numbers_range_placeholder"),
+                              help_text: t(".numbers_range_help_html") %>
         </div>
       </div>
     </div>

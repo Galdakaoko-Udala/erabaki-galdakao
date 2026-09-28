@@ -23,9 +23,12 @@ describe Decidim::GaldakaoCensus::UserLockedEvent do
   end
 
   describe "#default_i18n_options" do
-    it "includes the path to the blocked users panel" do
-      expect(event.default_i18n_options[:blocked_users_path])
-        .to eq("/admin/galdakao_census/galdakao/blocked_users")
+    it "includes the full URL to the blocked users panel, as it is also sent by email" do
+      url = URI.parse(event.default_i18n_options[:blocked_users_url])
+
+      expect(url.scheme).to start_with("http")
+      expect(url.host).to eq(organization.host)
+      expect(url.path).to eq("/admin/galdakao_census/blocked_users")
     end
   end
 end

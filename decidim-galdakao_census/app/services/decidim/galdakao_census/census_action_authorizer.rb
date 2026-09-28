@@ -3,19 +3,35 @@
 module Decidim
   module GaldakaoCensus
     class CensusActionAuthorizer < Decidim::Verifications::DefaultActionAuthorizer
-      def authorize
-        return [:missing, { action: :authorize }] if authorization.blank?
-        return [:ok, {}] if zones.blank?
-        return [:unauthorized, {}] if authorization_street.blank? || authorization_number.blank?
-        return [:ok, {}] if belongs_to_zone?
+      I18N_SCOPE = "decidim.galdakao_census.action_authorizer"
 
-        [:unauthorized, {}]
+      # The "zones" option is handled here instead of in the base class, where it would be
+      # treated as a metadata field that the authorization is missing. It is removed from
+      # a copy of the options: the original hash belongs to the component permissions and
+      # is reused for every action checked in the same request.
+      def initialize(authorization, options, component, resource)
+        options = (options || {}).to_h
+        @zone_ids = options["zones"].to_s.split(",").map(&:strip).compact_blank
+
+        super(authorization, options.except("zones"), component, resource)
+      end
+
+      def authorize
+        status_code, data = *super
+        return [status_code, data] unless status_code == :ok
+        return [status_code, data] if zone_ids.empty?
+        return unauthorized("address_not_found") unless address?
+        return [status_code, data] if belongs_to_zone?
+
+        unauthorized("not_in_zone")
       end
 
       private
 
-      def zones
-        options["zones"]
+      attr_reader :zone_ids
+
+      def unauthorized(reason)
+        [:unauthorized, { extra_explanation: { key: reason, params: { scope: I18N_SCOPE } } }]
       end
 
       def authorization_street
@@ -23,56 +39,22 @@ module Decidim
       end
 
       def authorization_number
-        authorization.metadata["street_number"]
+        authorization.metadata["street_number"].to_i
+      end
+
+      # Authorizations created before portals were stored as nil may contain 0
+      def address?
+        authorization_street.present? && authorization_number.positive?
       end
 
       def belongs_to_zone?
-        organization_zones = GaldakaoZone.where(organization: authorization.user.organization, id: zones.split(","))
+        zones = Zone.where(organization: authorization.user.organization, id: zone_ids)
 
-        GaldakaoZoneStreet
+        ZoneStreet
+          .where(zone: zones)
           .joins(:street)
-          .where(zone: organization_zones)
-          .find_each do |zone_street|
-            return true if street_valid?(zone_street) && number_valid?(zone_street)
-          end
-        false
-      end
-
-      def street_valid?(zone_street)
-        authorization_street == zone_street.street&.name
-      end
-
-      def parse_range(numbers_range)
-        numbers_range.split(",").flat_map do |segment|
-          if segment.include?("-")
-            a, b = segment.split("-")
-            (a.to_i..b.to_i).to_a
-          else
-            segment.to_i
-          end
-        end
-      end
-
-      def number_valid?(zone_street)
-        passes_constraint = case zone_street.numbers_constraint
-                            when "even_numbers" then authorization_number.even?
-                            when "odd_numbers" then authorization_number.odd?
-                            else true
-                            end
-        return false unless passes_constraint
-        return true if zone_street.numbers_range.blank?
-
-        portal_list = parse_range(zone_street.numbers_range)
-
-        case zone_street.numbers_constraint
-        when "except_range" then portal_list.exclude?(authorization_number)
-        else portal_list.include?(authorization_number)
-        end
-      end
-
-      # unused?
-      def manifest
-        Decidim::Verifications.find_workflow_manifest("census_authorization_handler")
+          .where(Street.table_name => { name: authorization_street })
+          .any? { |zone_street| zone_street.allows_number?(authorization_number) }
       end
     end
   end

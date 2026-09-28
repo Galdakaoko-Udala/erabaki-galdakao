@@ -50,7 +50,7 @@ module Decidim
       def register_success
         data = user.extended_data["authorizations"] || {}
         data.delete(HANDLER_KEY)
-        user.update(extended_data: user.extended_data.merge("authorizations" => data))
+        save_authorizations_data(data)
       end
 
       def locked_indefinitely?
@@ -58,12 +58,10 @@ module Decidim
       end
 
       def self.blocked_users(organization)
-        Decidim::User.where(decidim_organization_id: organization.id).select do |u|
-          data = u.extended_data.dig("authorizations", HANDLER_KEY)
-          next false unless data
-
-          data["locked_until"] == INFINITE
-        end
+        Decidim::User
+          .where(organization:)
+          .where("extended_data -> 'authorizations' -> ? ->> 'locked_until' = ?", HANDLER_KEY, INFINITE)
+          .order(:name)
       end
 
       private
@@ -77,8 +75,16 @@ module Decidim
       def update_auth_data(new_data)
         data = user.extended_data["authorizations"] || {}
         data[HANDLER_KEY] = new_data
-        user.update(extended_data: user.extended_data.merge("authorizations" => data))
+        save_authorizations_data(data)
         @auth_data = new_data
+      end
+
+      # Writes the column directly: with `update`, a user failing any unrelated validation
+      # would not be saved and the lock would silently not be applied.
+      def save_authorizations_data(data)
+        # rubocop:disable Rails/SkipsModelValidations
+        user.update_column(:extended_data, user.extended_data.merge("authorizations" => data))
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       def lock_params_for(failed_attempts)

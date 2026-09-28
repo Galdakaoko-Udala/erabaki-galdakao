@@ -22,14 +22,14 @@ describe Decidim::GaldakaoCensus::Admin::BlockedUsersController do
 
   shared_examples "denies access to blocked users" do
     it "does not list the blocked users" do
-      get routes.galdakao_blocked_users_path
+      get routes.blocked_users_path
 
       expect(response).to have_http_status(:redirect)
       expect(response.body).not_to include("locked@example.org")
     end
 
     it "does not unlock the user" do
-      delete routes.unlock_galdakao_blocked_user_path(locked_user)
+      patch routes.unlock_blocked_user_path(locked_user)
 
       expect(response).to have_http_status(:redirect)
       expect(locked?(locked_user)).to be(true)
@@ -50,14 +50,15 @@ describe Decidim::GaldakaoCensus::Admin::BlockedUsersController do
     before { sign_in create(:user, :admin, :confirmed, organization:) }
 
     it "lists the blocked users" do
-      get routes.galdakao_blocked_users_path
+      get routes.blocked_users_path
 
       expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include("translation_missing")
       expect(response.body).to include("locked@example.org")
     end
 
     it "unlocks a user of the organization" do
-      delete routes.unlock_galdakao_blocked_user_path(locked_user)
+      patch routes.unlock_blocked_user_path(locked_user)
 
       expect(locked?(locked_user)).to be(false)
     end
@@ -65,7 +66,7 @@ describe Decidim::GaldakaoCensus::Admin::BlockedUsersController do
     it "does not unlock a user of another organization" do
       other_locked_user = create(:user, :confirmed, organization: create(:organization), extended_data: lockout_data)
 
-      delete routes.unlock_galdakao_blocked_user_path(other_locked_user)
+      patch routes.unlock_blocked_user_path(other_locked_user)
 
       expect(response).to have_http_status(:not_found)
       expect(locked?(other_locked_user)).to be(true)

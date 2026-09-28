@@ -2,7 +2,7 @@
 const RANGE_CONSTRAINTS = ["only_range", "except_range"];
 
 document.addEventListener("turbo:load", () => {
-  const select = document.getElementById("galdakao_zone_street_numbers_constraint");
+  const select = document.getElementById("zone_street_numbers_constraint");
   const field = document.getElementById("numbers_range_field");
   if (!select || !field) {
     return;

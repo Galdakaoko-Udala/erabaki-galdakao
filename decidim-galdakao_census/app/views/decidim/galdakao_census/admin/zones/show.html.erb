@@ -1,64 +1,76 @@
-<% add_decidim_page_title(@zone.name) %>
-<div class="card">
+<% add_decidim_page_title(zone.name) %>
+<div class="card" id="census-zone">
   <div class="item_show__header">
-    <div style="display:flex;flex-direction:column;flex:1;">
-      <span style="font-size:0.85rem;color:#666;font-weight:500;margin-bottom:0.25rem;">
-        <%= t("decidim.admin.galdakao.zones_index.title") %>
-      </span>
-      <h1 class="item_show__header-title" style="margin:0;">
-        <%= t("decidim.admin.galdakao.zones_form.title_edit") %>: <%= @zone.name %>
-        <%= link_to t("decidim.admin.galdakao.zones_show.edit_zone"),
-            decidim_admin_galdakao_census.edit_galdakao_zone_path(@zone),
-            class: "button button__sm button__secondary" %>
-        <%= link_to decidim_admin_galdakao_census.galdakao_zones_path,
-            style: "display:inline-flex;align-items:center;gap:0.5rem;border:2px solid var(--secondary);color:var(--secondary);border-radius:4px;font-weight:600;padding:1.375px 10px;font-size:0.875rem;text-decoration:none;background:transparent;",
-            onmouseover: "this.style.background='var(--secondary)';this.style.color='white'",
-            onmouseout: "this.style.background='transparent';this.style.color='var(--secondary)'" do %>
-          <%= icon "arrow-left-line", class: "fill-current" %>
-          <span><%= t("decidim.admin.galdakao.zones_show.back") %></span>
-        <% end %>
-      </h1>
-    </div>
+    <h1 class="item_show__header-title">
+      <%= zone.name %>
+      <% if allowed_to? :update, :census_zone %>
+        <%= link_to t(".edit"), edit_zone_path(zone), class: "button button__sm button__secondary" %>
+      <% end %>
+      <%= link_to t(".back"), zones_path, class: "button button__sm button__transparent-secondary" %>
+    </h1>
   </div>
-  <div class="item_show__header" style="margin-top: 2rem;">
+
+  <div class="item_show__header">
     <h2 class="item_show__header-title">
-      <%= t("decidim.admin.galdakao.zones_show.streets_title") %>
-      <%= link_to t("decidim.admin.galdakao.zones_show.add_street"),
-          decidim_admin_galdakao_census.new_galdakao_zone_zone_street_path(@zone),
-          class: "button button__sm button__secondary" %>
+      <%= t(".streets") %>
+      <% if allowed_to? :create, :census_zone_street %>
+        <%= link_to t(".add_street"), new_zone_zone_street_path(zone), class: "button button__sm button__secondary new" %>
+      <% end %>
     </h2>
   </div>
-  <div class="table-scroll">
-    <table class="table-list">
-      <thead>
-        <tr>
-          <th><%= t("decidim.admin.galdakao.zones_show.col_street") %></th>
-          <th><%= t("decidim.admin.galdakao.zones_show.col_constraint") %></th>
-          <th><%= t("decidim.admin.galdakao.zones_show.col_range") %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @zone.zone_streets.each do |zs| %>
+
+  <% if zone.zone_streets.any? %>
+    <div class="table-stacked">
+      <table class="table-list">
+        <thead>
           <tr>
-            <td><%= zs.street.name %></td>
-            <td><%= t("decidim.admin.galdakao.zone_streets.form.numbers_constraint_options.#{zs.numbers_constraint}") %></td>
-            <td><%= zs.numbers_range.presence || t("decidim.admin.galdakao.zones_show.all") %></td>
-            <td class="table-list__actions">
-              <%= icon_link_to "pencil-line",
-                  decidim_admin_galdakao_census.edit_galdakao_zone_zone_street_path(@zone, zs),
-                  t("decidim.admin.galdakao.zones_show.edit"),
-                  class: "action-icon" %>
-              <%= icon_link_to "delete-bin-line",
-                  decidim_admin_galdakao_census.galdakao_zone_zone_street_path(@zone, zs),
-                  t("decidim.admin.galdakao.zones_show.destroy"),
-                  class: "action-icon--remove",
-                  method: :delete,
-                  data: { confirm: t("decidim.admin.galdakao.zones_index.destroy_confirm") } %>
-            </td>
+            <th><%= t(".street") %></th>
+            <th><%= t(".constraint") %></th>
+            <th><%= t(".range") %></th>
+            <th><%= t("decidim.admin.actions.actions") %></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          <% zone.zone_streets.includes(:street).each do |zone_street| %>
+            <tr>
+              <td data-label="<%= t(".street") %>"><%= zone_street.street.name %></td>
+              <td data-label="<%= t(".constraint") %>"><%= t(zone_street.numbers_constraint, scope: "decidim.galdakao_census.numbers_constraints") %></td>
+              <td data-label="<%= t(".range") %>"><%= zone_street.numbers_range.presence || "-" %></td>
+              <td class="table-list__actions" data-label="<%= t("decidim.admin.actions.actions") %>">
+                <button type="button" data-controller="dropdown" data-target="actions-zone-street-<%= zone_street.id %>" aria-label="<%= t("decidim.admin.actions.actions_label", resource: zone_street.street.name) %>">
+                  <%= icon "more-fill", class: "text-secondary" %>
+                </button>
+
+                <div class="inline-block relative">
+                  <ul id="actions-zone-street-<%= zone_street.id %>" class="dropdown dropdown__action" aria-hidden="true">
+                    <% if allowed_to? :update, :census_zone_street %>
+                      <li class="dropdown__item">
+                        <%= link_to edit_zone_zone_street_path(zone, zone_street), class: "dropdown__button" do %>
+                          <%= icon "pencil-line" %>
+                          <%= t("actions.edit", scope: "decidim.admin") %>
+                        <% end %>
+                      </li>
+                    <% end %>
+
+                    <% if allowed_to? :destroy, :census_zone_street %>
+                      <hr>
+
+                      <li class="dropdown__item">
+                        <%= link_to zone_zone_street_path(zone, zone_street), method: :delete, data: { confirm: t("actions.confirm_destroy", scope: "decidim.admin") }, class: "dropdown__button" do %>
+                          <%= icon "delete-bin-line" %>
+                          <%= t("actions.destroy", scope: "decidim.admin") %>
+                        <% end %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p><%= t(".no_streets") %></p>
+  <% end %>
 </div>
