@@ -50,6 +50,17 @@ RSpec.describe GaldakaoWebservice do
         expect(webservice.response).to be_a(Nokogiri::XML::Document)
       end
 
+      it "does not log the response body, which may contain personal data" do
+        logged = []
+        [:debug, :info, :warn, :error].each do |level|
+          allow(Rails.logger).to receive(level) { |message = nil, &block| logged << (message || block&.call).to_s }
+        end
+
+        webservice.response
+
+        expect(logged.join("\n")).not_to include("Resultado")
+      end
+
       it "strips namespaces from the XML" do
         expect(webservice.response.at_xpath("//Resultado").text).to eq("OK")
       end

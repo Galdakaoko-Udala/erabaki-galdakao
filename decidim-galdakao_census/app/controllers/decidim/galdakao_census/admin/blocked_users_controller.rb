@@ -5,12 +5,15 @@ module Decidim
     module Admin
       class BlockedUsersController < Decidim::Admin::ApplicationController
         layout "decidim/admin/users"
+
+        before_action -> { enforce_permission_to :read, :admin_user }
+
         def index
           @blocked_users = Decidim::GaldakaoCensus::LockoutManager.blocked_users(current_organization)
         end
 
         def unlock
-          @user = Decidim::User.find(params[:id])
+          @user = Decidim::User.where(organization: current_organization).find(params[:id])
           lockout_manager = Decidim::GaldakaoCensus::LockoutManager.new(@user)
 
           if lockout_manager.locked_indefinitely?

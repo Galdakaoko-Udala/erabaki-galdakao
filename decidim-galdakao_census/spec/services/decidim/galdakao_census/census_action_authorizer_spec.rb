@@ -11,7 +11,8 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
   let(:options) { { "zones" => zone.id.to_s } }
 
   let(:authorization) do
-    create(:authorization, metadata: { "street" => authorization_street, "street_number" => authorization_number })
+    create(:authorization, user: create(:user, organization:),
+                           metadata: { "street" => authorization_street, "street_number" => authorization_number })
   end
   let(:authorization_street) { "Calle Mayor" }
   let(:authorization_number) { 4 }
@@ -30,6 +31,18 @@ describe Decidim::GaldakaoCensus::CensusActionAuthorizer do
 
       it "returns ok" do
         expect(authorizer.authorize).to eq([:ok, {}])
+      end
+    end
+
+    context "when the configured zone belongs to another organization" do
+      let(:other_zone) { create(:galdakao_zone) }
+      let(:other_street) { create(:galdakao_street, organization: other_zone.organization, name: "Calle Mayor") }
+      let(:options) { { "zones" => other_zone.id.to_s } }
+
+      before { create(:galdakao_zone_street, zone: other_zone, street: other_street, numbers_constraint: "all_numbers") }
+
+      it "returns unauthorized" do
+        expect(authorizer.authorize).to eq([:unauthorized, {}])
       end
     end
 

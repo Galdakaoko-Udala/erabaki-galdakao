@@ -15,6 +15,8 @@ module Decidim
         validates :numbers_range,
                   format: { with: GaldakaoZoneStreet::RANGE_REGEXP },
                   if: ->(form) { form.numbers_range.present? }
+        validate :street_belongs_to_organization
+
         def numbers_constraint_options
           base = "decidim.admin.galdakao.zone_streets.form.numbers_constraint_options"
           {
@@ -24,6 +26,15 @@ module Decidim
             I18n.t("#{base}.only_range") => "only_range",
             I18n.t("#{base}.except_range") => "except_range"
           }
+        end
+
+        private
+
+        def street_belongs_to_organization
+          return if street_id.blank?
+          return if GaldakaoStreet.exists?(id: street_id, organization: current_organization)
+
+          errors.add(:street_id, :invalid)
         end
       end
     end

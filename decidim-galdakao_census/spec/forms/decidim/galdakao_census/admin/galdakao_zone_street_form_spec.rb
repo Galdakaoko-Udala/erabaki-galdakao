@@ -3,9 +3,13 @@
 require "rails_helper"
 
 describe Decidim::GaldakaoCensus::Admin::GaldakaoZoneStreetForm do
-  subject(:form) { described_class.new(street_id:, numbers_constraint:, numbers_range:) }
+  subject(:form) do
+    described_class.new(street_id:, numbers_constraint:, numbers_range:)
+                   .with_context(current_organization: organization)
+  end
 
-  let(:street_id) { create(:galdakao_street).id }
+  let(:organization) { create(:organization) }
+  let(:street_id) { create(:galdakao_street, organization:).id }
   let(:numbers_constraint) { "all_numbers" }
   let(:numbers_range) { nil }
 
@@ -18,6 +22,15 @@ describe Decidim::GaldakaoCensus::Admin::GaldakaoZoneStreetForm do
   end
 
   describe "validations" do
+    context "when the street belongs to another organization" do
+      let(:street_id) { create(:galdakao_street).id }
+
+      it "is not valid" do
+        expect(form).not_to be_valid
+        expect(form.errors[:street_id]).to be_present
+      end
+    end
+
     it "is not valid without a street_id" do
       form.street_id = nil
 

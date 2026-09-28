@@ -27,9 +27,11 @@ module Decidim
       end
 
       def belongs_to_zone?
+        organization_zones = GaldakaoZone.where(organization: authorization.user.organization, id: zones.split(","))
+
         GaldakaoZoneStreet
           .joins(:street)
-          .where(zone_id: zones.split(","))
+          .where(zone: organization_zones)
           .find_each do |zone_street|
             return true if street_valid?(zone_street) && number_valid?(zone_street)
           end

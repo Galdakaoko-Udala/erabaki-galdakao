@@ -29,8 +29,8 @@ class GaldakaoWebservice
         request.body = request_body
       end
 
+      # Do not log the response body: it contains personal data (e.g. the citizen's address)
       Rails.logger.info "[Galdakao-Census] [#{action}] SOAP status: #{raw_response.status}"
-      Rails.logger.info "[Galdakao-Census] [#{action}] SOAP body: #{raw_response.body}"
 
       unless raw_response.status.to_i == 200
         Rails.logger.error "[Galdakao-Census] [#{action}] SOAP error HTTP #{raw_response.status}"

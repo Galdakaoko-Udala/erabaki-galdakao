@@ -65,7 +65,7 @@ module Decidim
         private
 
         def zone
-          @zone ||= GaldakaoZone.find(params[:id])
+          @zone ||= GaldakaoZone.where(organization: current_organization).find(params[:id])
         end
 
         def json_zones

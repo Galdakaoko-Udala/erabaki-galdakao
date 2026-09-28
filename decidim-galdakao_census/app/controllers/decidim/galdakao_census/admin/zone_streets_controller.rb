@@ -54,7 +54,7 @@ module Decidim
         private
 
         def zone
-          @zone ||= GaldakaoZone.find(params[:zone_id])
+          @zone ||= GaldakaoZone.where(organization: current_organization).find(params[:zone_id])
         end
 
         def zone_street
