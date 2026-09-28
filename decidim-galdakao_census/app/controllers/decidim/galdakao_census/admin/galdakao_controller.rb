@@ -38,7 +38,7 @@ module Decidim
 
         private
 
-        def service(action: "TestDBConnection")
+        def service(action: GaldakaoWebservice::TEST_CONNECTION)
           @service ||= GaldakaoWebservice.new(action)
         end
 

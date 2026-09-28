@@ -45,7 +45,7 @@
             <td><%= t("decidim.admin.galdakao.zone_streets.form.numbers_constraint_options.#{zs.numbers_constraint}") %></td>
             <td><%= zs.numbers_range.presence || t("decidim.admin.galdakao.zones_show.all") %></td>
             <td class="table-list__actions">
-              <%= icon_link_to "edit-line",
+              <%= icon_link_to "pencil-line",
                   decidim_admin_galdakao_census.edit_galdakao_zone_zone_street_path(@zone, zs),
                   t("decidim.admin.galdakao.zones_show.edit"),
                   class: "action-icon" %>

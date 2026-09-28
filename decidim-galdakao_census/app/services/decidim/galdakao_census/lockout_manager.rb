@@ -13,8 +13,8 @@ module Decidim
         @user = user
       end
 
-      # Devuelve nil si no hay bloqueo activo.
-      # Devuelve un mensaje de error si el usuario está bloqueado.
+      # Returns nil if there is no active lock.
+      # Returns an error message if the user is locked.
       def check_lockout
         return nil unless auth_data["locked_until"]
 

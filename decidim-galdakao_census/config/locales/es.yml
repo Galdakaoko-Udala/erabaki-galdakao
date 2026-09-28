@@ -1,5 +1,5 @@
 es:
-  # Claves raíz que llama el handler Ruby directamente:
+  # Root keys called directly by the Ruby handler:
   #   I18n.t("census_authorization_handler.service_unavailable")
   #   I18n.t("census_authorization_handler.no_record")
   #   I18n.t("census_authorization_handler.invalid_document")
@@ -124,10 +124,6 @@ es:
             - "Los y las ciudadanas deben estar empadronadas en Galdakao para verificarse."
             - "La verificación se realiza contra el padrón municipal mediante DNI/NIE y fecha de nacimiento."
       census_authorization_handler:
-        # NOTA: name y explanation también están en es.yml (desactualizados).
-        # No se eliminan de es.yml en este commit — se hará en un commit
-        # posterior de forma atómica. Mientras tanto estas claves tienen
-        # precedencia porque Rails carga los archivos de módulo después.
         name: "Padrón municipal de Galdakao"
         explanation: "Verifica tu identidad mediante el padrón municipal de Galdakao."
         fields:

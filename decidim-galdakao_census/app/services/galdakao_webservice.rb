@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class GaldakaoWebservice
+  # SOAP operations exposed by the municipal register service
+  AUTHENTICATE = "autenticar"
+  LIST_STREETS = "ListadoCalles"
+  TEST_CONNECTION = "TestDBConnection"
+
   def initialize(action)
     @action = action
     @body = ""

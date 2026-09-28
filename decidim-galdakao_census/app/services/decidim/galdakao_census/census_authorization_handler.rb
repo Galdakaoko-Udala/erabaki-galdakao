@@ -82,7 +82,7 @@ module Decidim
       def response
         return @response if defined?(@response)
 
-        ws = GaldakaoWebservice.new("autenticar")
+        ws = GaldakaoWebservice.new(GaldakaoWebservice::AUTHENTICATE)
         ws.body = <<~XML
           <tns:dni>#{document_number&.upcase}</tns:dni>
             <tns:fecha_nacimiento>#{sanitized_date_of_birth}</tns:fecha_nacimiento>

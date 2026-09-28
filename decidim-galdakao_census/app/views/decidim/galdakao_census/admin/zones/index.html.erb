@@ -35,7 +35,7 @@
             <td><%= link_to zone.name, decidim_admin_galdakao_census.galdakao_zone_path(zone) %></td>
             <td><%= zone.zone_streets.count %></td>
             <td class="table-list__actions">
-              <%= icon_link_to "edit-line", decidim_admin_galdakao_census.galdakao_zone_path(zone),
+              <%= icon_link_to "pencil-line", decidim_admin_galdakao_census.galdakao_zone_path(zone),
                   t("decidim.admin.galdakao.zones_index.edit"),
                   class: "action-icon" %>
               <%= icon_link_to "delete-bin-line", decidim_admin_galdakao_census.galdakao_zone_path(zone),

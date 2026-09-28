@@ -1,5 +1,5 @@
 eu:
-  # Claves raíz que llama el handler Ruby directamente:
+  # Root keys called directly by the Ruby handler:
   #   I18n.t("census_authorization_handler.service_unavailable")
   #   I18n.t("census_authorization_handler.no_record")
   #   I18n.t("census_authorization_handler.invalid_document")
