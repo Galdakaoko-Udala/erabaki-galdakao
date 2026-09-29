@@ -12,6 +12,7 @@ module Decidim
       routes do
         resources :streets, only: [:index] do
           collection do
+            get :manage
             post :sync
           end
         end

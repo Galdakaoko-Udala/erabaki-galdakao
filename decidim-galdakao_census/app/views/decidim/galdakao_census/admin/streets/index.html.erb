@@ -3,22 +3,12 @@
   <div class="item_show__header">
     <h1 class="item_show__header-title">
       <%= t(".title") %>
-      <% if allowed_to? :sync, :census_street %>
-        <%= link_to t(".sync"), sync_streets_path, method: :post, data: { confirm: t(".sync_confirm") }, class: "button button__sm button__secondary" %>
+      <%= link_to manage_streets_path, class: "button button__sm button__transparent-secondary" do %>
+        <%= icon "arrow-left-line", class: "fill-current" %>
+        <span><%= t(".back") %></span>
       <% end %>
-      <%= link_to t(".back"), decidim_admin.authorization_workflows_path, class: "button button__sm button__transparent-secondary" %>
     </h1>
   </div>
-
-  <% if last_sync %>
-    <div class="callout <%= last_sync_class(last_sync) %>">
-      <%= t(".last_sync", time: l(last_sync, format: :long)) %>
-    </div>
-  <% else %>
-    <div class="callout warning">
-      <%= t(".never_synced") %>
-    </div>
-  <% end %>
 
   <% if streets.any? %>
     <div class="table-stacked">
@@ -40,5 +30,7 @@
       </table>
     </div>
     <%= decidim_paginate streets %>
+  <% else %>
+    <p><%= t(".no_streets") %></p>
   <% end %>
 </div>

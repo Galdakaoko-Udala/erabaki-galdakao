@@ -47,13 +47,20 @@ en:
             success: Streets synchronised successfully.
           index:
             title: Synchronised streets
-            back: Back to Verification Methods
-            sync: Synchronise streets from the register
-            sync_confirm: Are you sure you want to synchronise the streets? This may take a few seconds.
-            last_sync: 'Last synchronisation: %{time}'
-            never_synced: Streets have not been synchronised yet.
             name: Street name
             updated_at: Last updated
+            back: Back to Catalogue Management
+            no_streets: There are no streets yet. Synchronise them from the catalogue management panel.
+          manage:
+            title: Galdakao Panel — Municipal Register Management
+            back: Back to Verification Methods
+            sync_subtitle: Catalogue synchronisation
+            last_sync: 'Last synchronisation: %{time}'
+            never_synced: Streets have not been synchronised yet.
+            sync: Synchronise streets from the register
+            sync_confirm: Are you sure you want to synchronise the streets? This may take a few seconds.
+            catalog_subtitle: Current street catalogue
+            streets_link: View streets list
         authorization_workflows:
           streets: Synchronised streets
           zones: Verification zones

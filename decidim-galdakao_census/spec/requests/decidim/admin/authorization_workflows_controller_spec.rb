@@ -18,7 +18,7 @@ describe Decidim::Admin::AuthorizationWorkflowsController do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).not_to include("translation_missing")
-    expect(response.body).to include(%(href="#{routes.streets_path}"))
+    expect(response.body).to include(%(href="#{routes.manage_streets_path}"))
     expect(response.body).to include(%(href="#{routes.zones_path}"))
   end
 end

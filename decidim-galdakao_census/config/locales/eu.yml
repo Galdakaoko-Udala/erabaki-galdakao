@@ -47,13 +47,20 @@ eu:
             success: Kaleak ondo sinkronizatu dira.
           index:
             title: Sinkronizatutako kaleak
-            back: Egiaztapen metodoetara itzuli
-            sync: Sinkronizatu kaleak erroldatik
-            sync_confirm: Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuetako kontua da.
-            last_sync: 'Azken sinkronizazioa: %{time}'
-            never_synced: Kaleak oraindik ez dira sinkronizatu.
             name: Kalearen izena
             updated_at: Azken eguneraketa
+            back: Kale-izendegiaren kudeaketara itzuli
+            no_streets: Oraindik ez dago kalerik. Sinkronizatu itzazu katalogoaren kudeaketa-paneletik.
+          manage:
+            title: Galdakaoko panela — Kale-izendegiaren kudeaketa
+            back: Egiaztapen metodoetara itzuli
+            sync_subtitle: Katalogoen sinkronizazioa
+            last_sync: 'Azken sinkronizazioa: %{time}'
+            never_synced: Kaleak oraindik ez dira sinkronizatu.
+            sync: Sinkronizatu kaleak erroldatik
+            sync_confirm: Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuetako kontua da.
+            catalog_subtitle: Egungo kale-izendegia
+            streets_link: Ikusi kaleen zerrenda
         authorization_workflows:
           streets: Sinkronizatutako kaleak
           zones: Egiaztapen eremuak

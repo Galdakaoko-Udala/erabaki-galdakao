@@ -47,13 +47,20 @@ es:
             success: Calles sincronizadas correctamente.
           index:
             title: Calles sincronizadas
-            back: Volver a Métodos de verificación
-            sync: Sincronizar calles desde el padrón
-            sync_confirm: "¿Seguro que quieres sincronizar las calles? Esto puede tardar unos segundos."
-            last_sync: 'Última sincronización: %{time}'
-            never_synced: Las calles todavía no han sido sincronizadas.
             name: Nombre de la calle
             updated_at: Última actualización
+            back: Volver a Gestión del catálogo
+            no_streets: Todavía no hay calles. Sincronízalas desde el panel de gestión del catálogo.
+          manage:
+            title: Panel de Galdakao — Gestión del catálogo de calles
+            back: Volver a Métodos de verificación
+            sync_subtitle: Sincronización del catálogo
+            last_sync: 'Última sincronización: %{time}'
+            never_synced: Las calles todavía no han sido sincronizadas.
+            sync: Sincronizar calles desde el padrón
+            sync_confirm: "¿Seguro que quieres sincronizar las calles? Esto puede tardar unos segundos."
+            catalog_subtitle: Catálogo actual de calles
+            streets_link: Ver listado de calles
         authorization_workflows:
           streets: Calles sincronizadas
           zones: Zonas de verificación

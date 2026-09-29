@@ -13,7 +13,22 @@ describe Decidim::GaldakaoCensus::Admin::StreetsController do
     sign_in create(:user, :admin, :confirmed, organization:)
   end
 
-  it "renders the streets with the last sync date" do
+  it "renders the management panel with the sync button and the link to the list" do
+    get routes.manage_streets_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include("translation_missing")
+    expect(response.body).to include(routes.sync_streets_path)
+    expect(response.body).to include(%(href="#{routes.streets_path}"))
+  end
+
+  it "shows a message when there are no streets yet" do
+    get routes.streets_path
+
+    expect(response.body).to include(I18n.t("decidim.galdakao_census.admin.streets.index.no_streets"))
+  end
+
+  it "renders the list of streets" do
     create(:census_street, organization:, name: "Kale Nagusia")
 
     get routes.streets_path
@@ -27,7 +42,7 @@ describe Decidim::GaldakaoCensus::Admin::StreetsController do
     create(:census_street, organization:, updated_at: 1.month.ago)
     create(:census_street, organization:, updated_at: 1.hour.ago)
 
-    get routes.streets_path
+    get routes.manage_streets_path
 
     expect(response.body).to include("callout success")
   end
@@ -39,7 +54,7 @@ describe Decidim::GaldakaoCensus::Admin::StreetsController do
       it "redirects to the panel with an error message instead of failing" do
         post routes.sync_streets_path
 
-        expect(response).to redirect_to(routes.streets_path)
+        expect(response).to redirect_to(routes.manage_streets_path)
         expect(flash[:alert]).to eq(I18n.t("decidim.galdakao_census.admin.streets.sync.error"))
       end
     end

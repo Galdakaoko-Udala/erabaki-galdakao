@@ -3,11 +3,15 @@
 module Decidim
   module GaldakaoCensus
     module Admin
-      # Lists the streets synced from the municipal register and syncs them again.
+      # Manages the streets synced from the municipal register: a panel to sync them and their list.
       class StreetsController < Admin::ApplicationController
         include Decidim::Paginable
 
         helper_method :streets, :last_sync, :last_sync_class
+
+        def manage
+          enforce_permission_to :read, :census_street
+        end
 
         def index
           enforce_permission_to :read, :census_street
@@ -18,11 +22,11 @@ module Decidim
 
           if Street.import_streets!(current_organization)
             flash[:notice] = I18n.t("streets.sync.success", scope: "decidim.galdakao_census.admin")
+            redirect_to streets_path
           else
             flash[:alert] = I18n.t("streets.sync.error", scope: "decidim.galdakao_census.admin")
+            redirect_to manage_streets_path
           end
-
-          redirect_to streets_path
         end
 
         private
