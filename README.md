@@ -57,9 +57,9 @@ The census authorization module connects to the municipal register API via mTLS.
 Place the following files on the host with owner `1000:1000` and permissions `640`:
 
 ```
-/etc/ssl/galdakao/ca.crt
-/etc/ssl/galdakao/decidim-client.crt
-/etc/ssl/galdakao/decidim-client.key
+./certs/ca.crt
+./certs/decidim-client.crt
+./certs/decidim-client.key
 ```
 
 These files are mounted into the container as a volume (see `docker-compose.yml`).
@@ -70,9 +70,9 @@ Add to `.env`:
 
 ```bash
 GALDAKAO_CENSUS_TLS=true
-GALDAKAO_CENSUS_TLS_CERT=/etc/ssl/galdakao/ca.crt
-GALDAKAO_CENSUS_TLS_CLIENT_CERT=/etc/ssl/galdakao/decidim-client.crt
-GALDAKAO_CENSUS_TLS_CLIENT_KEY=/etc/ssl/galdakao/decidim-client.key
+GALDAKAO_CENSUS_TLS_CERT=/certs/ca.crt
+GALDAKAO_CENSUS_TLS_CLIENT_CERT=/certs/decidim-client.crt
+GALDAKAO_CENSUS_TLS_CLIENT_KEY=/certs/decidim-client.key
 CENSUS_URL=https://api.galdakao.eus/soap
 ```
 
