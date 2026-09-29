@@ -11,8 +11,8 @@ module Decidim
       has_many :zone_streets, dependent: :restrict_with_error
 
       # Path to each street in the ListadoCalles operation response:
-      #   <calles><calle>Street name</calle>...</calles>
-      STREETS_XPATH = "//calles/calle"
+      #   <calles><Calle>Street name</Calle>...</calles>
+      STREETS_XPATH = "//calles/Calle"
 
       # Syncs the streets from the municipal register SOAP API into Decidim's database.
       # Streets that no longer come from the register are kept, as they may be used in zones;
