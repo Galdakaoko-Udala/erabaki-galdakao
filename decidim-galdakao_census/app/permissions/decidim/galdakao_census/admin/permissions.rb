@@ -9,7 +9,8 @@ module Decidim
           census_street: [:read, :sync],
           census_zone: [:read, :create, :update, :destroy],
           census_zone_street: [:create, :update, :destroy],
-          census_blocked_user: [:read, :unlock]
+          census_blocked_user: [:read, :unlock],
+          census_connection: [:read, :check]
         }.freeze
 
         def permissions

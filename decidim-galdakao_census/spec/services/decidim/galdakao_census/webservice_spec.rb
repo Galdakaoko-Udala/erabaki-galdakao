@@ -127,6 +127,26 @@ RSpec.describe Decidim::GaldakaoCensus::Webservice do
     end
   end
 
+  describe ".authenticate" do
+    before { stub_request(:post, census_url).to_return(status: 200, body: "<autenticarResult/>") }
+
+    it "sends the escaped document number and the date of birth to the autenticar operation" do
+      described_class.authenticate("<X>", Date.new(1980, 1, 31))
+
+      expect(
+        a_request(:post, census_url).with do |request|
+          request.body.include?("<tns:autenticar>") &&
+            request.body.include?("<tns:dni>&lt;X&gt;</tns:dni>") &&
+            request.body.include?("<tns:fecha_nacimiento>1980-01-31</tns:fecha_nacimiento>")
+        end
+      ).to have_been_made
+    end
+
+    it "returns the response document" do
+      expect(described_class.authenticate("12345678Z", Date.new(1980, 1, 31))).to be_a(Nokogiri::XML::Document)
+    end
+  end
+
   describe "connection timeouts" do
     let(:config) { { census_url:, tls_enabled: false, open_timeout: 3, timeout: 7 } }
 

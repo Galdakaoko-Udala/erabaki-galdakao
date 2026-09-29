@@ -5,11 +5,14 @@ require "digest"
 module Decidim
   module GaldakaoCensus
     class CensusAuthorizationHandler < Decidim::AuthorizationHandler
-      # DNI (8 digits) or NIE (X/Y/Z + 7 digits), plus the old K/L/M documents,
-      # followed by the control letter. A DNI without its leading zero is also accepted.
       DOCUMENT_FORMAT = /\A[XYZKLM]?\d{7,8}[A-Z]\z/
       CONTROL_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE"
       NIE_PREFIXES = { "X" => "0", "Y" => "1", "Z" => "2" }.freeze
+
+      # Paths in the autenticar operation response
+      AUTHENTICATED_XPATH = "//autenticarResult/autenticarResult"
+      STREET_XPATH = "//autenticarResult/calle"
+      PORTAL_XPATH = "//autenticarResult/portal"
 
       attribute :document_number, String
       attribute :date_of_birth, Date
@@ -28,7 +31,7 @@ module Decidim
       def metadata
         super.merge(
           date_of_birth: formatted_date_of_birth,
-          street: xpath_text("//autenticarResult/calle").presence,
+          street: xpath_text(STREET_XPATH).presence,
           street_number:
         )
       end
@@ -42,7 +45,7 @@ module Decidim
       # nil when the register returns no portal (or one without digits, e.g. "s/n"),
       # so that a missing portal is never treated as number 0
       def street_number
-        xpath_text("//autenticarResult/portal").to_s[/\d+/]&.to_i
+        xpath_text(PORTAL_XPATH).to_s[/\d+/]&.to_i
       end
 
       def xpath_text(node)
@@ -51,7 +54,6 @@ module Decidim
         response.xpath(node)&.text&.strip
       end
 
-      # Checked locally so that a typo does not call the register nor count as a failed attempt
       def document_control_letter
         return if errors.include?(:document_number)
 
@@ -81,7 +83,7 @@ module Decidim
           return
         end
 
-        if response.at_xpath("//autenticarResult/autenticarResult")&.text == "true"
+        if response.at_xpath(AUTHENTICATED_XPATH)&.text == "true"
           lockout_manager.register_success
         else
           errors.add(:base, lockout_manager.register_failed_attempt)
@@ -95,13 +97,7 @@ module Decidim
       def response
         return @response if defined?(@response)
 
-        webservice = Webservice.new(Webservice::AUTHENTICATE)
-        webservice.body = <<~XML
-          <tns:dni>#{document_number.to_s.encode(xml: :text)}</tns:dni>
-          <tns:fecha_nacimiento>#{formatted_date_of_birth}</tns:fecha_nacimiento>
-        XML
-
-        @response = webservice.response
+        @response = Webservice.authenticate(document_number, date_of_birth)
       end
     end
   end

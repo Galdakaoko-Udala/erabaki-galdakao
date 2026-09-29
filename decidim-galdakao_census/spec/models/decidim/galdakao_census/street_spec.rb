@@ -16,8 +16,8 @@ describe Decidim::GaldakaoCensus::Street do
     let(:response) do
       Nokogiri::XML(<<~XML)
         <calles>
-          <calle>Calle DePrueba</calle>
-          <calle>Calle DeEjemplo</calle>
+          <Calle>Calle DePrueba</Calle>
+          <Calle>Calle DeEjemplo</Calle>
         </calles>
       XML
     end
@@ -34,8 +34,8 @@ describe Decidim::GaldakaoCensus::Street do
       let(:response) do
         Nokogiri::XML(<<~XML)
           <calles>
-            <calle>Calle DePrueba</calle>
-            <calle>   </calle>
+            <Calle>Calle DePrueba</Calle>
+            <Calle>   </Calle>
           </calles>
         XML
       end

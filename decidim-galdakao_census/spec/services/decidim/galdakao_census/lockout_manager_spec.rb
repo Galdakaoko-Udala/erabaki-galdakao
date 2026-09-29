@@ -41,14 +41,17 @@ describe Decidim::GaldakaoCensus::LockoutManager do
     end
 
     context "when the user is temporarily locked" do
+      # Stored as a string, so it is truncated to whole seconds
+      let(:locked_until) { 30.seconds.from_now.change(usec: 0) }
+
       before do
         user.update(
-          extended_data: { "authorizations" => { handler_key => { "locked_until" => 30.seconds.from_now.to_s } } }
+          extended_data: { "authorizations" => { handler_key => { "locked_until" => locked_until.to_s } } }
         )
       end
 
       it "returns a wait message with the remaining time" do
-        travel_to(30.seconds.from_now - 10.seconds) do
+        travel_to(locked_until - 10.seconds) do
           result = manager.check_lockout
 
           expect(result).to eq(I18n.t("decidim.galdakao_census.lockout.wait", minutes: 0, seconds: 10))

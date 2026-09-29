@@ -53,7 +53,6 @@ en:
             no_streets: There are no streets yet. Synchronise them from the catalogue management panel.
           manage:
             title: Galdakao Panel — Municipal Register Management
-            back: Back to Verification Methods
             sync_subtitle: Catalogue synchronisation
             last_sync: 'Last synchronisation: %{time}'
             never_synced: Streets have not been synchronised yet.
@@ -61,15 +60,10 @@ en:
             sync_confirm: Are you sure you want to synchronise the streets? This may take a few seconds.
             catalog_subtitle: Current street catalogue
             streets_link: View streets list
-        authorization_workflows:
-          streets: Synchronised streets
-          zones: Verification zones
-          management: Management
         zones:
           index:
             title: Verification zones
             new: New zone
-            back: Back to Verification Methods
             name: Name
             streets: No. streets
             no_zones: There are no zones yet.
@@ -123,10 +117,14 @@ en:
             numbers_range_help_html: Use <strong>1-50</strong> for a range or <strong>2,4,6,8</strong> for individual numbers.
         menu:
           blocked_users: Blocked authorizations
+          census: Galdakao census
+          check: Check
+          streets: Streets
+          sync: Webservice Sync
+          zones: Zones
         blocked_users:
           index:
             title: Blocked users
-            back: Back to Authorizations
             no_blocked: There are no blocked users at the moment.
             name: User
             email: Email
@@ -137,6 +135,12 @@ en:
           unlock:
             success: User successfully unblocked.
             not_blocked: This user is not blocked indefinitely.
+        connections:
+          show:
+            title: Connection with the webservice
+            validate: "Validate:"
+            submit: Validate ID
+            unavailable: The municipal register service is not available. Check the settings and the application logs.
       numbers_constraints:
         all_numbers: All numbers
         even_numbers: Even numbers
@@ -145,6 +149,9 @@ en:
         except_range: All except these portals
   activemodel:
     attributes:
+      census_check:
+        date_of_birth: Date of birth
+        document_number: Document number
       zone:
         name: Zone name
       zone_street:

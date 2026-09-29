@@ -53,7 +53,6 @@ es:
             no_streets: Todavía no hay calles. Sincronízalas desde el panel de gestión del catálogo.
           manage:
             title: Panel de Galdakao — Gestión del catálogo de calles
-            back: Volver a Métodos de verificación
             sync_subtitle: Sincronización del catálogo
             last_sync: 'Última sincronización: %{time}'
             never_synced: Las calles todavía no han sido sincronizadas.
@@ -61,15 +60,10 @@ es:
             sync_confirm: "¿Seguro que quieres sincronizar las calles? Esto puede tardar unos segundos."
             catalog_subtitle: Catálogo actual de calles
             streets_link: Ver listado de calles
-        authorization_workflows:
-          streets: Calles sincronizadas
-          zones: Zonas de verificación
-          management: Gestión
         zones:
           index:
             title: Zonas de verificación
             new: Nueva zona
-            back: Volver a Métodos de verificación
             name: Nombre
             streets: Nº calles
             no_zones: Todavía no hay zonas.
@@ -123,10 +117,14 @@ es:
             numbers_range_help_html: Usa <strong>1-50</strong> para un rango o <strong>2,4,6,8</strong> para portales sueltos.
         menu:
           blocked_users: Autorizaciones bloqueadas
+          census: Censo Galdakao
+          check: Check
+          streets: Calles
+          sync: Webservice Sync
+          zones: Zonas
         blocked_users:
           index:
             title: Usuarias bloqueadas
-            back: Volver a Autorizaciones
             no_blocked: No hay usuarias bloqueadas actualmente.
             name: Usuaria
             email: Correo electrónico
@@ -137,6 +135,12 @@ es:
           unlock:
             success: Usuaria desbloqueada correctamente.
             not_blocked: Esta usuaria no está bloqueada indefinidamente.
+        connections:
+          show:
+            title: Conexión con el webservice
+            validate: "Validar:"
+            submit: Validar DNI
+            unavailable: El servicio del padrón no está disponible. Revisa la configuración y los registros de la aplicación.
       numbers_constraints:
         all_numbers: Todos los números
         even_numbers: Números pares
@@ -145,6 +149,9 @@ es:
         except_range: Todos menos estos portales
   activemodel:
     attributes:
+      census_check:
+        date_of_birth: Fecha de nacimiento
+        document_number: Número de documento
       zone:
         name: Nombre de la zona
       zone_street:

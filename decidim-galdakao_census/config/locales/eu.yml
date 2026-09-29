@@ -53,7 +53,6 @@ eu:
             no_streets: Oraindik ez dago kalerik. Sinkronizatu itzazu katalogoaren kudeaketa-paneletik.
           manage:
             title: Galdakaoko panela — Kale-izendegiaren kudeaketa
-            back: Egiaztapen metodoetara itzuli
             sync_subtitle: Katalogoen sinkronizazioa
             last_sync: 'Azken sinkronizazioa: %{time}'
             never_synced: Kaleak oraindik ez dira sinkronizatu.
@@ -61,15 +60,10 @@ eu:
             sync_confirm: Ziur zaude kaleak sinkronizatu nahi dituzula? Segundo batzuetako kontua da.
             catalog_subtitle: Egungo kale-izendegia
             streets_link: Ikusi kaleen zerrenda
-        authorization_workflows:
-          streets: Sinkronizatutako kaleak
-          zones: Egiaztapen eremuak
-          management: Kudeaketa
         zones:
           index:
             title: Egiaztapen eremuak
             new: Eremu berria
-            back: Egiaztapen metodoetara itzuli
             name: Izena
             streets: Kale kop.
             no_zones: Oraindik ez dago eremurik.
@@ -123,10 +117,14 @@ eu:
             numbers_range_help_html: Erabili <strong>1-50</strong> tarte baterako edo <strong>2,4,6,8</strong> atari solteetarako.
         menu:
           blocked_users: Blokeatutako baimenak
+          census: Galdakaoko errolda
+          check: Check
+          streets: Kaleak
+          sync: Webservice Sync
+          zones: Eremuak
         blocked_users:
           index:
             title: Blokeatutako erabiltzaileak
-            back: Itzuli Baimenetara
             no_blocked: Une honetan ez dago blokeatutako erabiltzailerik.
             name: Erabiltzailea
             email: Posta elektronikoa
@@ -137,6 +135,12 @@ eu:
           unlock:
             success: Erabiltzailea behar bezala desblokeatu da.
             not_blocked: Erabiltzaile hau ez dago mugarik gabe blokeatuta.
+        connections:
+          show:
+            title: Web-zerbitzuarekiko konexioa
+            validate: "Balioztatu:"
+            submit: NANa balioztatu
+            unavailable: Udal erroldaren zerbitzua ez dago erabilgarri. Berrikusi konfigurazioa eta aplikazioaren erregistroak.
       numbers_constraints:
         all_numbers: Zenbaki guztiak
         even_numbers: Zenbaki bikoitiak
@@ -145,6 +149,9 @@ eu:
         except_range: Hauek izan ezik
   activemodel:
     attributes:
+      census_check:
+        date_of_birth: Jaiotze-data
+        document_number: Dokumentu-zenbakia
       zone:
         name: Eremuaren izena
       zone_street:

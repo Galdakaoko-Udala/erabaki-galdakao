@@ -7,8 +7,20 @@ module Decidim
       # SOAP operations exposed by the municipal register service
       AUTHENTICATE = "autenticar"
       LIST_STREETS = "ListadoCalles"
+      TEST_CONNECTION = "TestDBconnection"
 
       LOG_PREFIX = "[Galdakao-Census]"
+
+      # Checks a citizen against the register. Returns the response document, or nil when the service is unavailable.
+      def self.authenticate(document_number, date_of_birth)
+        webservice = new(AUTHENTICATE)
+        webservice.body = <<~XML
+          <tns:dni>#{document_number.to_s.encode(xml: :text)}</tns:dni>
+          <tns:fecha_nacimiento>#{date_of_birth&.strftime("%Y-%m-%d")}</tns:fecha_nacimiento>
+        XML
+
+        webservice.response
+      end
 
       def initialize(action)
         @action = action

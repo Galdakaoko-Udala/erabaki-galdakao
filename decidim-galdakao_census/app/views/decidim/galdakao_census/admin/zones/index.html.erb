@@ -6,7 +6,6 @@
       <% if allowed_to? :create, :census_zone %>
         <%= link_to t(".new"), new_zone_path, class: "button button__sm button__secondary new" %>
       <% end %>
-      <%= link_to t(".back"), decidim_admin.authorization_workflows_path, class: "button button__sm button__transparent-secondary" %>
     </h1>
   </div>
 

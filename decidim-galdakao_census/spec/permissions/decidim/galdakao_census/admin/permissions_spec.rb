@@ -16,7 +16,8 @@ describe Decidim::GaldakaoCensus::Admin::Permissions do
       census_street: [:read, :sync],
       census_zone: [:read, :create, :update, :destroy],
       census_zone_street: [:create, :update, :destroy],
-      census_blocked_user: [:read, :unlock]
+      census_blocked_user: [:read, :unlock],
+      census_connection: [:read, :check]
     }.each do |census_subject, actions|
       actions.each do |census_action|
         context "when #{census_action} #{census_subject}" do
