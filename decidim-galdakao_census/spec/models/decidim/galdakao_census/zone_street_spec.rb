@@ -114,6 +114,24 @@ describe Decidim::GaldakaoCensus::ZoneStreet do
 
         expect(zone_street).not_to be_valid
       end
+
+      it "is valid with a range whose bounds are equal" do
+        zone_street = build(:census_zone_street, numbers_constraint: :only_range, numbers_range: "5-5")
+
+        expect(zone_street).to be_valid
+      end
+
+      it "is not valid with a descending range" do
+        zone_street = build(:census_zone_street, numbers_constraint: :except_range, numbers_range: "10-1")
+
+        expect(zone_street).not_to be_valid
+      end
+
+      it "is not valid when any segment is a descending range" do
+        zone_street = build(:census_zone_street, numbers_constraint: :only_range, numbers_range: "1-4,10-5")
+
+        expect(zone_street).not_to be_valid
+      end
     end
   end
 

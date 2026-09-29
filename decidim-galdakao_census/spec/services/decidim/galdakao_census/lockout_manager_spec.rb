@@ -129,6 +129,32 @@ describe Decidim::GaldakaoCensus::LockoutManager do
         manager.register_failed_attempt
       end
     end
+
+    context "when several requests hold stale copies of the same user" do
+      let(:first_request) { described_class.new(Decidim::User.find(user.id)) }
+      let(:second_request) { described_class.new(Decidim::User.find(user.id)) }
+
+      it "counts every failed attempt" do
+        first_request
+        second_request
+
+        first_request.register_failed_attempt
+        second_request.register_failed_attempt
+
+        expect(user.reload.extended_data.dig("authorizations", handler_key, "failed_attempts")).to eq(2)
+      end
+
+      it "preserves extended_data written by others in the meantime" do
+        second_request
+        # rubocop:disable Rails/SkipsModelValidations
+        user.update_column(:extended_data, user.extended_data.merge("other_key" => "value"))
+        # rubocop:enable Rails/SkipsModelValidations
+
+        second_request.register_failed_attempt
+
+        expect(user.reload.extended_data["other_key"]).to eq("value")
+      end
+    end
   end
 
   context "when the user does not pass the model validations" do

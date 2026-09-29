@@ -103,6 +103,24 @@ describe Decidim::GaldakaoCensus::Admin::ZoneStreetForm do
 
         expect(form).not_to be_valid
       end
+
+      it "is valid with a range whose bounds are equal" do
+        form.numbers_range = "5-5"
+
+        expect(form).to be_valid
+      end
+
+      it "is not valid with a descending range" do
+        form.numbers_range = "10-1"
+
+        expect(form).not_to be_valid
+      end
+
+      it "is not valid when any segment is a descending range" do
+        form.numbers_range = "1-4,10-5"
+
+        expect(form).not_to be_valid
+      end
     end
   end
 

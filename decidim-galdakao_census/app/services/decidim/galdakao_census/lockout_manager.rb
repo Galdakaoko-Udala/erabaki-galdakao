@@ -32,15 +32,19 @@ module Decidim
       end
 
       def register_failed_attempt
-        failed_attempts = (auth_data["failed_attempts"] || 0) + 1
+        locked_until = message = nil
 
-        locked_until, message = lock_params_for(failed_attempts)
+        user.with_lock do
+          @auth_data = nil
+          failed_attempts = (auth_data["failed_attempts"] || 0) + 1
+          locked_until, message = lock_params_for(failed_attempts)
 
-        update_auth_data(
-          "failed_attempts" => failed_attempts,
-          "last_attempt_at" => Time.current,
-          "locked_until" => locked_until
-        )
+          update_auth_data(
+            "failed_attempts" => failed_attempts,
+            "last_attempt_at" => Time.current,
+            "locked_until" => locked_until
+          )
+        end
 
         notify_admin if locked_until == INFINITE
 
@@ -48,9 +52,12 @@ module Decidim
       end
 
       def register_success
-        data = user.extended_data["authorizations"] || {}
-        data.delete(HANDLER_KEY)
-        save_authorizations_data(data)
+        user.with_lock do
+          data = user.extended_data["authorizations"] || {}
+          data.delete(HANDLER_KEY)
+          save_authorizations_data(data)
+        end
+        @auth_data = nil
       end
 
       def locked_indefinitely?

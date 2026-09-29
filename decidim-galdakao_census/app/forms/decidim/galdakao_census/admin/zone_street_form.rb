@@ -14,7 +14,7 @@ module Decidim
         validates :street_id, :numbers_constraint, presence: true
         validates :numbers_constraint, inclusion: { in: ZoneStreet.numbers_constraints.keys }
         validates :numbers_range, presence: true, if: :numbers_range_required?
-        validates :numbers_range, format: { with: ZoneStreet::RANGE_REGEXP }, allow_blank: true
+        validate :numbers_range_format
         validate :street_belongs_to_organization
 
         def zone
@@ -40,6 +40,13 @@ module Decidim
 
         def numbers_range_required?
           numbers_constraint.in?(ZoneStreet::RANGE_REQUIRED)
+        end
+
+        def numbers_range_format
+          return if numbers_range.blank?
+          return if ZoneStreet.valid_numbers_range?(numbers_range)
+
+          errors.add(:numbers_range, :invalid)
         end
 
         def street_belongs_to_organization
