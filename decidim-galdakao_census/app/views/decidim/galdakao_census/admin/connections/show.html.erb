@@ -7,7 +7,12 @@
   </div>
 
   <div class="card-divider">
-    <h2><%= Decidim::GaldakaoCensus::Webservice::TEST_CONNECTION %>:</h2>
+    <h2><%= connection_action %>:</h2>
+    <% if connection_response && connection_action != Decidim::GaldakaoCensus::Webservice::TEST_CONNECTION %>
+      <p class="help-text" id="census-connection-fallback">
+        <%= t(".fallback", test_action: Decidim::GaldakaoCensus::Webservice::TEST_CONNECTION, action: connection_action) %>
+      </p>
+    <% end %>
     <% if connection_response %>
       <pre class="code-block" id="census-connection-response"><%= soap_body(connection_response) %></pre>
     <% else %>

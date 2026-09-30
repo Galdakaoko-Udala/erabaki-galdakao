@@ -7,7 +7,7 @@ describe "Admin census menu" do # rubocop:disable RSpec/DescribeClass
 
   before do
     test_webservice = instance_double(Decidim::GaldakaoCensus::Webservice, response: nil)
-    allow(Decidim::GaldakaoCensus::Webservice).to receive(:new).with("TestDBconnection").and_return(test_webservice)
+    allow(Decidim::GaldakaoCensus::Webservice).to receive(:new).and_return(test_webservice)
     switch_to_host(organization.host)
     login_as user, scope: :user
   end

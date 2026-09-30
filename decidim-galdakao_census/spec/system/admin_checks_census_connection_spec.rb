@@ -11,9 +11,16 @@ describe "Admin checks the census connection" do # rubocop:disable RSpec/Describ
       <Envelope><Body><TestDBconnectionResponse><estado>La conexión se realizó correctamente</estado></TestDBconnectionResponse></Body></Envelope>
     XML
   end
+  let(:streets_webservice) { instance_double(Decidim::GaldakaoCensus::Webservice, response: streets_response) }
+  let(:streets_response) do
+    Nokogiri::XML(<<~XML)
+      <Envelope><Body><ListadoCallesResponse><calles><Calle>Kale Nagusia</Calle></calles></ListadoCallesResponse></Body></Envelope>
+    XML
+  end
 
   before do
     allow(Decidim::GaldakaoCensus::Webservice).to receive(:new).with("TestDBconnection").and_return(test_webservice)
+    allow(Decidim::GaldakaoCensus::Webservice).to receive(:new).with("ListadoCalles").and_return(streets_webservice)
     switch_to_host(organization.host)
     login_as admin, scope: :user
     visit "/admin/galdakao_census"
@@ -21,14 +28,30 @@ describe "Admin checks the census connection" do # rubocop:disable RSpec/Describ
   end
 
   it "shows the response of the register to the connection test" do
+    expect(page).to have_css("h2", text: "TestDBconnection:")
+    expect(page).to have_no_css("#census-connection-fallback")
     within "#census-connection-response" do
       expect(page).to have_content("<TestDBconnectionResponse>")
       expect(page).to have_content("<estado>La conexión se realizó correctamente</estado>")
+    end
+    expect(Decidim::GaldakaoCensus::Webservice).not_to have_received(:new).with("ListadoCalles")
+  end
+
+  context "when the register does not answer the connection test" do
+    let(:test_response) { nil }
+
+    it "checks the connection with the street list" do
+      expect(page).to have_css("h2", text: "ListadoCalles:")
+      expect(page).to have_content("TestDBconnection did not answer, so the connection has been checked with ListadoCalles.")
+      within "#census-connection-response" do
+        expect(page).to have_content("<Calle>Kale Nagusia</Calle>")
+      end
     end
   end
 
   context "when the service is unavailable" do
     let(:test_response) { nil }
+    let(:streets_response) { nil }
 
     it "reports it" do
       expect(page).to have_content("The municipal register service is not available")

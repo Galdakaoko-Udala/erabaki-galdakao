@@ -140,6 +140,7 @@ en:
             title: Connection with the webservice
             validate: "Validate:"
             submit: Validate ID
+            fallback: "%{test_action} did not answer, so the connection has been checked with %{action}."
             unavailable: The municipal register service is not available. Check the settings and the application logs.
       numbers_constraints:
         all_numbers: All numbers

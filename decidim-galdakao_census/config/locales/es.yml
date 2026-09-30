@@ -140,6 +140,7 @@ es:
             title: Conexión con el webservice
             validate: "Validar:"
             submit: Validar DNI
+            fallback: "%{test_action} no ha respondido, así que la conexión se ha comprobado con %{action}."
             unavailable: El servicio del padrón no está disponible. Revisa la configuración y los registros de la aplicación.
       numbers_constraints:
         all_numbers: Todos los números

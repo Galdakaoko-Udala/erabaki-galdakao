@@ -140,6 +140,7 @@ eu:
             title: Web-zerbitzuarekiko konexioa
             validate: "Balioztatu:"
             submit: NANa balioztatu
+            fallback: "%{test_action} ez du erantzun, beraz konexioa %{action} erabiliz egiaztatu da."
             unavailable: Udal erroldaren zerbitzua ez dago erabilgarri. Berrikusi konfigurazioa eta aplikazioaren erregistroak.
       numbers_constraints:
         all_numbers: Zenbaki guztiak
