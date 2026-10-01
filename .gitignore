@@ -67,3 +67,6 @@ npm_debug.log
 tailwind.config.js
 .rspec-failures
 
+/public/sw.js*
+/public/sw.js*
+/public/sw.js*
