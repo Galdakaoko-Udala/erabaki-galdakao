@@ -35,6 +35,7 @@ services:
     image: ghcr.io/galdakaoko-udala/erabaki-galdakao:${GIT_REF:-main}
     volumes:
       - ./storage:/app/storage
+      - ./certs:/certs:ro
     restart: ${RESTART_POLICY:-always}
     labels:
       - "traefik.enable=true"

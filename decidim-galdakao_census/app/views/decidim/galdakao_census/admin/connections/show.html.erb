@@ -1,0 +1,55 @@
+<% add_decidim_page_title(t(".title")) %>
+<div class="card" id="census-connection">
+  <div class="item_show__header">
+    <h1 class="item_show__header-title">
+      <%= t(".title") %>
+    </h1>
+  </div>
+
+  <div class="card-divider">
+    <h2><%= connection_action %>:</h2>
+    <% if connection_response && connection_action != Decidim::GaldakaoCensus::Webservice::TEST_CONNECTION %>
+      <p class="help-text" id="census-connection-fallback">
+        <%= t(".fallback", test_action: Decidim::GaldakaoCensus::Webservice::TEST_CONNECTION, action: connection_action) %>
+      </p>
+    <% end %>
+    <% if connection_response %>
+      <pre class="code-block" id="census-connection-response"><%= soap_body(connection_response) %></pre>
+    <% else %>
+      <div class="callout alert"><%= t(".unavailable") %></div>
+    <% end %>
+  </div>
+
+  <% if allowed_to? :check, :census_connection %>
+    <div class="card-divider">
+      <h2><%= t(".validate") %></h2>
+      <%= decidim_form_for(@form, url: check_connection_path, html: { class: "form-defaults form census_check" }) do |f| %>
+        <div class="form__wrapper">
+          <div class="card pt-4">
+            <div class="card-section">
+              <div class="row column">
+                <%= f.text_field :document_number, autocomplete: "off" %>
+              </div>
+              <div class="row column">
+                <%= f.date_field :date_of_birth %>
+              </div>
+              <div class="row column">
+                <%= f.submit t(".submit"), class: "button button__sm button__secondary" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @checked %>
+        <div class="row column">
+          <% if @form.response %>
+            <pre class="code-block" id="census-check-response"><%= soap_body(@form.response) %></pre>
+          <% else %>
+            <div class="callout alert"><%= t(".unavailable") %></div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

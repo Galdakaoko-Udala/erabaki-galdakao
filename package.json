@@ -35,7 +35,8 @@
     "@tarekraafat/autocomplete.js": "^10.2.7",
     "postcss-scss": "^4.0.9",
     "sass-embedded": "^1.63.6",
-    "shakapacker": "^8.3.0"
+    "shakapacker": "^8.3.0",
+    "swc-loader": "^0.2.7"
   },
   "browserslist": [
     "extends @decidim/browserslist-config"
