@@ -50,10 +50,6 @@ module Decidim
 
           "success"
         end
-
-        def per_page
-          50
-        end
       end
     end
   end

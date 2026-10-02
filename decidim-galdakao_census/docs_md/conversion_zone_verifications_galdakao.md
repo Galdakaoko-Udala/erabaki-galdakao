@@ -416,10 +416,6 @@ module Decidim
       def zone_list
         paginate(GaldakaoZone.where(organization: current_organization).order(name: :asc))
       end
-
-      def per_page
-        50
-      end
     end
   end
 end

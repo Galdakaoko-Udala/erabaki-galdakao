@@ -38,6 +38,23 @@ describe Decidim::GaldakaoCensus::Admin::StreetsController do
     expect(response.body).to include("Kale Nagusia")
   end
 
+  describe "pagination" do
+    before { create_list(:census_street, 30, organization:) }
+
+    def listed_streets(params = {})
+      get(routes.streets_path, params:)
+      Nokogiri::HTML(response.body).css("#census-streets tbody tr").size
+    end
+
+    it "shows the Decidim default number of streets per page" do
+      expect(listed_streets).to eq(Decidim::Paginable::OPTIONS.first)
+    end
+
+    it "respects the number of streets per page chosen by the user" do
+      expect(listed_streets(per_page: 50)).to eq(30)
+    end
+  end
+
   it "shows the most recent sync, not the oldest street" do
     create(:census_street, organization:, updated_at: 1.month.ago)
     create(:census_street, organization:, updated_at: 1.hour.ago)

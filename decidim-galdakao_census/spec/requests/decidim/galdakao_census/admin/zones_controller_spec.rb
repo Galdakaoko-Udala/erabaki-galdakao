@@ -49,6 +49,23 @@ describe Decidim::GaldakaoCensus::Admin::ZonesController do
     end
   end
 
+  describe "pagination" do
+    before { create_list(:census_zone, 30, organization:) }
+
+    def listed_zones(params = {})
+      get(routes.zones_path, params:)
+      Nokogiri::HTML(response.body).css("#census-zones tbody tr").size
+    end
+
+    it "shows the Decidim default number of zones per page" do
+      expect(listed_zones).to eq(Decidim::Paginable::OPTIONS.first)
+    end
+
+    it "respects the number of zones per page chosen by the user" do
+      expect(listed_zones(per_page: 50)).to eq(30)
+    end
+  end
+
   describe "create, update and destroy" do
     it "creates a zone and registers it in the admin log" do
       expect { post routes.zones_path, params: { zone: { name: "Nueva" } } }

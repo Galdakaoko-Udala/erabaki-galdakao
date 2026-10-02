@@ -105,10 +105,6 @@ module Decidim
                   end
           query.map { |zone| { id: zone.id, text: zone.name } }
         end
-
-        def per_page
-          50
-        end
       end
     end
   end
