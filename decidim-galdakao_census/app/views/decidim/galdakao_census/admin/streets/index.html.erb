@@ -1,0 +1,36 @@
+<% add_decidim_page_title(t(".title")) %>
+<div class="card" id="census-streets">
+  <div class="item_show__header">
+    <h1 class="item_show__header-title">
+      <%= t(".title") %>
+      <%= link_to manage_streets_path, class: "button button__sm button__transparent-secondary" do %>
+        <%= icon "arrow-left-line", class: "fill-current" %>
+        <span><%= t(".back") %></span>
+      <% end %>
+    </h1>
+  </div>
+
+  <% if streets.any? %>
+    <div class="table-stacked">
+      <table class="table-list">
+        <thead>
+          <tr>
+            <th><%= t(".name") %></th>
+            <th><%= t(".updated_at") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% streets.each do |street| %>
+            <tr>
+              <td data-label="<%= t(".name") %>"><%= street.name %></td>
+              <td data-label="<%= t(".updated_at") %>"><%= l(street.updated_at, format: :short) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= decidim_paginate streets %>
+  <% else %>
+    <p><%= t(".no_streets") %></p>
+  <% end %>
+</div>

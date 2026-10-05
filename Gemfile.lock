@@ -252,6 +252,15 @@ GIT
       decidim-surveys (>= 0.32.0, < 0.33)
       deface (>= 1.5)
 
+PATH
+  remote: decidim-galdakao_census
+  specs:
+    decidim-galdakao_census (0.1.0)
+      decidim-admin (>= 0.32, < 0.33)
+      decidim-core (>= 0.32, < 0.33)
+      decidim-verifications (>= 0.32, < 0.33)
+      deface (~> 1.9)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -1145,6 +1154,7 @@ DEPENDENCIES
   decidim-elections!
   decidim-extra_censuses!
   decidim-file_authorization_handler!
+  decidim-galdakao_census!
   decidim-initiatives!
   decidim-pokecode!
   decidim-term_customizer!
@@ -1236,6 +1246,7 @@ CHECKSUMS
   decidim-extra_censuses (0.3.0)
   decidim-file_authorization_handler (0.32.0)
   decidim-forms (0.32.1)
+  decidim-galdakao_census (0.1.0)
   decidim-generators (0.32.1)
   decidim-initiatives (0.32.1)
   decidim-meetings (0.32.1)

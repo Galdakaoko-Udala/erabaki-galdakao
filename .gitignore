@@ -66,8 +66,6 @@ npm_debug.log
 # Ignore Tailwind configuration
 tailwind.config.js
 .rspec-failures
+coverage/
 
-/public/sw.js*
-/public/sw.js*
-/public/sw.js*
-/public/sw.js*
+docker-compose.override.yml

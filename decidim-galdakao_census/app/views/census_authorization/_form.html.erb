@@ -1,0 +1,26 @@
+<%= append_stylesheet_pack_tag "decidim_galdakao_census" %>
+
+<div class="census-auth-form">
+  <div class="census-auth-form__box">
+    <div class="census-auth-form__field">
+      <label class="census-auth-form__label" for="census_authorization_handler_document_number">
+        <%= t("decidim.authorization_handlers.census_authorization_handler.fields.document_number") %> *
+      </label>
+      <%= form.text_field :document_number,
+          label: false,
+          autocomplete: "off",
+          id: "census_authorization_handler_document_number",
+          class: "census-auth-input" %>
+    </div>
+    <div class="census-auth-form__field census-auth-form__field--date">
+      <label class="census-auth-form__label" for="census_authorization_handler_date_of_birth">
+        <%= t("decidim.authorization_handlers.census_authorization_handler.fields.date_of_birth") %> *
+      </label>
+      <%= form.date_field :date_of_birth,
+          label: false,
+          id: "census_authorization_handler_date_of_birth",
+          class: "census-auth-input" %>
+    </div>
+  </div>
+  <%= form.hidden_field :handler_name %>
+</div>
