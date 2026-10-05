@@ -12,7 +12,7 @@ describe Decidim::GaldakaoCensus::Street do
   end
 
   describe ".import_streets" do
-    let(:webservice) { instance_double(Decidim::GaldakaoCensus::Webservice, response: response) }
+    let(:webservice) { instance_double(Decidim::GaldakaoCensus::Webservice, response:) }
     let(:response) do
       Nokogiri::XML(<<~XML)
         <calles>

@@ -49,9 +49,9 @@ describe Decidim::GaldakaoCensus::Admin::ZoneStreetsController do
   it "renders the form with an error status when the range is missing" do
     params = { zone_street: { street_id: street.id, numbers_constraint: "only_range", numbers_range: "" } }
 
-    post routes.zone_zone_streets_path(zone), params: params
+    post(routes.zone_zone_streets_path(zone), params:)
 
-    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response).to have_http_status(:unprocessable_content)
     expect(zone.zone_streets).to be_empty
   end
 
