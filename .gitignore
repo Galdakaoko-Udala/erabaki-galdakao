@@ -69,3 +69,4 @@ tailwind.config.js
 coverage/
 
 docker-compose.override.yml
+/public/sw.js*
