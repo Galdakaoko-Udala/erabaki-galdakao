@@ -1,0 +1,41 @@
+<% add_decidim_page_title(t(".title")) %>
+<div class="card" id="census-blocked-users">
+  <div class="item_show__header">
+    <h1 class="item_show__header-title">
+      <%= t(".title") %>
+    </h1>
+  </div>
+
+  <% if blocked_users.any? %>
+    <div class="table-stacked">
+      <table class="table-list">
+        <thead>
+          <tr>
+            <th><%= t(".name") %></th>
+            <th><%= t(".email") %></th>
+            <th><%= t(".attempts") %></th>
+            <th><%= t(".last_attempt") %></th>
+            <th><%= t("decidim.admin.actions.actions") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% blocked_users.each do |user| %>
+            <tr>
+              <td data-label="<%= t(".name") %>"><%= user.name %></td>
+              <td data-label="<%= t(".email") %>"><%= user.email %></td>
+              <td data-label="<%= t(".attempts") %>"><%= lockout_data(user)["failed_attempts"] %></td>
+              <td data-label="<%= t(".last_attempt") %>"><%= last_attempt_at(user) ? l(last_attempt_at(user), format: :short) : "-" %></td>
+              <td class="table-list__actions" data-label="<%= t("decidim.admin.actions.actions") %>">
+                <% if allowed_to? :unlock, :census_blocked_user %>
+                  <%= link_to t(".unlock"), unlock_blocked_user_path(user), method: :patch, data: { confirm: t(".unlock_confirm") }, class: "button button__sm button__secondary" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p><%= t(".no_blocked") %></p>
+  <% end %>
+</div>

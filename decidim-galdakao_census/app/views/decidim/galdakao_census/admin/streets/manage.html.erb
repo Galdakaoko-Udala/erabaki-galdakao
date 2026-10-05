@@ -1,0 +1,35 @@
+<% add_decidim_page_title(t(".title")) %>
+<div class="card" id="census-streets-manage">
+  <div class="item_show__header">
+    <h1 class="item_show__header-title">
+      <%= t(".title") %>
+    </h1>
+  </div>
+  <div class="card-divider">
+    <h2 class="card-title"><%= t(".sync_subtitle") %></h2>
+  </div>
+  <div class="card__content">
+    <% if last_sync %>
+      <div class="callout <%= last_sync_class(last_sync) %>">
+        <%= t(".last_sync", time: l(last_sync, format: :long)) %>
+      </div>
+    <% else %>
+      <div class="callout warning">
+        <%= t(".never_synced") %>
+      </div>
+    <% end %>
+    <% if allowed_to? :sync, :census_street %>
+      <div class="mt-s mb-4">
+        <%= button_to t(".sync"), sync_streets_path, method: :post, class: "button button__sm button__secondary", data: { confirm: t(".sync_confirm") } %>
+      </div>
+    <% end %>
+    <div class="card-divider">
+      <h2 class="card-title"><%= t(".catalog_subtitle") %></h2>
+    </div>
+    <div class="card__content">
+      <div class="mt-s">
+        <%= link_to t(".streets_link"), streets_path, class: "button button__sm button__secondary" %>
+      </div>
+    </div>
+  </div>
+</div>

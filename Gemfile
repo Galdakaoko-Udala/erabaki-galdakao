@@ -15,6 +15,8 @@ gem "decidim-extra_censuses", git: "https://github.com/openpoke/decidim-module-e
 gem "decidim-file_authorization_handler", github: "openpoke/decidim-file_authorization_handler", branch: "main"
 gem "decidim-pokecode", github: "openpoke/decidim-module-pokecode", branch: "main"
 gem "decidim-term_customizer", github: "openpoke/decidim-module-term_customizer", branch: "release/0.31-stable"
+# Galdakao census gem local
+gem "decidim-galdakao_census", path: "decidim-galdakao_census"
 
 gem "bootsnap", "~> 1.7"
 gem "puma", ">= 6.3.1"

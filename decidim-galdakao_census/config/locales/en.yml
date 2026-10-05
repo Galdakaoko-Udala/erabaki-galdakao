@@ -1,0 +1,161 @@
+en:
+  decidim:
+    authorization_handlers:
+      admin:
+        census_authorization_handler:
+          help:
+          - Citizens must be registered in the Galdakao municipal register to verify their identity.
+          - Verification is performed against the municipal register using a national ID (DNI/NIE) and date of birth.
+      census_authorization_handler:
+        name: Galdakao municipal register
+        explanation: Verify your identity using the Galdakao municipal register.
+        fields:
+          document_number: Document number (DNI/NIE)
+          date_of_birth: Date of birth
+        service_unavailable: The municipal register service is currently unavailable.
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: You do not meet the participation requirements for this process.
+    events:
+      galdakao_census:
+        user_locked:
+          email_intro: A participant has been blocked indefinitely after exceeding the maximum number of verification attempts.
+          email_outro: Access the <a href="%{blocked_users_url}">blocked authorizations list</a> to manage the case.
+          email_subject: Participant blocked due to excessive verification attempts
+          notification_title: A participant has been blocked indefinitely after exceeding the maximum number of verification attempts.
+      verifications:
+        verify_with_managed_user:
+          email_intro: A participant has tried to verify themselves with data that is already in use by another participant.
+          email_outro: Check the <a href="%{conflicts_url}">Verifications conflicts list</a> to see the details and solve the issue.
+          email_subject: Failed verification attempt against another participant
+          notification_title: A participant has tried to verify themselves with data that is already in use by another participant.
+    galdakao_census:
+      action_authorizer:
+        address_not_found: The municipal register did not return your full address (street and number), so we cannot check whether you live in the zones allowed for this action. Please contact the City Hall.
+        not_in_zone: Your address in the municipal register is not within the zones allowed for this action.
+      lockout:
+        blocked_indefinitely: Your access has been blocked indefinitely. Please contact the administration.
+        blocked_indefinitely_contact: You have exceeded the maximum number of attempts. Please contact the participation department of Galdakao City Hall.
+        attempts_remaining: Incorrect data, you have %{remaining} attempts left out of 6.
+        three_attempts: You have entered incorrect data 3 times. Please check your data. You will be able to try again in 5 minutes.
+        wait: You must wait %{minutes} minutes and %{seconds} seconds before trying again.
+      admin:
+        streets:
+          sync:
+            error: The streets could not be synchronised because the municipal register service is not available. Please try again later.
+            success: Streets synchronised successfully.
+          index:
+            title: Synchronised streets
+            name: Street name
+            updated_at: Last updated
+            back: Back to Catalogue Management
+            no_streets: There are no streets yet. Synchronise them from the catalogue management panel.
+          manage:
+            title: Galdakao Panel — Municipal Register Management
+            sync_subtitle: Catalogue synchronisation
+            last_sync: 'Last synchronisation: %{time}'
+            never_synced: Streets have not been synchronised yet.
+            sync: Synchronise streets from the register
+            sync_confirm: Are you sure you want to synchronise the streets? This may take a few seconds.
+            catalog_subtitle: Current street catalogue
+            streets_link: View streets list
+        zones:
+          index:
+            title: Verification zones
+            new: New zone
+            name: Name
+            streets: No. streets
+            no_zones: There are no zones yet.
+          show:
+            edit: Edit name
+            back: Back
+            streets: Streets in this zone
+            add_street: Add street
+            street: Street
+            constraint: Constraint
+            range: Range
+            no_streets: This zone has no streets yet.
+          new:
+            title: New zone
+            create: Save
+            back: Cancel
+          edit:
+            update: Save
+            back: Cancel
+            title: 'Editing zone: %{name}'
+          create:
+            success: New zone created successfully
+            invalid: There was a problem creating the zone.
+          update:
+            success: Zone updated successfully
+            invalid: There was a problem updating the zone.
+          destroy:
+            success: Zone deleted successfully
+            invalid: There was a problem deleting the zone.
+        zone_streets:
+          create:
+            success: Street added successfully
+            invalid: There was a problem adding the street.
+          update:
+            success: Street updated successfully
+            invalid: There was a problem updating the street.
+          destroy:
+            success: Street removed successfully
+            invalid: There was a problem removing the street.
+          new:
+            create: Save
+            back: Cancel
+            title: 'Add street to zone: %{zone}'
+          edit:
+            update: Save
+            back: Cancel
+            title: 'Edit street in zone: %{zone}'
+          form:
+            street_blank: Select a street
+            numbers_range_placeholder: 'Ex: 1-50  or  2,4,6,8'
+            numbers_range_help_html: Use <strong>1-50</strong> for a range or <strong>2,4,6,8</strong> for individual numbers.
+        menu:
+          blocked_users: Blocked authorizations
+          census: Galdakao census
+          check: Check
+          streets: Streets
+          sync: Webservice Sync
+          zones: Zones
+        blocked_users:
+          index:
+            title: Blocked users
+            no_blocked: There are no blocked users at the moment.
+            name: User
+            email: Email
+            attempts: Attempts
+            last_attempt: Last attempt
+            unlock: Unblock
+            unlock_confirm: Are you sure you want to unblock this user?
+          unlock:
+            success: User successfully unblocked.
+            not_blocked: This user is not blocked indefinitely.
+        connections:
+          show:
+            title: Connection with the webservice
+            validate: "Validate:"
+            submit: Validate ID
+            fallback: "%{test_action} did not answer, so the connection has been checked with %{action}."
+            unavailable: The municipal register service is not available. Check the settings and the application logs.
+      numbers_constraints:
+        all_numbers: All numbers
+        even_numbers: Even numbers
+        odd_numbers: Odd numbers
+        only_range: Only these portals
+        except_range: All except these portals
+  activemodel:
+    attributes:
+      census_check:
+        date_of_birth: Date of birth
+        document_number: Document number
+      zone:
+        name: Zone name
+      zone_street:
+        street_id: Street
+        numbers_constraint: Number constraint
+        numbers_range: Doorways

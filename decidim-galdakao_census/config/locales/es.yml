@@ -1,0 +1,161 @@
+es:
+  decidim:
+    authorization_handlers:
+      admin:
+        census_authorization_handler:
+          help:
+          - Los y las ciudadanas deben estar empadronadas en Galdakao para verificarse.
+          - La verificación se realiza contra el padrón municipal mediante DNI/NIE y fecha de nacimiento.
+      census_authorization_handler:
+        name: Padrón municipal de Galdakao
+        explanation: Verifica tu identidad mediante el padrón municipal de Galdakao.
+        fields:
+          document_number: Número de documento (DNI/NIE)
+          date_of_birth: Fecha de nacimiento
+        service_unavailable: El servicio del padrón no está disponible en este momento.
+    authorization_modals:
+      content:
+        unauthorized:
+          explanation: No cumples los requisitos de participación para este proceso.
+    events:
+      galdakao_census:
+        user_locked:
+          email_intro: Una participante ha sido bloqueada indefinidamente al superar el número máximo de intentos de verificación.
+          email_outro: Accede al <a href="%{blocked_users_url}">listado de autorizaciones bloqueadas</a> para gestionar el caso.
+          email_subject: Participante bloqueada por exceso de intentos de verificación
+          notification_title: Una participante ha sido bloqueada indefinidamente al superar el número máximo de intentos de verificación.
+      verifications:
+        verify_with_managed_user:
+          email_intro: Una participante ha intentado verificarse con datos que ya están en uso por otra participante.
+          email_outro: Comprueba la <a href="%{conflicts_url}">lista de conflictos de verificaciones</a> para ver los detalles y resolver el problema.
+          email_subject: Error al intentar verificarse contra otra participante
+          notification_title: Una participante ha intentado verificarse con datos que ya están en uso por otra participante.
+    galdakao_census:
+      action_authorizer:
+        address_not_found: El padrón municipal no ha devuelto tu dirección completa (calle y número), así que no podemos comprobar si vives en las zonas permitidas para esta acción. Ponte en contacto con el Ayuntamiento.
+        not_in_zone: Tu dirección en el padrón municipal no está dentro de las zonas permitidas para esta acción.
+      lockout:
+        blocked_indefinitely: Tu acceso ha sido bloqueado indefinidamente. Contacta con la administración.
+        blocked_indefinitely_contact: Has superado el número máximo de intentos. Por favor, ponte en contacto con el departamento de participación del Ayuntamiento de Galdakao.
+        attempts_remaining: Datos incorrectos, te quedan %{remaining} intentos de 6.
+        three_attempts: Has introducido datos erróneos 3 veces. Por favor revisa tus datos. Podrás volver a intentarlo en 5 minutos.
+        wait: Debes esperar %{minutes} minutos y %{seconds} segundos antes de volver a intentarlo.
+      admin:
+        streets:
+          sync:
+            error: No se han podido sincronizar las calles porque el servicio del padrón municipal no está disponible. Inténtalo de nuevo más tarde.
+            success: Calles sincronizadas correctamente.
+          index:
+            title: Calles sincronizadas
+            name: Nombre de la calle
+            updated_at: Última actualización
+            back: Volver a Gestión del catálogo
+            no_streets: Todavía no hay calles. Sincronízalas desde el panel de gestión del catálogo.
+          manage:
+            title: Panel de Galdakao — Gestión del catálogo de calles
+            sync_subtitle: Sincronización del catálogo
+            last_sync: 'Última sincronización: %{time}'
+            never_synced: Las calles todavía no han sido sincronizadas.
+            sync: Sincronizar calles desde el padrón
+            sync_confirm: "¿Seguro que quieres sincronizar las calles? Esto puede tardar unos segundos."
+            catalog_subtitle: Catálogo actual de calles
+            streets_link: Ver listado de calles
+        zones:
+          index:
+            title: Zonas de verificación
+            new: Nueva zona
+            name: Nombre
+            streets: Nº calles
+            no_zones: Todavía no hay zonas.
+          show:
+            edit: Editar nombre
+            back: Volver
+            streets: Calles de esta zona
+            add_street: Añadir calle
+            street: Calle
+            constraint: Restricción
+            range: Rango
+            no_streets: Esta zona todavía no tiene calles.
+          new:
+            title: Crear nueva zona
+            create: Guardar
+            back: Cancelar
+          edit:
+            update: Guardar
+            back: Cancelar
+            title: 'Editando zona: %{name}'
+          create:
+            success: Nueva zona creada correctamente
+            invalid: Ha habido un problema al crear la zona.
+          update:
+            success: Zona actualizada correctamente
+            invalid: Ha habido un problema al actualizar la zona.
+          destroy:
+            success: Zona eliminada correctamente
+            invalid: Ha habido un problema al eliminar la zona.
+        zone_streets:
+          create:
+            success: Calle añadida correctamente
+            invalid: Ha habido un problema al añadir la calle.
+          update:
+            success: Calle actualizada correctamente
+            invalid: Ha habido un problema al actualizar la calle.
+          destroy:
+            success: Calle eliminada correctamente
+            invalid: Ha habido un problema al quitar la calle.
+          new:
+            create: Guardar
+            back: Cancelar
+            title: 'Añadir calle a la zona: %{zone}'
+          edit:
+            update: Guardar
+            back: Cancelar
+            title: 'Editar calle de la zona: %{zone}'
+          form:
+            street_blank: Selecciona una calle
+            numbers_range_placeholder: 'Ej: 1-50  o  2,4,6,8'
+            numbers_range_help_html: Usa <strong>1-50</strong> para un rango o <strong>2,4,6,8</strong> para portales sueltos.
+        menu:
+          blocked_users: Autorizaciones bloqueadas
+          census: Censo Galdakao
+          check: Check
+          streets: Calles
+          sync: Webservice Sync
+          zones: Zonas
+        blocked_users:
+          index:
+            title: Usuarias bloqueadas
+            no_blocked: No hay usuarias bloqueadas actualmente.
+            name: Usuaria
+            email: Correo electrónico
+            attempts: Intentos
+            last_attempt: Último intento
+            unlock: Desbloquear
+            unlock_confirm: "¿Seguro que quieres desbloquear esta usuaria?"
+          unlock:
+            success: Usuaria desbloqueada correctamente.
+            not_blocked: Esta usuaria no está bloqueada indefinidamente.
+        connections:
+          show:
+            title: Conexión con el webservice
+            validate: "Validar:"
+            submit: Validar DNI
+            fallback: "%{test_action} no ha respondido, así que la conexión se ha comprobado con %{action}."
+            unavailable: El servicio del padrón no está disponible. Revisa la configuración y los registros de la aplicación.
+      numbers_constraints:
+        all_numbers: Todos los números
+        even_numbers: Números pares
+        odd_numbers: Números impares
+        only_range: Solo estos portales
+        except_range: Todos menos estos portales
+  activemodel:
+    attributes:
+      census_check:
+        date_of_birth: Fecha de nacimiento
+        document_number: Número de documento
+      zone:
+        name: Nombre de la zona
+      zone_street:
+        street_id: Calle
+        numbers_constraint: Restricción de números
+        numbers_range: Portales
