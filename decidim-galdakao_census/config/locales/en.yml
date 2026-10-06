@@ -12,6 +12,7 @@ en:
         fields:
           document_number: Document number (DNI/NIE)
           date_of_birth: Date of birth
+        not_in_census: The data entered is not in the Galdakao municipal register.
         service_unavailable: The municipal register service is currently unavailable.
     authorization_modals:
       content:
