@@ -68,8 +68,12 @@ module Decidim
         @lockout_manager ||= LockoutManager.new(user)
       end
 
+      def lockout_enabled?
+        user&.persisted?
+      end
+
       def check_lockout
-        return if user.blank?
+        return unless lockout_enabled?
 
         message = lockout_manager.check_lockout
         errors.add(:base, message) if message.present?
@@ -84,9 +88,11 @@ module Decidim
         end
 
         if response.at_xpath(AUTHENTICATED_XPATH)&.text == "true"
-          lockout_manager.register_success
-        else
+          lockout_manager.register_success if lockout_enabled?
+        elsif lockout_enabled?
           errors.add(:base, lockout_manager.register_failed_attempt)
+        else
+          errors.add(:base, I18n.t("decidim.authorization_handlers.census_authorization_handler.not_in_census"))
         end
       end
 
