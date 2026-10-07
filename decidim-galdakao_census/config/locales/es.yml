@@ -12,6 +12,7 @@ es:
         fields:
           document_number: Número de documento (DNI/NIE)
           date_of_birth: Fecha de nacimiento
+          zones: Zonas
         not_in_census: Los datos introducidos no constan en el padrón municipal de Galdakao.
         service_unavailable: El servicio del padrón no está disponible en este momento.
     authorization_modals:
