@@ -20,7 +20,7 @@ module Decidim
         Decidim::Verifications.register_workflow(:census_authorization_handler) do |workflow|
           workflow.form = "Decidim::GaldakaoCensus::CensusAuthorizationHandler"
           workflow.action_authorizer = "Decidim::GaldakaoCensus::CensusActionAuthorizer"
-          workflow.renewable = false
+          workflow.renewable = true
           workflow.options do |options|
             options.attribute :zones, type: :string, required: false
           end

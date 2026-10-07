@@ -163,18 +163,48 @@ describe Decidim::GaldakaoCensus::CensusAuthorizationHandler do
       end
     end
 
+    shared_examples "a handler without lockout" do
+      context "when the webservice confirms the document" do
+        before { stub_webservice(result: "true") }
+
+        it "is valid without using the lockout manager" do
+          expect(handler).to be_valid
+          expect(Decidim::GaldakaoCensus::LockoutManager).not_to have_received(:new)
+        end
+      end
+
+      context "when the webservice rejects the document" do
+        before { stub_webservice(result: "false") }
+
+        it "is not valid without using the lockout manager" do
+          expect(handler).not_to be_valid
+          expect(handler.errors[:base]).to include(I18n.t("decidim.authorization_handlers.census_authorization_handler.not_in_census"))
+          expect(Decidim::GaldakaoCensus::LockoutManager).not_to have_received(:new)
+        end
+      end
+    end
+
     context "when there is no user" do
       let(:user) { nil }
 
-      before do
-        allow(lockout_manager).to receive(:register_success)
-        stub_webservice(result: "true")
-      end
+      it_behaves_like "a handler without lockout"
+    end
 
-      it "does not call check_lockout, but document_number_valid still runs and instantiates the lockout manager" do
-        handler.valid?
+    # An admin creating a new managed user validates the handler before the user is saved
+    context "when the user is not persisted" do
+      let(:user) { build(:user, :managed, organization:) }
 
-        expect(Decidim::GaldakaoCensus::LockoutManager).to have_received(:new).with(nil)
+      it_behaves_like "a handler without lockout"
+
+      context "with a real lockout manager" do
+        before do
+          allow(Decidim::GaldakaoCensus::LockoutManager).to receive(:new).and_call_original
+          stub_webservice(result: "false")
+        end
+
+        it "does not raise" do
+          expect { handler.valid? }.not_to raise_error
+        end
       end
     end
   end

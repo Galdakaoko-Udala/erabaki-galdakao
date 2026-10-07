@@ -12,6 +12,8 @@ eu:
         fields:
           document_number: Agiri-zenbakia (NAN/AIZ)
           date_of_birth: Jaiotze-data
+          zones: Eremuak
+        not_in_census: Sartutako datuak ez daude Galdakaoko udal erroldan.
         service_unavailable: Errolda zerbitzua ez dago erabilgarri une honetan.
     authorization_modals:
       content:

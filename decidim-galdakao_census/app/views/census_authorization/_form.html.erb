@@ -1,5 +1,7 @@
 <%= append_stylesheet_pack_tag "decidim_galdakao_census" %>
 
+<%= base_error_messages(handler) unless form.object_name == "authorization_handler" %>
+
 <div class="census-auth-form">
   <div class="census-auth-form__box">
     <div class="census-auth-form__field">

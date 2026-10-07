@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_01_141842) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_07_100746) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "ltree"
   enable_extension "pg_catalog.plpgsql"
@@ -377,6 +377,51 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_141842) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["decidim_author_id"], name: "decidim_awesome_editor_images_author"
     t.index ["decidim_organization_id"], name: "decidim_awesome_editor_images_constraint_organization"
+  end
+
+  create_table "decidim_awesome_follow_up_questionnaire_messages", force: :cascade do |t|
+    t.bigint "follow_up_questionnaire_id", null: false
+    t.bigint "decidim_user_id"
+    t.string "session_token"
+    t.bigint "status_id", null: false
+    t.text "body"
+    t.string "author_type", null: false
+    t.bigint "author_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_type", "author_id"], name: "index_fuqm_on_author"
+    t.index ["decidim_user_id"], name: "index_fuqm_on_decidim_user_id"
+    t.index ["follow_up_questionnaire_id", "decidim_user_id", "session_token", "created_at"], name: "index_fuqm_on_respondent_created_at"
+    t.index ["follow_up_questionnaire_id"], name: "index_fuqm_on_follow_up_questionnaire_id"
+    t.index ["session_token"], name: "index_fuqm_on_session_token"
+    t.index ["status_id"], name: "index_fuqm_on_status_id"
+  end
+
+  create_table "decidim_awesome_follow_up_questionnaire_statuses", force: :cascade do |t|
+    t.bigint "follow_up_questionnaire_id", null: false
+    t.jsonb "name", default: {}, null: false
+    t.string "color", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["follow_up_questionnaire_id"], name: "index_fuqs_on_follow_up_questionnaire_id"
+  end
+
+  create_table "decidim_awesome_follow_up_questionnaires", force: :cascade do |t|
+    t.bigint "decidim_organization_id", null: false
+    t.bigint "decidim_component_id", null: false
+    t.bigint "decidim_questionnaire_id", null: false
+    t.jsonb "name", default: {}, null: false
+    t.integer "position", default: 0, null: false
+    t.string "responder_name_field"
+    t.string "responder_email_field"
+    t.string "reply_to"
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "position"], name: "index_decidim_awesome_fuq_on_active_position"
+    t.index ["decidim_component_id"], name: "index_decidim_awesome_fuq_on_component_id"
+    t.index ["decidim_organization_id"], name: "index_decidim_awesome_fuq_on_organization_id"
+    t.index ["decidim_questionnaire_id"], name: "index_decidim_awesome_fuq_on_questionnaire_id", unique: true
   end
 
   create_table "decidim_awesome_proposal_extra_fields", force: :cascade do |t|
@@ -1769,8 +1814,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_141842) do
     t.jsonb "body"
     t.integer "comments_count", default: 0, null: false
     t.integer "follows_count", default: 0, null: false
-    t.integer "old_state", default: 0, null: false
     t.integer "evaluation_assignments_count", default: 0
+    t.integer "old_state", default: 0, null: false
     t.datetime "withdrawn_at", precision: nil
     t.integer "decidim_proposals_proposal_state_id"
     t.datetime "deleted_at"
@@ -2310,6 +2355,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_141842) do
   add_foreign_key "decidim_awesome_config_constraints", "decidim_awesome_config"
   add_foreign_key "decidim_awesome_editor_images", "decidim_organizations"
   add_foreign_key "decidim_awesome_editor_images", "decidim_users", column: "decidim_author_id"
+  add_foreign_key "decidim_awesome_follow_up_questionnaire_messages", "decidim_awesome_follow_up_questionnaire_statuses", column: "status_id"
+  add_foreign_key "decidim_awesome_follow_up_questionnaire_messages", "decidim_awesome_follow_up_questionnaires", column: "follow_up_questionnaire_id"
+  add_foreign_key "decidim_awesome_follow_up_questionnaire_statuses", "decidim_awesome_follow_up_questionnaires", column: "follow_up_questionnaire_id"
+  add_foreign_key "decidim_awesome_follow_up_questionnaires", "decidim_components"
+  add_foreign_key "decidim_awesome_follow_up_questionnaires", "decidim_organizations"
   add_foreign_key "decidim_budgets_budgets", "decidim_scopes"
   add_foreign_key "decidim_budgets_orders", "decidim_budgets_budgets"
   add_foreign_key "decidim_budgets_projects", "decidim_budgets_budgets"
