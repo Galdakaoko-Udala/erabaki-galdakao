@@ -1814,8 +1814,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_100746) do
     t.jsonb "body"
     t.integer "comments_count", default: 0, null: false
     t.integer "follows_count", default: 0, null: false
-    t.integer "evaluation_assignments_count", default: 0
     t.integer "old_state", default: 0, null: false
+    t.integer "evaluation_assignments_count", default: 0
     t.datetime "withdrawn_at", precision: nil
     t.integer "decidim_proposals_proposal_state_id"
     t.datetime "deleted_at"

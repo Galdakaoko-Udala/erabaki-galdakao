@@ -10,7 +10,7 @@ gem "decidim-conferences", DECIDIM_VERSION
 gem "decidim-elections", DECIDIM_VERSION
 gem "decidim-initiatives", DECIDIM_VERSION
 
-gem "decidim-decidim_awesome", github: "decidim-ice/decidim-module-decidim_awesome", branch: "upgrade-32"
+gem "decidim-decidim_awesome", github: "decidim-ice/decidim-module-decidim_awesome", branch: "main"
 gem "decidim-extra_censuses", github: "platoniq/decidim-module-extra_censuses", branch: "main"
 gem "decidim-file_authorization_handler", github: "openpoke/decidim-file_authorization_handler", branch: "main"
 gem "decidim-pokecode", github: "openpoke/decidim-module-pokecode", branch: "main"
