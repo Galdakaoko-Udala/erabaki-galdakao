@@ -20,6 +20,18 @@ GIT
       decidim-admin (~> 0.32)
 
 GIT
+  remote: https://github.com/openpoke/decidim-module-extra_censuses.git
+  revision: 67332aa01f11d8c218774ee978ee38130fb86396
+  branch: main
+  specs:
+    decidim-extra_censuses (0.3.0)
+      decidim-admin (>= 0.32.0, < 0.33)
+      decidim-core (>= 0.32.0, < 0.33)
+      decidim-elections (>= 0.32.0, < 0.33)
+      decidim-surveys (>= 0.32.0, < 0.33)
+      deface (>= 1.5)
+
+GIT
   remote: https://github.com/openpoke/decidim-module-pokecode.git
   revision: 461f5653f498a6b8f5fb02661b3dd4f108e5390d
   branch: main
@@ -239,18 +251,6 @@ GIT
       devise_invitable (~> 2.0, >= 2.0.9)
     decidim-verifications (0.32.1)
       decidim-core (= 0.32.1)
-
-GIT
-  remote: https://github.com/platoniq/decidim-module-extra_censuses.git
-  revision: d99d32cad333d4ab09daf3aaf0b9e4d6a5d9edd8
-  branch: main
-  specs:
-    decidim-extra_censuses (0.3.0)
-      decidim-admin (>= 0.32.0, < 0.33)
-      decidim-core (>= 0.32.0, < 0.33)
-      decidim-elections (>= 0.32.0, < 0.33)
-      decidim-surveys (>= 0.32.0, < 0.33)
-      deface (>= 1.5)
 
 PATH
   remote: decidim-galdakao_census
