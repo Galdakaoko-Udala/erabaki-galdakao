@@ -1162,7 +1162,6 @@ DEPENDENCIES
   letter_opener_web
   listen
   puma (>= 6.3.1)
-  selma (= 0.5.2)
   web-console
 
 CHECKSUMS
