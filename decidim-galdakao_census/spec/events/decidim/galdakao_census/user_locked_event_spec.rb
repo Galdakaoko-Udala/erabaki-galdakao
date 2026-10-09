@@ -28,7 +28,7 @@ describe Decidim::GaldakaoCensus::UserLockedEvent do
 
       expect(url.scheme).to start_with("http")
       expect(url.host).to eq(organization.host)
-      expect(url.path).to eq("/admin/galdakao_census/blocked_users")
+      expect(url.path).to eq("/en/admin/galdakao_census/blocked_users")
     end
   end
 end

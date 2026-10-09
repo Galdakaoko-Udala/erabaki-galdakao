@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email = []
   s.license = "AGPL-3.0"
   s.homepage = ""
-  s.required_ruby_version = ">= 3.3"
+  s.required_ruby_version = ">= 3.4"
 
   s.name = "decidim-galdakao_census"
   s.summary = "Galdakao census authorization for Decidim"

@@ -23,7 +23,7 @@ module Decidim
         return false if street_names.nil?
 
         street_names.each do |street_name|
-          street = find_or_initialize_by(name: street_name, organization: organization)
+          street = find_or_initialize_by(name: street_name, organization:)
           # rubocop:disable Rails/SkipsModelValidations
           street.touch if street.persisted?
           # rubocop:enable Rails/SkipsModelValidations

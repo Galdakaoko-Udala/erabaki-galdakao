@@ -22,7 +22,7 @@ describe "Admin census menu" do # rubocop:disable RSpec/DescribeClass
         click_on "Galdakao census"
       end
 
-      expect(page).to have_current_path("/admin/galdakao_census/connection")
+      expect(page).to have_current_path("/en/admin/galdakao_census/connection")
 
       within ".sidebar-menu" do
         expect(page).to have_content("Webservice Sync")
@@ -32,7 +32,7 @@ describe "Admin census menu" do # rubocop:disable RSpec/DescribeClass
         click_on "Zones"
       end
 
-      expect(page).to have_current_path("/admin/galdakao_census/zones")
+      expect(page).to have_current_path("/en/admin/galdakao_census/zones")
       expect(page).to have_css(".layout-nav .is-active", text: "Galdakao census")
     end
   end

@@ -3,8 +3,8 @@
 module Decidim
   # This holds the decidim-galdakao_census version.
   module GaldakaoCensus
-    DECIDIM_VERSION = "~> 0.31"
-    COMPAT_DECIDIM_VERSION = [">= 0.31", "< 0.32"].freeze
-    VERSION = "0.1.0"
+    DECIDIM_VERSION = "~> 0.32"
+    COMPAT_DECIDIM_VERSION = [">= 0.32", "< 0.33"].freeze
+    VERSION = "0.2.0"
   end
 end

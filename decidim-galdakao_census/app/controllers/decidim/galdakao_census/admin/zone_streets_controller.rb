@@ -24,7 +24,7 @@ module Decidim
 
             on(:invalid) do
               flash.now[:alert] = I18n.t("zone_streets.create.invalid", scope: "decidim.galdakao_census.admin")
-              render :new, status: :unprocessable_entity
+              render :new, status: :unprocessable_content
             end
           end
         end
@@ -46,7 +46,7 @@ module Decidim
 
             on(:invalid) do
               flash.now[:alert] = I18n.t("zone_streets.update.invalid", scope: "decidim.galdakao_census.admin")
-              render :edit, status: :unprocessable_entity
+              render :edit, status: :unprocessable_content
             end
           end
         end

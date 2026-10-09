@@ -78,7 +78,7 @@ describe Decidim::GaldakaoCensus::Admin::ZonesController do
     it "renders the form with an error status when the zone is not valid" do
       post routes.zones_path, params: { zone: { name: "" } }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).not_to include("translation_missing")
     end
 
@@ -120,7 +120,7 @@ describe Decidim::GaldakaoCensus::Admin::ZonesController do
     let!(:zones) { create_list(:census_zone, 55, organization:) }
 
     def json_zone_ids(params)
-      get routes.zones_path(format: :json), params: params
+      get(routes.zones_path(format: :json), params:)
       response.parsed_body.pluck("id")
     end
 

@@ -26,7 +26,7 @@ describe "Admin impersonates a new managed user with the census" do # rubocop:di
   end
 
   it "creates the managed user with a census authorization and impersonates it" do
-    expect(page).to have_content("successfully")
+    expect(page).to have_content("The managed participant has been successfully created.")
 
     managed_user = Decidim::User.managed.find_by(name: "Rigoberto")
     expect(Decidim::Authorization.where(user: managed_user).pluck(:name)).to eq(["census_authorization_handler"])

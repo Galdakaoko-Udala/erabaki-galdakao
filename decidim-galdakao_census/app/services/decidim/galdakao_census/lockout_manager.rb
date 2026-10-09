@@ -27,7 +27,7 @@ module Decidim
           minutes = remaining / 60
           seconds = remaining % 60
           I18n.t("decidim.galdakao_census.lockout.wait",
-                 minutes: minutes, seconds: seconds)
+                 minutes:, seconds:)
         end
       end
 
@@ -112,7 +112,7 @@ module Decidim
       def wait_message(lock_time)
         minutes = lock_time.to_i / 60
         seconds = lock_time.to_i % 60
-        "#{I18n.t("decidim.galdakao_census.lockout.wait", minutes: minutes, seconds: seconds)}\n"
+        "#{I18n.t("decidim.galdakao_census.lockout.wait", minutes:, seconds:)}\n"
       end
 
       def notify_admin

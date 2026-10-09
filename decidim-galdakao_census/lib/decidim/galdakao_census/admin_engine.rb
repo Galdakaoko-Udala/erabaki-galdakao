@@ -36,7 +36,11 @@ module Decidim
 
       initializer "decidim_galdakao_census_admin.mount_routes" do |_app|
         Decidim::Core::Engine.routes do
-          mount Decidim::GaldakaoCensus::AdminEngine, at: "/admin/galdakao_census", as: "decidim_admin_galdakao_census"
+          extend Decidim::Routes::LocaleRedirects
+
+          scope "/:locale", **locale_scope_options do
+            mount Decidim::GaldakaoCensus::AdminEngine, at: "/admin/galdakao_census", as: "decidim_admin_galdakao_census"
+          end
         end
       end
 

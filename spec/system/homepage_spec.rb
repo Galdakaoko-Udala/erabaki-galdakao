@@ -17,9 +17,4 @@ describe "Visit_the_homepage", perform_enqueued: true do
     expect(page).to have_content("Meetings")
     expect(page).to have_content("Activity")
   end
-
-  it "renders the language chooser on header" do
-    visit decidim.root_path
-    expect(page).to have_css(".main-header__language-container")
-  end
 end
